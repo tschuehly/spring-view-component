@@ -3,8 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
+	id("maven-publish")
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
+	`maven-publish`
 }
 
 group = "de.tschuehly"
@@ -35,4 +37,51 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/kotlin")
+            exclude("**/*.kt")
+        }
+    }
+}
+
+tasks {
+	bootJar {
+		enabled = false
+	}
+}
+
+java {
+	withSourcesJar()
+}
+publishing{
+	publications {
+
+		create<MavenPublication>("Maven") {
+			from(components["java"])
+			groupId = "de.github.tschuehly"
+			artifactId = "supabase-spring-boot-starter"
+		}
+		withType<MavenPublication> {
+			pom {
+				packaging = "jar"
+				name.set("thymeleaf-view-component")
+				description.set("Thymeleaf View Component")
+				licenses {
+					license {
+						name.set("MIT license")
+						url.set("https://opensource.org/licenses/MIT")
+					}
+				}
+				developers {
+					developer {
+						name.set("Thomas Schuehly")
+						email.set("thomas.schuehly@outlook.com")
+					}
+				}
+			}
+		}
+	}
 }
