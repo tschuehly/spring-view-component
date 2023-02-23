@@ -20,20 +20,8 @@ class ViewComponentAspect(
     val applicationContext: ApplicationContext
 ) {
     @Around("execution(* render()) || execution(* render(*))")
-    fun renderInject(joinPoint: ProceedingJoinPoint): Any {
-        val contextMap: Map<String, Any> = joinPoint.proceed() as Map<String, Any>
-        val htmlContext = Context()
-        htmlContext.setVariables(contextMap)
-        htmlContext.setVariable(
-            ThymeleafEvaluationContext.THYMELEAF_EVALUATION_CONTEXT_CONTEXT_VARIABLE_NAME,
-            ThymeleafEvaluationContext(applicationContext, null)
-        )
-        val engine = TemplateEngineConfig.templateEngine(joinPoint.`this`.javaClass)
-
-        return engine
-            .process(
-                joinPoint.`this`.javaClass.simpleName.substringBefore("$$"),
-                htmlContext
-            )
+    fun renderInject(joinPoint: ProceedingJoinPoint): ViewComponentContext {
+        val viewComponentContext = joinPoint.proceed() as ViewComponentContext
+        return ViewComponentContext(viewComponentContext.context,joinPoint.`this`.javaClass)
     }
 }
