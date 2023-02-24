@@ -5,9 +5,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
-import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.springframework.web.servlet.mvc.method.annotation.ModelAndViewMethodReturnValueHandler
 
 @Component
 class ViewComponentReturnValueConfiguration : WebMvcConfigurer{
@@ -17,7 +15,8 @@ class ViewComponentReturnValueConfiguration : WebMvcConfigurer{
     }
 }
 
-class ViewComponentMethodReturnValueHandler(): ModelAndViewMethodReturnValueHandler() {
+class ViewComponentMethodReturnValueHandler(): HandlerMethodReturnValueHandler {
+
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
         return ViewComponentContext::class.java.isAssignableFrom(returnType.parameterType)
     }
