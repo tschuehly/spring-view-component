@@ -1,14 +1,23 @@
 package de.tschuehly.thymeleafviewcomponent
 
 import org.springframework.core.MethodParameter
+import org.springframework.format.FormatterRegistry
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.thymeleaf.spring6.SpringTemplateEngine
 
 @Component
-class ViewComponentReturnValueConfiguration : WebMvcConfigurer{
+class ViewComponentReturnValueConfiguration(
+    val springTemplateEngine: SpringTemplateEngine
+) : WebMvcConfigurer{
+
+    override fun addFormatters(registry: FormatterRegistry) {
+        super.addFormatters(registry)
+        registry.addFormatter(ViewComponentFormatter(springTemplateEngine))
+    }
     override fun addReturnValueHandlers(handlers: MutableList<HandlerMethodReturnValueHandler>) {
         handlers.add(ViewComponentMethodReturnValueHandler())
         super.addReturnValueHandlers(handlers)
