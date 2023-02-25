@@ -9,21 +9,17 @@ class ViewComponentFormatter(
     val springTemplateEngine: SpringTemplateEngine
 ) : Formatter<ViewComponentContext> {
     override fun print(viewComponentContext: ViewComponentContext, locale: Locale): String {
-        if(viewComponentContext.componentClass == null){
-            throw Error("ViewComponentContext componentclass is null")
+        if(viewComponentContext.componentTemplate == null){
+            throw Error("ViewComponentContext componentTemplate is null")
         }
         val context = Context()
         context.setVariables(viewComponentContext.context)
-        val componentName =
-            viewComponentContext.componentClass.simpleName.substringBefore("$$")
-        val componentPackage =
-            viewComponentContext.componentClass.`package`.name.replace(".","/") + "/"
 
-        return springTemplateEngine.process("$componentPackage$componentName.html",context)
+        return springTemplateEngine.process(viewComponentContext.componentTemplate,context)
     }
 
     override fun parse(text: String, locale: Locale): ViewComponentContext {
-        TODO("Not yet implemented")
+        throw Error("Parsing of ViewComponentContext is not yet supported")
     }
 
 }

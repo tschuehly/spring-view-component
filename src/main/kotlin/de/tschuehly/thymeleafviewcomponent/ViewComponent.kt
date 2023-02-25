@@ -21,6 +21,8 @@ class ViewComponentAspect(
         if(returnValue !is ViewComponentContext){
             throw Error("render method needs to return a ViewComponentContext")
         }
-        return ViewComponentContext(returnValue.context, joinPoint.`this`.javaClass)
+        val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
+        val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".","/") + "/"
+        return ViewComponentContext(returnValue.context, "$componentPackage$componentName.html")
     }
 }
