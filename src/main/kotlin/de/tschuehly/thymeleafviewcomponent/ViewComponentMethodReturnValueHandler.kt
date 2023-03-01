@@ -20,7 +20,7 @@ class ViewComponentMethodReturnValueHandler : HandlerMethodReturnValueHandler {
     ) {
         val viewComponentContext = returnValue as ViewComponentContext
         mavContainer.view = viewComponentContext.componentTemplate
-        mavContainer.addAllAttributes(viewComponentContext.context)
+        mavContainer.addAllAttributes(viewComponentContext.contextAttributes.toMap())
     }
 
 }

@@ -1,7 +1,13 @@
 package de.tschuehly.thymeleafviewcomponent
 
-data class ViewComponentContext(
-    val context: Map<String,Any>,
-    val componentTemplate: String? = null
+
+class ViewComponentContext(
+    vararg val contextAttributes: Pair<String,Any>,
 ) {
+    var componentTemplate: String? = null
+    constructor(
+        componentTemplate: String? = null, vararg contextAttributes: Pair<String, Any>) : this(*contextAttributes){
+            this.componentTemplate = componentTemplate
+        }
+
 }

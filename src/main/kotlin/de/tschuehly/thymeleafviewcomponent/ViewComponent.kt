@@ -23,6 +23,6 @@ class ViewComponentAspect(
         }
         val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
         val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".","/") + "/"
-        return ViewComponentContext(returnValue.context, "$componentPackage$componentName.html")
+        return ViewComponentContext("$componentPackage$componentName.html",*returnValue.contextAttributes)
     }
 }

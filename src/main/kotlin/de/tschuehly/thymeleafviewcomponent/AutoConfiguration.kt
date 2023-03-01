@@ -22,5 +22,4 @@ class AutoConfiguration {
         secondaryTemplateResolver.checkExistence = true
         return secondaryTemplateResolver
     }
-
 }
