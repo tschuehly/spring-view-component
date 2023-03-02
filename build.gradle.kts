@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.3"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -55,6 +55,12 @@ tasks {
 
 java {
 	withSourcesJar()
+}
+
+tasks.jar{
+	enabled = true
+	// Remove `plain` postfix from jar file name
+	archiveClassifier.set("")
 }
 publishing{
 	publications {
