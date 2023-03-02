@@ -123,15 +123,25 @@ If we now access the root url path of our spring application we can see that the
 
 ### Installation
 
+Add this snippet to your build.gradle.kts:
 ```kotlin
 // build.gradle.kts
 repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.githubtschuehly:thymeleaf-view-component:0.1.2")
+    implementation("com.githubtschuehly:thymeleaf-view-component:0.1.3")
+}
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/kotlin")
+            exclude("**/*.kt")
+        }
+    }
 }
 ```
+
 
 ### Sources
 
