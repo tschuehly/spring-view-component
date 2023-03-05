@@ -130,7 +130,7 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.githubtschuehly:thymeleaf-view-component:0.1.3")
+    implementation("com.github.tschuehly:thymeleaf-view-component:0.1.3")
 }
 sourceSets {
     main {
