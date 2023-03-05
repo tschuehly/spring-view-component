@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.1.5"
+version = "0.1.6"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -67,7 +67,7 @@ publishing{
 
 		create<MavenPublication>("Maven") {
 			from(components["java"])
-			groupId = "de.tschuehly"
+			groupId = "de.github.tschuehly"
 			artifactId = "thymeleaf-view-component"
 		}
 		withType<MavenPublication> {
