@@ -12,10 +12,4 @@ class ViewComponentContext(
         this.componentTemplate = componentTemplate
     }
 
-    constructor(vararg contextAttributes: Pair<String, Any>) :
-            this(*(contextAttributes.map { ModelPair(it.first, it.second) }.toTypedArray())) {
-        this.componentTemplate = componentTemplate
-    }
-
-    constructor() : this(null)
 }

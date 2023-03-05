@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.1.4"
+version = "0.1.5"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -67,8 +67,8 @@ publishing{
 
 		create<MavenPublication>("Maven") {
 			from(components["java"])
-			groupId = "de.github.tschuehly"
-			artifactId = "supabase-spring-boot-starter"
+			groupId = "de.tschuehly"
+			artifactId = "thymeleaf-view-component"
 		}
 		withType<MavenPublication> {
 			pom {
