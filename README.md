@@ -4,7 +4,7 @@ While developing my side project over the last year with thymeleaf I noticed tha
 
 That's why the Idea of ViewComponents came along. There is a similar Library already available for [Ruby on Rails](https://viewcomponent.org/) which are inspired by react. 
 
-There are examples for both [Kotlin with gradle](#kotlin) and [Java with maven](#java)
+If you want to use the library with [Java and maven you can skip ahead](#java)
 
 ## Kotlin
 
