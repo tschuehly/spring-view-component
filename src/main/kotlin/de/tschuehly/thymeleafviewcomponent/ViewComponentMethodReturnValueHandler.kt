@@ -9,7 +9,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 class ViewComponentMethodReturnValueHandler : HandlerMethodReturnValueHandler {
 
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
-        return ViewComponentContext::class.java.isAssignableFrom(returnType.parameterType)
+        return ViewContext::class.java.isAssignableFrom(returnType.parameterType)
     }
 
     override fun handleReturnValue(
@@ -18,9 +18,9 @@ class ViewComponentMethodReturnValueHandler : HandlerMethodReturnValueHandler {
         mavContainer: ModelAndViewContainer,
         webRequest: NativeWebRequest
     ) {
-        val viewComponentContext = returnValue as ViewComponentContext
-        mavContainer.view = viewComponentContext.componentTemplate
-        mavContainer.addAllAttributes(viewComponentContext.contextAttributes.toMap())
+        val viewContext = returnValue as ViewContext
+        mavContainer.view = viewContext.componentTemplate
+        mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
     }
 
 }

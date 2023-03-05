@@ -7,19 +7,19 @@ import java.util.*
 
 class ViewComponentFormatter(
     private val springTemplateEngine: SpringTemplateEngine
-) : Formatter<ViewComponentContext> {
-    override fun print(viewComponentContext: ViewComponentContext, locale: Locale): String {
-        if(viewComponentContext.componentTemplate == null){
-            throw Error("ViewComponentContext componentTemplate is null")
+) : Formatter<ViewContext> {
+    override fun print(viewContext: ViewContext, locale: Locale): String {
+        if(viewContext.componentTemplate == null){
+            throw Error("ViewContext componentTemplate is null")
         }
         val context = Context()
-        context.setVariables(viewComponentContext.contextAttributes.toMap())
+        context.setVariables(viewContext.contextAttributes.toMap())
 
-        return springTemplateEngine.process(viewComponentContext.componentTemplate,context)
+        return springTemplateEngine.process(viewContext.componentTemplate,context)
     }
 
-    override fun parse(text: String, locale: Locale): ViewComponentContext {
-        throw Error("Parsing of ViewComponentContext is not yet supported")
+    override fun parse(text: String, locale: Locale): ViewContext {
+        throw Error("Parsing of ViewContext is not yet supported")
     }
 
 }

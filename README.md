@@ -4,11 +4,17 @@ While developing my side project over the last year with thymeleaf I noticed tha
 
 That's why the Idea of ViewComponents came along. There is a similar Library already available for [Ruby on Rails](https://viewcomponent.org/) which are inspired by react. 
 
-[How to install thymeleaf-view-component](#installation)
+There are examples for both [Kotlin with gradle](#kotlin) and [Java with maven](#java)
+
+## Kotlin
+
+[How to install thymeleaf-view-component with gradle](#gradle-installation)
+
+[Demo Repository with Kotlin and Gradle](https://github.com/tschuehly/thymeleaf-component-demo)
 
 ### Creating a ViewComponent
 
-We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewComponentContext. We can pass the properties we want to use in our template.
+We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We can pass the properties we want to use in our template.
 
 ```kotlin
 // HomeViewComponent.kt
@@ -16,9 +22,9 @@ We just need to add the @ViewComponent annotation to a class and define a render
 class HomeViewComponent(
     private val exampleService: ExampleService
     ) {
-    fun render() = ViewComponentContext(
-        "helloWorld" to "Hello World",
-        "coffee" to exampleService.getCoffee()
+    fun render() = ViewContext(
+        "helloWorld" toProperty "Hello World",
+        "coffee" toProperty exampleService.getCoffee()
     )
 }
 ```
@@ -27,8 +33,13 @@ Next we define the HTML in the HomeViewComponent.html in the same package as our
 
 ````html 
 // HomeViewComponent.html
-<div th:text="${helloWorld}"></div>
-<strong th:text="${coffee}"></strong>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:text="${helloWorld}"></div>
+    <br>
+    <strong th:text="${coffee}"></strong>
+</body>
+</html>
 ````
 
 We can then call the render method in our Controller
@@ -70,11 +81,9 @@ We can also create components with parameters. We can either use default values 
 ```kotlin
 // ParameterViewComponent.kt
 @ViewComponent
-class ParameterViewComponent(
-    private val exampleService: ExampleService
-){
-    fun render(parameter: String?) = ViewComponentContext(
-        "office" to (parameter ?: throw Error("You need to pass in a parameter")),
+class ParameterViewComponent{
+    fun render(parameter: String?) = ViewContext(
+        "office" toProperty (parameter ?: throw Error("You need to pass in a parameter")),
     )
 }
 ```
@@ -95,9 +104,9 @@ This enables us to define the properties for our ParameterViewComponent in the H
 class HomeViewComponent(
     private val exampleService: ExampleService,
 ) {
-    fun render() = ViewComponentContext(
-            "helloWorld" to exampleService.getHelloWorld(),
-            "office" to exampleService.getOfficeHours()
+    fun render() = ViewContext(
+            "helloWorld" toProperty exampleService.getHelloWorld(),
+            "office" toProperty exampleService.getOfficeHours()
         )
 }
 ```
@@ -121,7 +130,7 @@ If we now access the root url path of our spring application we can see that the
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
 
-### Installation
+### Gradle Installation
 
 Add this snippet to your build.gradle.kts:
 ```kotlin
@@ -142,7 +151,187 @@ sourceSets {
 }
 ```
 
+## Java
 
-### Sources
+[How to install thymeleaf-view-component with maven](#maven-installation)
 
-You can find the source code of the library here: [thymeleaf-view-component](https://github.com/tschuehly/thymeleaf-view-component)
+[Demo Repository with Java and Maven](https://github.com/tschuehly/view-component-java-maven-demo/tree/master)
+
+### Creating a ViewComponent
+
+We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We can pass the properties we want to use in our template.
+
+```java
+// HomeViewComponent.java
+@ViewComponent
+public class HomeViewComponent {
+    private final ExampleService exampleService;
+
+    public HomeViewComponent(ExampleService exampleService) {
+        this.exampleService = exampleService;
+    }
+
+    public ViewContext render() {
+        return new ViewContext(
+                ViewProperty.of("helloWorld", "Hello World"),
+                ViewProperty.of("coffee", exampleService.getCoffee())
+        );
+    }
+}
+
+```
+
+Next we define the HTML in the HomeViewComponent.html in the same package as our ViewComponent Class.
+
+````html 
+// HomeViewComponent.html
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:text="${helloWorld}"></div>
+    <br>
+    <strong th:text="${coffee}"></strong>
+</body>
+</html>
+````
+
+We can then call the render method in our Controller
+
+```java
+// Router.java
+@Controller
+public class Router {
+    private final HomeViewComponent HomeViewComponent;
+
+    public Router(HomeViewComponent HomeViewComponent) {
+        this.HomeViewComponent = HomeViewComponent;
+    }
+
+    @GetMapping("/")
+    ViewContext homeView(){
+        return HomeViewComponent.render();
+    }
+}
+```
+
+If we now access the root url path of our spring application we can see that the component renders properly:
+![thymeleaf-view-component-example](https://user-images.githubusercontent.com/33346637/222275655-b80a45b0-3a3d-4bd6-909a-1b54ab8cc925.png)
+
+
+### Nesting components:
+
+We can also embed components to our templates, either with expression inlining `[(${{}})]` or with the `th:utext=${{}}` property. It is important to use double curly bracelets `{{}}`.
+
+```html
+<div>
+    [(${{@navigationViewComponent.render()}})]
+</div>
+```
+
+```html
+<div th:utext="${{@navigationViewComponent.render()}}"></div>
+```
+### Parameter components:
+
+We can also create components with parameters. We can either use default values when we pass a null value, get a property from a Service or we can throw a custom error.
+
+```java
+@ViewComponent
+public class ParameterViewComponent {
+    public ViewContext render(String parameter) throws Exception {
+        if (parameter == null) {
+            throw new Exception("You need to pass in a parameter");
+        }
+        return new ViewContext(
+                ViewProperty.of("office", parameter)
+                );
+    }
+}
+
+```
+
+```html
+// ParameterViewComponent.html
+<h2>ParameterComponent:</h2>
+
+<div th:text="${office}"></div>
+
+```
+
+This enables us to define the properties for our ParameterViewComponent in the HomeViewComponent:
+
+```java
+// HomeViewComponent.java
+@ViewComponent
+public class HomeViewComponent {
+    private final ExampleService exampleService;
+
+    public HomeViewComponent(ExampleService exampleService) {
+        this.exampleService = exampleService;
+    }
+
+    public ViewContext render() {
+        return new ViewContext(
+                ViewProperty.of("helloWorld", "Hello World"),
+                ViewProperty.of("coffee", exampleService.getCoffee()),
+                ViewProperty.of("office", exampleService.getOfficeHours())
+        );
+    }
+}
+
+```
+```html
+// HomeViewComponent.html
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:text="${helloWorld}"></div>
+
+<div th:utext="${{@parameterViewComponent.render(office)}}"></div>
+
+</body>
+</html>
+```
+
+
+If we now access the root url path of our spring application we can see that the parameter component renders properly:
+
+![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
+
+
+### Maven Installation
+
+Add this to your pom.xml:
+```xml
+<project>
+    <dependencies>
+        <dependency>
+            <groupId>de.github.tschuehly</groupId>
+            <artifactId>thymeleaf-view-component</artifactId>
+            <version>0.1.6</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.html</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
+        <repository>
+            <id>Jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+</project>
+```

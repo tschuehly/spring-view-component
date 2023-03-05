@@ -16,13 +16,13 @@ annotation class ViewComponent()
 class ViewComponentAspect(
 ) {
     @Around("execution(* render()) || execution(* render(*))")
-    fun renderInject(joinPoint: ProceedingJoinPoint): ViewComponentContext {
+    fun renderInject(joinPoint: ProceedingJoinPoint): ViewContext {
         val returnValue = joinPoint.proceed()
-        if(returnValue !is ViewComponentContext){
-            throw Error("render method needs to return a ViewComponentContext")
+        if(returnValue !is ViewContext){
+            throw Error("render method needs to return a ViewContext")
         }
         val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
         val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".","/") + "/"
-        return ViewComponentContext("$componentPackage$componentName.html",*returnValue.contextAttributes)
+        return ViewContext("$componentPackage$componentName.html",*returnValue.contextAttributes)
     }
 }
