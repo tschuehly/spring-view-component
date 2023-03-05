@@ -4,11 +4,11 @@ While developing my side project over the last year with thymeleaf I noticed tha
 
 That's why the Idea of ViewComponents came along. There is a similar Library already available for [Ruby on Rails](https://viewcomponent.org/) which are inspired by react. 
 
-If you want to use the library with [Java and maven you can skip ahead](#java)
+If you want to use the library with [Java and Maven](#java) you can skip ahead
 
 ## Kotlin
 
-[How to install thymeleaf-view-component with gradle](#gradle-installation)
+[Installation with Gradle](#gradle-installation)
 
 [Demo Repository with Kotlin and Gradle](https://github.com/tschuehly/thymeleaf-component-demo)
 
@@ -153,7 +153,7 @@ sourceSets {
 
 ## Java
 
-[How to install thymeleaf-view-component with maven](#maven-installation)
+[Installation with Maven](#maven-installation)
 
 [Demo Repository with Java and Maven](https://github.com/tschuehly/view-component-java-maven-demo/tree/master)
 
