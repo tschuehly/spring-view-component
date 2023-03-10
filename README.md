@@ -63,16 +63,17 @@ If we now access the root url path of our spring application we can see that the
 
 ### Nesting components:
 
-We can also embed components to our templates, either with expression inlining `[(${{}})]` or with the `th:utext=${{}}` property. It is important to use double curly bracelets `{{}}`.
+We can also embed components to our templates with the attribute `view:component="componentName"`.
 
 ```html
-<div>
-    [(${{@navigationViewComponent.render()}})]
-</div>
+
+<div view:component="navigationViewComponent"></div>
 ```
 
+When our render method has parameters we can pass them by using the `.render(parameter)` method.
 ```html
-<div th:utext="${{@navigationViewComponent.render()}}"></div>
+
+<div view:component="parameterViewComponent.render('Hello World')"></div>
 ```
 ### Parameter components:
 
@@ -118,7 +119,7 @@ class HomeViewComponent(
 
 <div th:text="${helloWorld}"></div>
 
-<div th:utext="${{@parameterViewComponent.render(office)}}"></div>
+<div view:component="parameterViewComponent.render(office)"></div>
 
 </body>
 </html>
@@ -139,7 +140,7 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.github.tschuehly:thymeleaf-view-component:0.1.3")
+    implementation("com.github.tschuehly:thymeleaf-view-component:0.3.0")
 }
 sourceSets {
     main {
@@ -219,17 +220,19 @@ If we now access the root url path of our spring application we can see that the
 
 ### Nesting components:
 
-We can also embed components to our templates, either with expression inlining `[(${{}})]` or with the `th:utext=${{}}` property. It is important to use double curly bracelets `{{}}`.
+We can also embed components to our templates with the attribute `view:component="componentName"`.
 
 ```html
-<div>
-    [(${{@navigationViewComponent.render()}})]
-</div>
+
+<div view:component="navigationViewComponent"></div>
 ```
 
+When our render method has parameters we can pass them by using the `.render(parameter)` method.
 ```html
-<div th:utext="${{@navigationViewComponent.render()}}"></div>
+
+<div view:component="parameterViewComponent.render('Hello World')"></div>
 ```
+
 ### Parameter components:
 
 We can also create components with parameters. We can either use default values when we pass a null value, get a property from a Service or we can throw a custom error.
@@ -287,12 +290,10 @@ public class HomeViewComponent {
 
 <div th:text="${helloWorld}"></div>
 
-<div th:utext="${{@parameterViewComponent.render(office)}}"></div>
-
+<div view:component="parameterViewComponent.render(office)"></div>
 </body>
 </html>
 ```
-
 
 If we now access the root url path of our spring application we can see that the parameter component renders properly:
 
@@ -308,7 +309,7 @@ Add this to your pom.xml:
         <dependency>
             <groupId>de.github.tschuehly</groupId>
             <artifactId>thymeleaf-view-component</artifactId>
-            <version>0.1.6</version>
+            <version>0.3.0</version>
         </dependency>
     </dependencies>
     <build>

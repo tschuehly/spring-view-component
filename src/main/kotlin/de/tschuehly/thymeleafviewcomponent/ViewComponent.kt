@@ -9,20 +9,23 @@ import org.springframework.stereotype.Component
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Component
-annotation class ViewComponent()
+annotation class ViewComponent
 
 @Aspect
 @Component
-class ViewComponentAspect(
-) {
-    @Around("execution(* render()) || execution(* render(*))")
+class ViewComponentAspect {
+    @Around("execution(* render()) || execution(* render(*)) ") // TODO: Only matches methods with one parameter
     fun renderInject(joinPoint: ProceedingJoinPoint): ViewContext {
+
         val returnValue = joinPoint.proceed()
-        if(returnValue !is ViewContext){
+        if (returnValue !is ViewContext) {
             throw Error("render method needs to return a ViewContext")
         }
         val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
-        val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".","/") + "/"
-        return ViewContext("$componentPackage$componentName.html",*returnValue.contextAttributes)
+        val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".", "/") + "/"
+        return ViewContext(
+            componentTemplate = "$componentPackage$componentName.html",
+            contextAttributes = returnValue.contextAttributes
+        )
     }
 }

@@ -6,7 +6,7 @@ data class ViewProperty(
 ) {
     companion object {
         @JvmStatic
-        fun of(propertyName: String,propertyValue: Any): ViewProperty {
+        fun of(propertyName: String, propertyValue: Any): ViewProperty {
             return ViewProperty(propertyName, propertyValue)
         }
     }
