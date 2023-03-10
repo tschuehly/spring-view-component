@@ -14,7 +14,7 @@ annotation class ViewComponent
 @Aspect
 @Component
 class ViewComponentAspect {
-    @Around("execution(* render()) || execution(* render(*)) ") // TODO: Only matches methods with one parameter
+    @Around("execution(* render(..)) && @within(de.tschuehly.thymeleafviewcomponent.ViewComponent)")
     fun renderInject(joinPoint: ProceedingJoinPoint): ViewContext {
 
         val returnValue = joinPoint.proceed()
