@@ -66,13 +66,11 @@ If we now access the root url path of our spring application we can see that the
 We can also embed components to our templates with the attribute `view:component="componentName"`.
 
 ```html
-
 <div view:component="navigationViewComponent"></div>
 ```
 
 When our render method has parameters we can pass them by using the `.render(parameter)` method.
 ```html
-
 <div view:component="parameterViewComponent.render('Hello World')"></div>
 ```
 ### Parameter components:
@@ -140,7 +138,7 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.github.tschuehly:thymeleaf-view-component:0.3.0")
+    implementation("com.github.tschuehly:thymeleaf-view-component:0.3.1")
 }
 sourceSets {
     main {
@@ -309,7 +307,7 @@ Add this to your pom.xml:
         <dependency>
             <groupId>de.github.tschuehly</groupId>
             <artifactId>thymeleaf-view-component</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
     </dependencies>
     <build>
