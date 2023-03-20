@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "name": "viewcomponent",
+      "type": "de.tschuehly.thymeleafviewcomponent.ViewComponentProperties",
+      "sourceType": "de.tschuehly.thymeleafviewcomponent.ViewComponentProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "viewcomponent.localDevelopment",
+      "type": "java.lang.Boolean",
+      "description": "If set to true loads templates from the filesystem allowing for hot reload",
+      "sourceType": "de.tschuehly.thymeleafviewcomponent.ViewComponentProperties"
+    },
+  ],
+  "hints": []
+}
