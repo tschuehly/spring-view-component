@@ -128,6 +128,13 @@ If we now access the root url path of our spring application we can see that the
 
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
+### Local Development
+
+To enable live reload of the components on each save without rebuilding the application add this configuration:
+
+```yaml
+viewcomponent.localDevelopment=true
+```
 
 ### Gradle Installation
 
@@ -138,7 +145,7 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.github.tschuehly:thymeleaf-view-component:0.3.1")
+    implementation("com.github.tschuehly:thymeleaf-view-component:0.4.0")
 }
 sourceSets {
     main {
@@ -298,6 +305,14 @@ If we now access the root url path of our spring application we can see that the
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
 
+### Local Development
+
+To enable live reload of the components on each save without rebuilding the application add this configuration:
+
+```yaml
+viewcomponent.localDevelopment=true
+```
+
 ### Maven Installation
 
 Add this to your pom.xml:
@@ -307,7 +322,7 @@ Add this to your pom.xml:
         <dependency>
             <groupId>de.github.tschuehly</groupId>
             <artifactId>thymeleaf-view-component</artifactId>
-            <version>0.3.1</version>
+            <version>0.4.0</version>
         </dependency>
     </dependencies>
     <build>
