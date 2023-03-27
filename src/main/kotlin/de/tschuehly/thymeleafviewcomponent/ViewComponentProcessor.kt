@@ -4,6 +4,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
 import org.thymeleaf.engine.AttributeName
+import org.thymeleaf.exceptions.TemplateProcessingException
 import org.thymeleaf.model.IProcessableElementTag
 import org.thymeleaf.processor.element.AbstractAttributeTagProcessor
 import org.thymeleaf.processor.element.IElementTagStructureHandler
@@ -54,9 +55,13 @@ class ViewComponentProcessor(dialectPrefix: String) :
         } catch (e: NoSuchBeanDefinitionException) {
             throw ViewComponentBeanNotFoundException("No ViewComponentBean with the name: \"$componentName\" found")
         }
-        val expression = parser.parseExpression(webContext, expressionString)
 
-        val viewContext = expression.execute(webContext) as ViewContext
+        val expression = parser.parseExpression(webContext, expressionString)
+        val viewContext = try {
+            expression.execute(webContext) as ViewContext
+        } catch (e: TemplateProcessingException) {
+            throw ViewComponentProcessingException(e.message, e.cause)
+        }
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
 
         webContext.setVariables(viewContext.contextAttributes.toMap())
