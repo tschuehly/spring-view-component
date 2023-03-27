@@ -12,7 +12,7 @@
       "type": "java.lang.Boolean",
       "description": "If set to true loads templates from the filesystem allowing for hot reload",
       "sourceType": "de.tschuehly.thymeleafviewcomponent.ViewComponentProperties"
-    },
+    }
   ],
   "hints": []
 }
