@@ -6,7 +6,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 
 
-class ViewComponentMethodReturnValueHandler : HandlerMethodReturnValueHandler {
+class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
 
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
         return ViewContext::class.java.isAssignableFrom(returnType.parameterType)

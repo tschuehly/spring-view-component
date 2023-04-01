@@ -51,9 +51,7 @@ class Router(
     val homeViewComponent: HomeViewComponent
 ) {
     @GetMapping("/")
-    fun homeComponent(): Any {
-        return homeViewComponent.render()
-    }
+    fun homeComponent() = homeViewComponent.render()
 }
 ```
 
@@ -127,6 +125,25 @@ class HomeViewComponent(
 If we now access the root url path of our spring application we can see that the parameter component renders properly:
 
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
+
+### Composing pages from components
+
+If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
+
+```kotlin
+@Controller
+class Router(
+    private val homeViewComponent: HomeViewComponent,
+    private val navigationViewComponent: NavigationViewComponent,
+) {
+
+    @GetMapping("/multi-component")
+    fun multipleComponent() = ViewContextContainer(
+        navigationViewComponent.render(),
+        homeViewComponent.render()
+    )
+}
+```
 
 ### Local Development
 
@@ -206,15 +223,15 @@ We can then call the render method in our Controller
 // Router.java
 @Controller
 public class Router {
-    private final HomeViewComponent HomeViewComponent;
+    private final HomeViewComponent homeViewComponent;
 
-    public Router(HomeViewComponent HomeViewComponent) {
-        this.HomeViewComponent = HomeViewComponent;
+    public Router(HomeViewComponent homeViewComponent) {
+        this.HomeViewComponent = homeViewComponent;
     }
 
     @GetMapping("/")
     ViewContext homeView(){
-        return HomeViewComponent.render();
+        return homeViewComponent.render();
     }
 }
 ```
@@ -304,6 +321,31 @@ If we now access the root url path of our spring application we can see that the
 
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
+### Composing pages from components
+
+If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
+
+```java
+// Router.java
+@Controller
+public class Router {
+    private final NavigationViewComponent navigationViewComponent;
+    private final TableViewComponent tableViewComponent;
+
+    public Router(NavigationViewComponent navigationViewComponent, TableViewComponent tableViewComponent) {
+        this.navigationViewComponent = navigationViewComponent;
+        this.tableViewComponent = tableViewComponent;
+    }
+
+    @GetMapping("/multi-component")
+    ViewContextContainer multipleComponent() {
+        return new ViewContextContainer(
+                this.navigationViewComponent.render(),
+                this.tableViewComponent.render()
+        );
+    }
+}
+```
 
 ### Local Development
 
