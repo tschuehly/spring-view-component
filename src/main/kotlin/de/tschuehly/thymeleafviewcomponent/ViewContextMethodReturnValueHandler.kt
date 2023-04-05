@@ -18,7 +18,9 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
         mavContainer: ModelAndViewContainer,
         webRequest: NativeWebRequest
     ) {
-        val viewContext = returnValue as ViewContext
+        val viewContext = returnValue?.takeIf {
+            (ViewContext::class.java.isAssignableFrom(it.javaClass))
+        } as ViewContext
         mavContainer.view = viewContext.componentTemplate
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
     }

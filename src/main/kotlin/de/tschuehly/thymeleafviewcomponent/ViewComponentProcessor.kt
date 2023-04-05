@@ -60,7 +60,13 @@ class ViewComponentProcessor(dialectPrefix: String) :
         val viewContext = try {
             expression.execute(webContext) as ViewContext
         } catch (e: TemplateProcessingException) {
-            throw ViewComponentProcessingException(e.message, e.cause)
+            try{
+                val supplierExpression = parser.parseExpression(webContext,expressionString.replace(".render(",".get("))
+                supplierExpression.execute(webContext) as ViewContext
+            }catch (e: TemplateProcessingException){
+                throw ViewComponentProcessingException(e.message, e.cause)
+            }
+
         }
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
 

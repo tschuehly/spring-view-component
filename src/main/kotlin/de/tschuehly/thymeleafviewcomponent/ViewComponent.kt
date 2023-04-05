@@ -3,6 +3,7 @@ package de.tschuehly.thymeleafviewcomponent
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
+import org.aspectj.lang.annotation.Pointcut
 import org.springframework.stereotype.Component
 
 
@@ -14,7 +15,17 @@ annotation class ViewComponent
 @Aspect
 @Component
 class ViewComponentAspect {
-    @Around("execution(* render(..)) && @within(de.tschuehly.thymeleafviewcomponent.ViewComponent)")
+    @Pointcut("@within(de.tschuehly.thymeleafviewcomponent.ViewComponent)")
+    fun isViewComponent(){
+        //
+    }
+
+    @Pointcut("execution(* render(..)) || execution(* get(..))")
+    fun isRenderOrGetMethod(){
+        //
+    }
+
+    @Around("isViewComponent() && isRenderOrGetMethod()")
     fun renderInject(joinPoint: ProceedingJoinPoint): ViewContext {
 
         val returnValue = joinPoint.proceed()

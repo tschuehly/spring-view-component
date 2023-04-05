@@ -144,6 +144,26 @@ class Router(
     )
 }
 ```
+### Serverless components - Spring Cloud Function support
+
+If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do that with the Spring Cloud Function support.
+
+Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your build.gradle.kts.
+
+Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render() function we will now override the get method of the Supplier interface.
+
+If you start your application the component should be automatically rendered on http://localhost:8080
+```kotlin
+@ViewComponent
+class HomeViewComponent(
+    private val exampleService: ExampleService,
+) : Supplier<ViewContext> {
+    override fun get() = ViewContext(
+        "helloWorld" toProperty exampleService.getHelloWorld(),
+        "coffee" toProperty exampleService.getCoffee()
+    )
+}
+```
 
 ### Local Development
 
@@ -342,6 +362,38 @@ public class Router {
         return new ViewContextContainer(
                 this.navigationViewComponent.render(),
                 this.tableViewComponent.render()
+        );
+    }
+}
+```
+
+### Serverless components - Spring Cloud Function support
+
+If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do that with the Spring Cloud Function support. 
+
+Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your build.gradle.kts.
+
+Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render() function we will now override the get method of the Supplier interface.
+
+If you start your application the component should be automatically rendered on http://localhost:8080
+
+
+```java
+// HomeViewComponent.java
+@ViewComponent
+public class HomeViewComponent implements Supplier<ViewContext> {
+    private final ExampleService exampleService;
+
+    public HomeViewComponent(ExampleService exampleService) {
+        this.exampleService = exampleService;
+    }
+
+    @Override
+    public ViewContext get() {
+        return new ViewContext(
+                ViewProperty.of("helloWorld", "Hello World"),
+                ViewProperty.of("coffee", exampleService.getCoffee()),
+                ViewProperty.of("office", exampleService.getOfficeHours())
         );
     }
 }
