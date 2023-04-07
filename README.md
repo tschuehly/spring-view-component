@@ -182,7 +182,7 @@ repositories {
     maven("https://jitpack.io")
 }
 dependencies {
-    implementation("com.github.tschuehly:thymeleaf-view-component:0.4.0")
+    implementation("com.github.tschuehly:thymeleaf-view-component:0.5.0")
 }
 sourceSets {
     main {
@@ -416,7 +416,7 @@ Add this to your pom.xml:
         <dependency>
             <groupId>de.github.tschuehly</groupId>
             <artifactId>thymeleaf-view-component</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.0</version>
         </dependency>
     </dependencies>
     <build>
@@ -430,7 +430,7 @@ Add this to your pom.xml:
         </resources>
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
+                <artifactId>maven-resources-plugin</artifactId>5
                 <version>3.3.0</version>
             </plugin>
         </plugins>
