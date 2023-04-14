@@ -69,7 +69,7 @@ class ViewComponentProcessor(dialectPrefix: String) :
 
         }
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
-
+        SpringContextUtils.getRequestContext(webContext).model.putAll(viewContext.contextAttributes.toMap());
         webContext.setVariables(viewContext.contextAttributes.toMap())
 
         val modelFactory = webContext.modelFactory

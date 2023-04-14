@@ -2,7 +2,7 @@ package de.tschuehly.thymeleafviewcomponent
 
 data class ViewProperty(
     val propertyName: String,
-    val propertyValue: Any
+    val propertyValue: Any?
 ) {
     companion object {
         @JvmStatic
@@ -12,9 +12,9 @@ data class ViewProperty(
     }
 }
 
-infix fun <B : Any> String.toProperty(that: B) = ViewProperty(this, that)
+infix fun <B : Any> String.toProperty(that: B?) = ViewProperty(this, that)
 
-fun Array<out ViewProperty>.toMap(): Map<String, Any> {
+fun Array<out ViewProperty>.toMap(): Map<String, Any?> {
     return this.associate {
         Pair(it.propertyName, it.propertyValue)
     }
