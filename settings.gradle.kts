@@ -1,1 +1,2 @@
-rootProject.name = "thymeleaf-view-component"
+includeBuild("thymeleaf")
+includeBuild("common")
