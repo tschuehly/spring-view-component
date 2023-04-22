@@ -20,7 +20,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     // Use this to develop locally when you include the build locally in your settings.gradle
-    implementation("de.tschuehly:spring-view-component-thymeleaf")
+//    implementation("de.tschuehly:spring-view-component-thymeleaf")
+    implementation("com.github.tschuehly:spring-view-component:spring-view-component-thymeleaf:ae806c7e7e")
 
 //  Use this to develop with the version on jitpack
 //    implementation("com.github.tschuehly:thymeleaf-view-component:0.4.0")

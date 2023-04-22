@@ -1,8 +1,37 @@
 # Spring ViewComponent
 
-While developing my side project over the last year with thymeleaf I noticed that the templates you serve with the Controller get quite large. You can split them up by using Thymeleaf fragments. But when you nest multiple fragments and use variable expression it is going to get hard to test.
+Spring ViewComponent allows you to create typesafe, reusable, testable & encapsulated server rendered view components.
 
-That's why the Idea of ViewComponents came along. There is a similar Library already available for [Ruby on Rails](https://viewcomponent.org/) which are inspired by react. 
+GitHub developed a similar Library for [Ruby on Rails](https://viewcomponent.org/) to ease the development the very site
+you are on right now.
+
+## What’s a ViewComponent?
+
+Think of ViewComponents as an evolution of the presenter pattern, inspired by React. 
+A ViewComponent is a Spring Bean and HTML template: 
+
+```kotlin
+// HomeViewComponent.kt
+@ViewComponent
+class HomeViewComponent(
+    private val exampleService: ExampleService
+) {
+    fun render() = ViewContext(
+        "helloWorld" toProperty exampleService.getCoffee(),
+    )
+}
+```
+````html 
+// HomeViewComponent.html
+<div th:text="${helloWorld}"></div>
+````
+
+## Template Engines
+
+- [Thymeleaf](https://thymeleaf.org)
+- [JTE](https://github.com/casid/jte) (experimental)
+
+# Thymeleaf
 
 If you want to use the library with [Java and Maven](#java) you can skip ahead
 
@@ -14,14 +43,15 @@ If you want to use the library with [Java and Maven](#java) you can skip ahead
 
 ### Creating a ViewComponent
 
-We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We can pass the properties we want to use in our template.
+We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We
+can pass the properties we want to use in our template.
 
 ```kotlin
 // HomeViewComponent.kt
 @ViewComponent
 class HomeViewComponent(
     private val exampleService: ExampleService
-    ) {
+) {
     fun render() = ViewContext(
         "helloWorld" toProperty "Hello World",
         "coffee" toProperty exampleService.getCoffee()
@@ -35,9 +65,9 @@ Next we define the HTML in the HomeViewComponent.html in the same package as our
 // HomeViewComponent.html
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-    <div th:text="${helloWorld}"></div>
-    <br>
-    <strong th:text="${coffee}"></strong>
+<div th:text="${helloWorld}"></div>
+<br>
+<strong th:text="${coffee}"></strong>
 </body>
 </html>
 ````
@@ -58,27 +88,31 @@ class Router(
 If we now access the root url path of our spring application we can see that the component renders properly:
 ![thymeleaf-view-component-example](https://user-images.githubusercontent.com/33346637/222275655-b80a45b0-3a3d-4bd6-909a-1b54ab8cc925.png)
 
-
 ### Nesting components:
 
 We can also embed components to our templates with the attribute `view:component="componentName"`.
 
 ```html
+
 <div view:component="navigationViewComponent"></div>
 ```
 
 When our render method has parameters we can pass them by using the `.render(parameter)` method.
+
 ```html
+
 <div view:component="parameterViewComponent.render('Hello World')"></div>
 ```
+
 ### Parameter components:
 
-We can also create components with parameters. We can either use default values when we pass a null value, get a property from a Service or we can throw a custom error.
+We can also create components with parameters. We can either use default values when we pass a null value, get a
+property from a Service or we can throw a custom error.
 
 ```kotlin
 // ParameterViewComponent.kt
 @ViewComponent
-class ParameterViewComponent{
+class ParameterViewComponent {
     fun render(parameter: String?) = ViewContext(
         "office" toProperty (parameter ?: throw Error("You need to pass in a parameter")),
     )
@@ -102,11 +136,12 @@ class HomeViewComponent(
     private val exampleService: ExampleService,
 ) {
     fun render() = ViewContext(
-            "helloWorld" toProperty exampleService.getHelloWorld(),
-            "office" toProperty exampleService.getOfficeHours()
-        )
+        "helloWorld" toProperty exampleService.getHelloWorld(),
+        "office" toProperty exampleService.getOfficeHours()
+    )
 }
 ```
+
 ```html
 // HomeViewComponent.html
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -121,14 +156,14 @@ class HomeViewComponent(
 </html>
 ```
 
-
 If we now access the root url path of our spring application we can see that the parameter component renders properly:
 
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
 ### Composing pages from components
 
-If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
+If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in
+your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
 
 ```kotlin
 @Controller
@@ -144,15 +179,20 @@ class Router(
     )
 }
 ```
+
 ### Serverless components - Spring Cloud Function support
 
-If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do that with the Spring Cloud Function support.
+If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do
+that with the Spring Cloud Function support.
 
-Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your build.gradle.kts.
+Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your
+build.gradle.kts.
 
-Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render() function we will now override the get method of the Supplier interface.
+Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render()
+function we will now override the get method of the Supplier interface.
 
 If you start your application the component should be automatically rendered on http://localhost:8080
+
 ```kotlin
 @ViewComponent
 class HomeViewComponent(
@@ -176,6 +216,7 @@ viewcomponent.localDevelopment=true
 ### Gradle Installation
 
 Add this snippet to your build.gradle.kts:
+
 ```kotlin
 // build.gradle.kts
 repositories {
@@ -202,7 +243,8 @@ sourceSets {
 
 ### Creating a ViewComponent
 
-We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We can pass the properties we want to use in our template.
+We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We
+can pass the properties we want to use in our template.
 
 ```java
 // HomeViewComponent.java
@@ -230,9 +272,9 @@ Next we define the HTML in the HomeViewComponent.html in the same package as our
 // HomeViewComponent.html
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-    <div th:text="${helloWorld}"></div>
-    <br>
-    <strong th:text="${coffee}"></strong>
+<div th:text="${helloWorld}"></div>
+<br>
+<strong th:text="${coffee}"></strong>
 </body>
 </html>
 ````
@@ -250,7 +292,7 @@ public class Router {
     }
 
     @GetMapping("/")
-    ViewContext homeView(){
+    ViewContext homeView() {
         return homeViewComponent.render();
     }
 }
@@ -258,7 +300,6 @@ public class Router {
 
 If we now access the root url path of our spring application we can see that the component renders properly:
 ![thymeleaf-view-component-example](https://user-images.githubusercontent.com/33346637/222275655-b80a45b0-3a3d-4bd6-909a-1b54ab8cc925.png)
-
 
 ### Nesting components:
 
@@ -270,6 +311,7 @@ We can also embed components to our templates with the attribute `view:component
 ```
 
 When our render method has parameters we can pass them by using the `.render(parameter)` method.
+
 ```html
 
 <div view:component="parameterViewComponent.render('Hello World')"></div>
@@ -277,9 +319,11 @@ When our render method has parameters we can pass them by using the `.render(par
 
 ### Parameter components:
 
-We can also create components with parameters. We can either use default values when we pass a null value, get a property from a Service or we can throw a custom error.
+We can also create components with parameters. We can either use default values when we pass a null value, get a
+property from a Service or we can throw a custom error.
 
 ```java
+
 @ViewComponent
 public class ParameterViewComponent {
     public ViewContext render(String parameter) throws Exception {
@@ -288,7 +332,7 @@ public class ParameterViewComponent {
         }
         return new ViewContext(
                 ViewProperty.of("office", parameter)
-                );
+        );
     }
 }
 
@@ -324,6 +368,7 @@ public class HomeViewComponent {
 }
 
 ```
+
 ```html
 // HomeViewComponent.html
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -343,7 +388,8 @@ If we now access the root url path of our spring application we can see that the
 
 ### Composing pages from components
 
-If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
+If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in
+your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
 
 ```java
 // Router.java
@@ -369,14 +415,16 @@ public class Router {
 
 ### Serverless components - Spring Cloud Function support
 
-If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do that with the Spring Cloud Function support. 
+If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do
+that with the Spring Cloud Function support.
 
-Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your build.gradle.kts.
+Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your
+build.gradle.kts.
 
-Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render() function we will now override the get method of the Supplier interface.
+Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render()
+function we will now override the get method of the Supplier interface.
 
 If you start your application the component should be automatically rendered on http://localhost:8080
-
 
 ```java
 // HomeViewComponent.java
@@ -410,7 +458,9 @@ viewcomponent.localDevelopment=true
 ### Maven Installation
 
 Add this to your pom.xml:
+
 ```xml
+
 <project>
     <dependencies>
         <dependency>
