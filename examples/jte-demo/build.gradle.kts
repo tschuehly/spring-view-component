@@ -13,6 +13,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -23,8 +24,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    implementation("de.tschuehly:spring-view-component-jte")
+//    implementation("de.tschuehly:spring-view-component-jte")
 
+    implementation("com.github.tschuehly:spring-view-component:spring-view-component-jte:e2cc9e72e4")
     implementation("gg.jte:jte-spring-boot-starter-3:2.3.1")
     implementation("gg.jte:jte-kotlin:2.3.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

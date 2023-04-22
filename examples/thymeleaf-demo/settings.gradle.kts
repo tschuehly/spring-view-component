@@ -1,2 +1,2 @@
-rootProject.name = "spring-view-component-thymeleaf-demo"
+rootProject.name = "thymeleaf-demo"
 includeBuild("..\\..\\..\\spring-view-component")
