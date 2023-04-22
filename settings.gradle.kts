@@ -1,2 +1,3 @@
 includeBuild("thymeleaf")
-includeBuild("common")
+includeBuild("core")
+includeBuild("jte")

@@ -1,17 +1,16 @@
 {
   "groups": [
     {
-      "name": "viewcomponent",
-      "type": "de.tschuehly.springviewcomponentthymeleaf.ViewComponentProperties",
-      "sourceType": "de.tschuehly.springviewcomponentthymeleaf.ViewComponentProperties"
+      "name": "spring.viewcomponent",
+      "type": "de.tschuehly.spring.viewcomponent.core.ViewComponentProperties",
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.ViewComponentProperties"
     }
   ],
   "properties": [
     {
-      "name": "viewcomponent.localDevelopment",
       "type": "java.lang.Boolean",
       "description": "If set to true loads templates from the filesystem allowing for hot reload",
-      "sourceType": "de.tschuehly.springviewcomponentthymeleaf.ViewComponentProperties"
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.ViewComponentProperties"
     }
   ],
   "hints": []

@@ -1,9 +1,9 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
-import de.tschuehly.spring.viewcomponent.common.ViewComponentBeanNotFoundException
-import de.tschuehly.spring.viewcomponent.common.ViewComponentProcessingException
-import de.tschuehly.spring.viewcomponent.common.ViewContext
-import de.tschuehly.spring.viewcomponent.common.toMap
+import de.tschuehly.spring.viewcomponent.core.ViewComponentBeanNotFoundException
+import de.tschuehly.spring.viewcomponent.core.ViewComponentProcessingException
+import de.tschuehly.spring.viewcomponent.core.ViewContext
+import de.tschuehly.spring.viewcomponent.core.toMap
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
@@ -74,7 +74,7 @@ class ViewComponentProcessor(dialectPrefix: String) :
 
         }
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
-        SpringContextUtils.getRequestContext(webContext).model.putAll(viewContext.contextAttributes.toMap());
+        SpringContextUtils.getRequestContext(webContext).model.putAll(viewContext.contextAttributes.toMap())
         webContext.setVariables(viewContext.contextAttributes.toMap())
 
         val modelFactory = webContext.modelFactory

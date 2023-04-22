@@ -1,7 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
-import de.tschuehly.spring.viewcomponent.common.ViewContextContainer
-import de.tschuehly.spring.viewcomponent.common.toMap
+import de.tschuehly.spring.viewcomponent.core.ViewContextContainer
+import de.tschuehly.spring.viewcomponent.core.toMap
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.MethodParameter
