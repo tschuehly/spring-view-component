@@ -1,4 +1,4 @@
-# thymeleaf-view-component
+# Spring ViewComponent
 
 While developing my side project over the last year with thymeleaf I noticed that the templates you serve with the Controller get quite large. You can split them up by using Thymeleaf fragments. But when you nest multiple fragments and use variable expression it is going to get hard to test.
 
