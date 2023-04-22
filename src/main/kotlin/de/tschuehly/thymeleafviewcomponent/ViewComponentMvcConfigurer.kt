@@ -6,12 +6,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Component
 class ViewComponentMvcConfigurer(
-    private val viewContextContainerMethodReturnValueHandler: ViewContextContainerMethodReturnValueHandler,
+    vararg val methodReturnValueHandler: HandlerMethodReturnValueHandler,
 ) : WebMvcConfigurer {
 
     override fun addReturnValueHandlers(handlers: MutableList<HandlerMethodReturnValueHandler>) {
+        methodReturnValueHandler.forEach {
+            handlers.add(it)
+        }
         handlers.add(ViewContextAsyncHandlerMethodReturnValueHandler())
-        handlers.add(viewContextContainerMethodReturnValueHandler)
         handlers.add(ViewContextMethodReturnValueHandler())
         super.addReturnValueHandlers(handlers)
     }

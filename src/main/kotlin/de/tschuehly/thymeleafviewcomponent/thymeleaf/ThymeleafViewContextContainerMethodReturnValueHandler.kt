@@ -1,5 +1,7 @@
-package de.tschuehly.thymeleafviewcomponent
+package de.tschuehly.thymeleafviewcomponent.thymeleaf
 
+import de.tschuehly.thymeleafviewcomponent.ViewContextContainer
+import de.tschuehly.thymeleafviewcomponent.toMap
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.MethodParameter
@@ -12,8 +14,7 @@ import org.thymeleaf.spring6.view.ThymeleafView
 import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import java.util.*
 
-@Component
-class ViewContextContainerMethodReturnValueHandler(
+class ThymeleafViewContextContainerMethodReturnValueHandler(
     private val thymeleafViewResolver: ThymeleafViewResolver
 ) : HandlerMethodReturnValueHandler, WebApplicationObjectSupport() {
 
@@ -34,9 +35,10 @@ class ViewContextContainerMethodReturnValueHandler(
             val view: ThymeleafView =
                 thymeleafViewResolver.resolveViewName(viewContext.componentTemplate!!, Locale.GERMAN) as ThymeleafView
             view.render(viewContext.contextAttributes.toMap(), request, response)
-
         }
         mavContainer.isRequestHandled = true
     }
 
 }
+
+

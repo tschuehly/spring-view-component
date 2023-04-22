@@ -35,7 +35,7 @@ class ViewComponentAspect {
         val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
         val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".", "/") + "/"
         return ViewContext(
-            componentTemplate = "$componentPackage$componentName.html",
+            componentTemplate = "$componentPackage$componentName.jte",
             contextAttributes = returnValue.contextAttributes
         )
     }

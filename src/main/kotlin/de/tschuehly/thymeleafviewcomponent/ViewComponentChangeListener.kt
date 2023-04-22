@@ -9,8 +9,12 @@ class ViewComponentChangeListener(
     private val eventPublisher: ApplicationEventPublisher
 ) : FileChangeListener {
     override fun onChange(changeSet: MutableSet<ChangedFiles>) {
-        if(changeSet.any { changedFiles -> changedFiles.files.any { it.relativeName.endsWith(".html") } }){
-            publishEvent(ClassPathChangedEvent(this,changeSet,false))
+        if (changeSet.any { changedFiles ->
+                changedFiles.files.any {
+                    it.relativeName.endsWith(".html") || it.relativeName.endsWith(".jte")
+                }
+            }) {
+            publishEvent(ClassPathChangedEvent(this, changeSet, false))
         }
     }
 
