@@ -2,11 +2,13 @@ package de.tschuehly.thymeleafviewcomponent
 
 import org.springframework.core.MethodParameter
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Component
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 import reactor.core.publisher.Mono
 
+@Component
 class ViewContextAsyncHandlerMethodReturnValueHandler() : AsyncHandlerMethodReturnValueHandler {
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
         return Mono::class.java.isAssignableFrom(returnType.parameterType)

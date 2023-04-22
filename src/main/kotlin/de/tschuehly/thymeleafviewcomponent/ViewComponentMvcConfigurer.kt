@@ -13,8 +13,6 @@ class ViewComponentMvcConfigurer(
         methodReturnValueHandler.forEach {
             handlers.add(it)
         }
-        handlers.add(ViewContextAsyncHandlerMethodReturnValueHandler())
-        handlers.add(ViewContextMethodReturnValueHandler())
         super.addReturnValueHandlers(handlers)
     }
 }
