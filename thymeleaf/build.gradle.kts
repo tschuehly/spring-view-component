@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jreleaser.model.Active
 
 plugins {
 	id("org.springframework.boot") version "3.0.1"
@@ -6,7 +7,8 @@ plugins {
 	id("maven-publish")
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
-	`maven-publish`
+	id("org.jreleaser") version "1.5.1"
+	id("signing")
 }
 
 group = "de.tschuehly"
@@ -63,6 +65,7 @@ publishing{
 				packaging = "jar"
 				name.set("spring-view-component-thymeleaf")
 				description.set("Spring ViewComponent Thymeleaf")
+				url.set("https://github.com/tschuehly/spring-view-component/")
 				licenses {
 					license {
 						name.set("MIT license")
@@ -75,7 +78,34 @@ publishing{
 						email.set("thomas.schuehly@outlook.com")
 					}
 				}
+				scm {
+					connection.set("scm:git:git@github.com:tschuehly/spring-view-component.git")
+					developerConnection.set("scm:git:ssh:git@github.com:tschuehly/spring-view-component.git")
+					url.set("https://github.com/tschuehly/spring-view-component")
+				}
 			}
 		}
 	}
+}
+
+jreleaser {
+	signing {
+		active.set(Active.ALWAYS)
+		armored.set(true)
+	}
+	deploy {
+		maven {
+			nexus2 {
+				create("maven-central") {
+					active.set(Active.ALWAYS)
+					url.set("https://s01.oss.sonatype.org/service/local")
+					closeRepository.set(false)
+					releaseRepository.set(false)
+					stagingRepositories.add("target/staging-deploy")
+				}
+
+			}
+		}
+	}
+
 }
