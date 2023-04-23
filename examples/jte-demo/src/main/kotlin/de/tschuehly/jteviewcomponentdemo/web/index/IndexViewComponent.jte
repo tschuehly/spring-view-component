@@ -1,10 +1,14 @@
-@import de.tschuehly.jteviewcomponentdemo.web.index.ModelTest
+@import de.tschuehly.jteviewcomponentdemo.web.example.ExampleViewComponent
+@import de.tschuehly.jteviewcomponentdemo.web.index.IndexViewComponent
 
-@param ModelTest model
-@param de.tschuehly.jteviewcomponentdemo.web.table.TableViewComponent tableViewComponent
+@param IndexViewComponent.ExampleFormDTO exampleFormDTO
+@param ExampleViewComponent exampleViewComponent
 
 <script src="http://localhost:35729/livereload.js"></script>
 
-Hello ${model.getExampleProp()} heute ist eine 1^23
+<p>Index ViewComponent</p>
 
-<%--${tableViewComponent.render()}--%>
+<h2>Say hello to ${exampleFormDTO.getExampleProp()}  </h2>
+
+
+${exampleViewComponent.render()}

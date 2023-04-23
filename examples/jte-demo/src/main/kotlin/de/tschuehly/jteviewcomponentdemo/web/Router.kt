@@ -1,7 +1,7 @@
 package de.tschuehly.jteviewcomponentdemo.web
 
 import de.tschuehly.jteviewcomponentdemo.web.index.IndexViewComponent
-import de.tschuehly.spring.viewcomponent.core.ViewContext
+import de.tschuehly.spring.viewcomponent.jte.JteViewContext
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 
@@ -10,7 +10,7 @@ class Router(
     private val indexViewComponent: IndexViewComponent
 ) {
     @GetMapping("/")
-    fun index(): ViewContext {
+    fun index(): JteViewContext {
         return indexViewComponent.render()
     }
 

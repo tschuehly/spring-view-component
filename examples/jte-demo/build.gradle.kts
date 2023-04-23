@@ -24,9 +24,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-//    implementation("de.tschuehly:spring-view-component-jte")
+    implementation("de.tschuehly:spring-view-component-jte")
 
-    implementation("com.github.tschuehly:spring-view-component:spring-view-component-jte:ae806c7e7e")
+    //   implementation("com.github.tschuehly:spring-view-component:spring-view-component-jte:ae806c7e7e")
     implementation("gg.jte:jte-spring-boot-starter-3:2.3.1")
     implementation("gg.jte:jte-kotlin:2.3.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

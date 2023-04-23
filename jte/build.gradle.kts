@@ -20,6 +20,9 @@ repositories {
 dependencies {
     api("de.tschuehly:spring-view-component-core")
     implementation("gg.jte:jte-spring-boot-starter-3:2.3.0")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+
     implementation("gg.jte:jte:2.3.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

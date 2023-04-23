@@ -1,9 +1,10 @@
 package de.tschuehly.spring.viewcomponent.core
 
-class ViewContext(
-    vararg val contextAttributes: ViewProperty,
+open class ViewContext(
+    open vararg val contextAttributes: ViewProperty,
 ) {
     var componentTemplate: String? = null
+
 
     constructor(
         componentTemplate: String? = null,
