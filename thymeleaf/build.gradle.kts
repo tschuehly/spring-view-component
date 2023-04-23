@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core")
+	api("de.tschuehly:spring-view-component-core:0.5.1")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-devtools")
@@ -44,6 +44,7 @@ tasks {
 }
 
 java {
+	withJavadocJar()
 	withSourcesJar()
 }
 
@@ -59,6 +60,7 @@ publishing{
 			from(components["java"])
 			groupId = "de.tschuehly"
 			artifactId = "spring-view-component-thymeleaf"
+			description = "Create server rendered components with thymeleaf"
 		}
 		withType<MavenPublication> {
 			pom {
@@ -66,6 +68,7 @@ publishing{
 				name.set("spring-view-component-thymeleaf")
 				description.set("Spring ViewComponent Thymeleaf")
 				url.set("https://github.com/tschuehly/spring-view-component/")
+				inceptionYear.set("2023")
 				licenses {
 					license {
 						name.set("MIT license")
@@ -74,6 +77,7 @@ publishing{
 				}
 				developers {
 					developer {
+						id.set("tschuehly")
 						name.set("Thomas Schuehly")
 						email.set("thomas.schuehly@outlook.com")
 					}
@@ -86,9 +90,18 @@ publishing{
 			}
 		}
 	}
+	repositories {
+		maven {
+			url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+		}
+	}
 }
 
 jreleaser {
+	project {
+		copyright.set("Thomas Schuehly")
+	}
+	gitRootSearch.set(true)
 	signing {
 		active.set(Active.ALWAYS)
 		armored.set(true)
@@ -101,7 +114,7 @@ jreleaser {
 					url.set("https://s01.oss.sonatype.org/service/local")
 					closeRepository.set(false)
 					releaseRepository.set(false)
-					stagingRepositories.add("target/staging-deploy")
+					stagingRepositories.add("build/staging-deploy")
 				}
 
 			}

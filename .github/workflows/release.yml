@@ -25,4 +25,4 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew -Prelease :thymeleaf:jreleaserDeploy -DaltDeploymentRepository=local::file:./target/staging-deploy
+        run: ./gradlew :thymeleaf:publish :thymeleaf:jreleaserDeploy -DaltDeploymentRepository=local::file:./thymeleaf/build/staging-deploy
