@@ -4,9 +4,10 @@ import org.jreleaser.model.Active
 plugins {
 	id("org.springframework.boot") version "3.0.1"
 	id("io.spring.dependency-management") version "1.1.0"
-	id("maven-publish")
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
+
+	id("maven-publish")
 	id("org.jreleaser") version "1.5.1"
 	id("signing")
 }
