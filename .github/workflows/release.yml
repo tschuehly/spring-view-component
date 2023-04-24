@@ -28,7 +28,6 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./gradlew :thymeleaf:jreleaserDeploy -DaltDeploymentRepository=local::file:./thymeleaf/build/staging-deploy
-      - name: Publish core package to staging
       - name: Publish thymeleaf package to staging
         run: ./gradlew :jte:publish
       - name: Publish thymeleaf package to maven central

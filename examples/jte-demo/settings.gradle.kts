@@ -1,2 +1,2 @@
 rootProject.name = "jte-demo"
-includeBuild("..\\..\\..\\spring-view-component")
+//includeBuild("..\\..\\..\\spring-view-component")
