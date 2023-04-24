@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.5.1"
+version = "0.5.2"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core:0.5.1")
+	api("de.tschuehly:spring-view-component-core:0.5.2")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-devtools")
@@ -113,8 +113,8 @@ jreleaser {
 				create("maven-central") {
 					active.set(Active.ALWAYS)
 					url.set("https://s01.oss.sonatype.org/service/local")
-					closeRepository.set(false)
-					releaseRepository.set(false)
+					closeRepository.set(true)
+					releaseRepository.set(true)
 					stagingRepositories.add("build/staging-deploy")
 				}
 

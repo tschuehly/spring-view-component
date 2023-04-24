@@ -1,16 +1,19 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jreleaser.model.Active
 
 plugins {
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
-    id("maven-publish")
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
-    `maven-publish`
+
+    id("maven-publish")
+    id("org.jreleaser") version "1.5.1"
+    id("signing")
 }
 
 group = "de.tschuehly"
-version = "0.5.1"
+version = "0.5.2"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -18,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    api("de.tschuehly:spring-view-component-core")
+    api("de.tschuehly:spring-view-component-core:0.5.2")
     implementation("gg.jte:jte-spring-boot-starter-3:2.3.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
@@ -35,15 +38,16 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 tasks {
     bootJar {
         enabled = false
     }
 }
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
 java {
+    withJavadocJar()
     withSourcesJar()
 }
 tasks.jar{
@@ -58,12 +62,15 @@ publishing{
             from(components["java"])
             groupId = "de.tschuehly"
             artifactId = "spring-view-component-jte"
+            description = "Create server rendered components with JTE"
         }
         withType<MavenPublication> {
             pom {
                 packaging = "jar"
                 name.set("spring-view-component-jte")
                 description.set("Spring ViewComponent JTE")
+                url.set("https://github.com/tschuehly/spring-view-component/")
+                inceptionYear.set("2023")
                 licenses {
                     license {
                         name.set("MIT license")
@@ -72,12 +79,49 @@ publishing{
                 }
                 developers {
                     developer {
+                        id.set("tschuehly")
                         name.set("Thomas Schuehly")
                         email.set("thomas.schuehly@outlook.com")
                     }
                 }
+                scm {
+                    connection.set("scm:git:git@github.com:tschuehly/spring-view-component.git")
+                    developerConnection.set("scm:git:ssh:git@github.com:tschuehly/spring-view-component.git")
+                    url.set("https://github.com/tschuehly/spring-view-component")
+                }
             }
+        }
+    }
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
 }
 
+
+jreleaser {
+    project {
+        copyright.set("Thomas Schuehly")
+    }
+    gitRootSearch.set(true)
+    signing {
+        active.set(Active.ALWAYS)
+        armored.set(true)
+    }
+    deploy {
+        maven {
+            nexus2 {
+                create("maven-central") {
+                    active.set(Active.ALWAYS)
+                    url.set("https://s01.oss.sonatype.org/service/local")
+                    closeRepository.set(true)
+                    releaseRepository.set(true)
+                    stagingRepositories.add("build/staging-deploy")
+                }
+
+            }
+        }
+    }
+
+}
