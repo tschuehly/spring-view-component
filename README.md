@@ -2,12 +2,12 @@
 
 Spring ViewComponent allows you to create typesafe, reusable, testable & encapsulated server rendered view components.
 
-GitHub developed a similar Library for [Ruby on Rails](https://viewcomponent.org/) to ease the development the very site
+GitHub developed a similar Library for [Ruby on Rails](https://viewcomponent.org/) to ease the development of the very site
 you are on right now.
 
 ## What’s a ViewComponent?
 
-Think of ViewComponents as an evolution of the presenter pattern, inspired by React. 
+Think of ViewComponents as an evolution of the presenter pattern, inspired by [React](https://reactjs.org/docs/react-component.html). 
 
 A ViewComponent is a Spring Bean that defines the context for our Template: 
 
