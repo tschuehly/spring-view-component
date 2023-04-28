@@ -1,4 +1,4 @@
-![image](https://user-images.githubusercontent.com/33346637/235085649-319f1e17-42ee-4741-aff0-fa78cdc23e2e.png)
+![image](https://user-images.githubusercontent.com/33346637/235085980-eb16eaa3-ec89-4293-9609-cf651a44f60e.png)
 
 Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered view components.
 
