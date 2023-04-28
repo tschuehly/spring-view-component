@@ -23,7 +23,7 @@ class HomeViewComponent(
 }
 ```
 
-And te HTML Template, you can use [Thymeleaf](https://thymeleaf.org)
+And for the HTML Template, you can use [Thymeleaf](https://thymeleaf.org)
 
 ````html 
 // HomeViewComponent.html
