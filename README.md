@@ -1,6 +1,6 @@
-# Spring ViewComponent
+![image](https://user-images.githubusercontent.com/33346637/235085649-319f1e17-42ee-4741-aff0-fa78cdc23e2e.png)
 
-Spring ViewComponent allows you to create typesafe, reusable, testable & encapsulated server rendered view components.
+Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered view components.
 
 GitHub developed a similar Library for [Ruby on Rails](https://viewcomponent.org/) to ease the development of the very site
 you are on right now.
