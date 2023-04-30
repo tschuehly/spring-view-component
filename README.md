@@ -46,7 +46,9 @@ If you want to use the library with [Java and Maven](#java) you can skip ahead
 
 [Installation with Gradle](#gradle-installation)
 
-[Demo Repository with Kotlin and Gradle](https://github.com/tschuehly/thymeleaf-component-demo)
+[Thymeleaf Example](https://github.com/tschuehly/spring-view-component/tree/master/examples/thymeleaf-demo)
+[JTE Example](https://github.com/tschuehly/spring-view-component/tree/master/examples/jte-demo)
+
 
 ### Creating a ViewComponent
 
