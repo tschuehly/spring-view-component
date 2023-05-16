@@ -266,6 +266,10 @@ class HomeViewComponent(
 Add this snippet to your build.gradle.kts:
 ```kotlin
 // build.gradle.kts
+tasks.withType<Jar>{
+    from(sourceSets.main.get().output.resourcesDir)
+}
+
 sourceSets {
     main {
         resources {
