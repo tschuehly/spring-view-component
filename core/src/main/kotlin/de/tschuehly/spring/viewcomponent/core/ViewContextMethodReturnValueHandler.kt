@@ -10,7 +10,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
 
     override fun supportsReturnType(returnType: MethodParameter): Boolean {
-        return ViewContext::class.java.isAssignableFrom(returnType.parameterType)
+        return IViewContext::class.java.isAssignableFrom(returnType.parameterType)
     }
 
     override fun handleReturnValue(
@@ -20,8 +20,8 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
         webRequest: NativeWebRequest
     ) {
         val viewContext = returnValue?.takeIf {
-            (ViewContext::class.java.isAssignableFrom(it.javaClass))
-        } as ViewContext
+            (IViewContext::class.java.isAssignableFrom(it.javaClass))
+        } as IViewContext
         mavContainer.view = viewContext.componentTemplate
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
     }

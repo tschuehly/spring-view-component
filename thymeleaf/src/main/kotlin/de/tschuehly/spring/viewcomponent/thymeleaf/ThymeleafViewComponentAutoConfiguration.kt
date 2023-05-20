@@ -46,7 +46,7 @@ class ThymeleafViewComponentAutoConfiguration {
                 dialect
             )
         }
-        engine.addDialect(ViewComponentDialect())
+        engine.addDialect(ThymeleafViewComponentDialect())
         return engine
     }
 

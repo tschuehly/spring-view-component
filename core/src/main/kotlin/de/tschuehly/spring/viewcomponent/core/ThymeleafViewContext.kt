@@ -1,6 +1,6 @@
 package de.tschuehly.spring.viewcomponent.core
 
-open class ViewContext(
+open class ThymeleafViewContext(
     open vararg val contextAttributes: ViewProperty,
 ) {
     var componentTemplate: String? = null

@@ -1,11 +1,11 @@
 @import de.tschuehly.jteviewcomponentdemo.web.example.ExampleViewComponent
 @import de.tschuehly.jteviewcomponentdemo.web.index.IndexViewComponent
-@import de.tschuehly.spring.viewcomponent.jte.JteViewContext
+@import de.tschuehly.spring.viewcomponent.jte.ViewContext
 
 
 @param IndexViewComponent.ExampleFormDTO exampleFormDTO
 @param ExampleViewComponent exampleViewComponent
-@param JteViewContext parameterViewComponent
+@param ViewContext parameterViewComponent
 
 <script src="http://localhost:35729/livereload.js"></script>
 

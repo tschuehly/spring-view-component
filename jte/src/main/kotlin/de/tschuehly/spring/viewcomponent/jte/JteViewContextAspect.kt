@@ -21,9 +21,9 @@ class JteViewContextAspect(
         //
     }
 
-    @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "jteViewContext")
-    fun renderInject(jteViewContext: JteViewContext): JteViewContext {
-        jteViewContext.jteTemplateEngine = jteTemplateEngine
-        return jteViewContext
+    @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "viewContext")
+    fun renderInject(viewContext: ViewContext): ViewContext {
+        viewContext.jteTemplateEngine = jteTemplateEngine
+        return viewContext
     }
 }

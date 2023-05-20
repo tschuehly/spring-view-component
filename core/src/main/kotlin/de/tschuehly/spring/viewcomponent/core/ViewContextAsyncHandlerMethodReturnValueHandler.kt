@@ -30,8 +30,8 @@ class ViewContextAsyncHandlerMethodReturnValueHandler() : AsyncHandlerMethodRetu
             ResponseEntity::class.java.isAssignableFrom(it.javaClass)
         } as ResponseEntity<*>
         val viewContext = responseEntity.body?.takeIf {
-            ViewContext::class.java.isAssignableFrom(it.javaClass)
-        } as ViewContext
+            IViewContext::class.java.isAssignableFrom(it.javaClass)
+        } as IViewContext
         mavContainer.view = viewContext.componentTemplate
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
     }

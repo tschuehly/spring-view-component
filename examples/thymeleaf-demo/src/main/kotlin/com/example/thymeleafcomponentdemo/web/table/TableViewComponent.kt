@@ -1,7 +1,7 @@
 package com.example.thymeleafcomponentdemo.web.table
 
 import de.tschuehly.spring.viewcomponent.core.ViewComponent
-import de.tschuehly.spring.viewcomponent.core.ViewContext
+import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 
 
 @ViewComponent

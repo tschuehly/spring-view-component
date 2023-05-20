@@ -27,11 +27,11 @@ class ViewComponentAspect {
     }
 
     @Around("isViewComponent() && isRenderOrGetMethod()")
-    fun renderInject(joinPoint: ProceedingJoinPoint): ViewContext {
+    fun renderInject(joinPoint: ProceedingJoinPoint): IViewContext {
 
         val returnValue = joinPoint.proceed()
-        if (returnValue::class.isSubclassOf(ViewContext::class)) {
-            returnValue as ViewContext
+        if (returnValue::class.isSubclassOf(IViewContext::class)) {
+            returnValue as IViewContext
             val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
             val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".", "/") + "/"
             returnValue.componentTemplate = "$componentPackage$componentName"

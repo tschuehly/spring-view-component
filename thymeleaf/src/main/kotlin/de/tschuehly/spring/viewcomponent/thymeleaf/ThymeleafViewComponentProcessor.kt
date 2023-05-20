@@ -1,9 +1,6 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
-import de.tschuehly.spring.viewcomponent.core.ViewComponentBeanNotFoundException
-import de.tschuehly.spring.viewcomponent.core.ViewComponentProcessingException
-import de.tschuehly.spring.viewcomponent.core.ViewContext
-import de.tschuehly.spring.viewcomponent.core.toMap
+import de.tschuehly.spring.viewcomponent.core.*
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
@@ -18,7 +15,7 @@ import org.thymeleaf.standard.expression.StandardExpressions
 import org.thymeleaf.templatemode.TemplateMode
 
 
-class ViewComponentProcessor(dialectPrefix: String) :
+class ThymeleafViewComponentProcessor(dialectPrefix: String) :
 
     AbstractAttributeTagProcessor(
         /* templateMode = */ TemplateMode.HTML,
@@ -62,12 +59,12 @@ class ViewComponentProcessor(dialectPrefix: String) :
 
         val expression = parser.parseExpression(webContext, expressionString)
         val viewContext = try {
-            expression.execute(webContext) as ViewContext
+            expression.execute(webContext) as IViewContext
         } catch (e: TemplateProcessingException) {
             try {
                 val supplierExpression =
                     parser.parseExpression(webContext, expressionString.replace(".render(", ".get("))
-                supplierExpression.execute(webContext) as ViewContext
+                supplierExpression.execute(webContext) as IViewContext
             } catch (e: TemplateProcessingException) {
                 throw ViewComponentProcessingException(e.message, e.cause)
             }

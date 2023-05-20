@@ -139,7 +139,7 @@ class HomeViewComponent(
     private val exampleViewComponent: ExampleViewComponent,
     private val parameterViewComponent: ParameterViewComponent
 ) {
-    fun render() = JteViewContext(
+    fun render() = ViewContext(
         "exampleViewComponent" toProperty exampleViewComponent,
         "parameterViewComponent" toProperty parameterViewComponent
     )
@@ -188,7 +188,7 @@ This enables us to define the properties for our ParameterViewComponent in the H
 class HomeViewComponent(
     private val exampleService: ExampleService,
 ) {
-    fun render() = ViewContext( // JteViewContext with JTE
+    fun render() = ViewContext(
         "helloWorld" toProperty exampleService.getHelloWorld(),
         "office" toProperty exampleService.getOfficeHours()
     )
