@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-	id("org.springframework.boot") version "3.0.1"
+	id("org.springframework.boot") version "3.1.0"
 	id("io.spring.dependency-management") version "1.1.0"
-	kotlin("jvm") version "1.7.22"
-	kotlin("plugin.spring") version "1.7.22"
+	kotlin("jvm") version "1.8.21"
+	kotlin("plugin.spring") version "1.8.21"
 
 	id("maven-publish")
 	id("org.jreleaser") version "1.5.1"
@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.5.2"
+version = "0.5.3"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core:0.5.2")
+	api("de.tschuehly:spring-view-component-core:0.5.3")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-devtools")
