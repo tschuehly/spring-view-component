@@ -28,6 +28,7 @@ dependencies {
 
     implementation("gg.jte:jte:2.3.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
@@ -124,4 +125,13 @@ jreleaser {
         }
     }
 
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/kotlin")
+            exclude("**/*.kt")
+        }
+    }
 }
