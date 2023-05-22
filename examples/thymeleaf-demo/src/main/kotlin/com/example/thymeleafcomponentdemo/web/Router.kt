@@ -3,7 +3,7 @@ package com.example.thymeleafcomponentdemo.web
 import com.example.thymeleafcomponentdemo.web.home.HomeViewComponent
 import com.example.thymeleafcomponentdemo.web.navigation.NavigationViewComponent
 import com.example.thymeleafcomponentdemo.web.table.TableViewComponent
-import de.tschuehly.spring.viewcomponent.core.ViewContextContainer
+import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContextContainer
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
