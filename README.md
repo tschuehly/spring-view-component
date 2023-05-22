@@ -75,9 +75,9 @@ Next we define the HTML in the HomeViewComponent.[jte/html] in the same package 
 // HomeViewComponent.html
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div>${helloWorld}</div>
+<div th:text="${helloWorld}"></div>
 <br>
-<strong>${coffee}</strong>
+<strong th:text="${coffee}"></strong>
 </body>
 </html>
 ````
