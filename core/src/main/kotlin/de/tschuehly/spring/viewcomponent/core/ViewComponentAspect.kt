@@ -16,7 +16,8 @@ class ViewComponentAspect {
     }
 
     @Around("isViewComponent() && execution(* *(..))")
-    fun renderInject(joinPoint: ProceedingJoinPoint): Any {
+    fun renderInject(joinPoint: ProceedingJoinPoint): IViewContext {
+
         val returnValue = joinPoint.proceed()
         if (returnValue::class.isSubclassOf(IViewContext::class)) {
             returnValue as IViewContext
@@ -25,6 +26,6 @@ class ViewComponentAspect {
             returnValue.componentTemplate = "$componentPackage$componentName"
             return returnValue
         }
-        return returnValue
+        throw Error("render() method does not return ViewContext")
     }
 }

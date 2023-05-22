@@ -1,5 +1,6 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf.application.web.simple
 
+import de.tschuehly.spring.viewcomponent.core.ViewAction
 import de.tschuehly.spring.viewcomponent.core.ViewComponent
 import de.tschuehly.spring.viewcomponent.core.toProperty
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
@@ -13,4 +14,8 @@ class SimpleViewComponent(
         "helloWorld" toProperty exampleService.getHelloWorld()
     )
 
+    @ViewAction
+    fun testAction(): ViewContext {
+        return render()
+    }
 }
