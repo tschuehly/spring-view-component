@@ -24,6 +24,7 @@ class ViewComponentAspect {
             val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
             val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".", "/") + "/"
             returnValue.componentTemplate = "$componentPackage$componentName"
+            returnValue.componentBean = joinPoint.target
             return returnValue
         }
         throw Error("render() method does not return ViewContext")

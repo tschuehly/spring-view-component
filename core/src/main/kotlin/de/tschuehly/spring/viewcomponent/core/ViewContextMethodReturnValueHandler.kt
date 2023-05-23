@@ -24,6 +24,7 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
         } as IViewContext
         mavContainer.view = viewContext.componentTemplate
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
+        mavContainer.addAttribute("viewComponentBean",viewContext.comp#onentBean)
     }
 
 }

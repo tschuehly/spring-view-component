@@ -6,6 +6,7 @@ import de.tschuehly.spring.viewcomponent.core.ViewProperty
 class ViewContext(override val contextAttributes: Array<out ViewProperty>) :
     IViewContext {
     override var componentTemplate: String? = null
+    override var componentBean: Any? = null
 
 
     constructor(
