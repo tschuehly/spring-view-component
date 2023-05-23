@@ -12,6 +12,7 @@ class ViewContext(
     override vararg val contextAttributes: ViewProperty
 ) : Content, IViewContext {
     var jteTemplateEngine: TemplateEngine? = null
+    override var componentBean: Any? = null
     override var componentTemplate: String? = null
 
 

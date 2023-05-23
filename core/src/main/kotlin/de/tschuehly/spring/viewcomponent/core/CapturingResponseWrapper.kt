@@ -14,7 +14,7 @@ internal class CapturingResponseWrapper(response: HttpServletResponse) : HttpSer
     private val capture: ByteArrayOutputStream
     private var output: ServletOutputStream? = null
     private var writer: PrintWriter? = null
-    lateinit var viewComponentBean: Any
+    var viewComponentBean: Any? = null
     init {
         capture = ByteArrayOutputStream(response.bufferSize)
     }

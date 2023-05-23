@@ -1,0 +1,12 @@
+<div>
+    <form view:action="addItem">
+        <input type="text" name="item">
+        <button type="submit">Save Item</button>
+    </form>
+    <table><tr><th>Item</th></tr>
+        <tr th:each="item : ${itemList}">
+            <td th:text="${item}"></td>
+        </tr>
+    </table>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+</div>

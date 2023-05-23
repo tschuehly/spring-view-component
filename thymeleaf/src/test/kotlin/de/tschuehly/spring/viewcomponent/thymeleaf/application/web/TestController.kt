@@ -6,6 +6,8 @@ import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.header.Header
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.index.IndexViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.layout.LayoutViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.nested.NestedViewComponent
+import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.action.ActionViewComponent
+import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.index.IndexViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.simple.SimpleViewComponent
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,6 +24,10 @@ class TestController(
 ) {
     @GetMapping("/")
     fun indexComponent() = indexViewComponent.render()
+
+    @GetMapping("/action")
+    fun actionComponent() = actionViewComponent.render()
+
     @GetMapping("/simple")
     fun simpleComponent() = simpleViewComponent.render()
 

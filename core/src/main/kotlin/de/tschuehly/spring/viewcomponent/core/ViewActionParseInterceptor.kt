@@ -17,18 +17,10 @@ class ViewActionParseInterceptor : HandlerInterceptor {
         handler: Any,
         modelAndView: ModelAndView?
     ) {
-        super.postHandle(request, response, handler, modelAndView)
-    }
-    override fun afterCompletion(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        handler: Any,
-        ex: Exception?
-    ) {
         if(response is CapturingResponseWrapper){
             val captureResponse: CapturingResponseWrapper = response
-            captureResponse.viewComponentBean
+            captureResponse.viewComponentBean = modelAndView?.modelMap?.get("viewComponentBean")
         }
-        super.afterCompletion(request, response, handler, ex)
+        super.postHandle(request, response, handler, modelAndView)
     }
 }
