@@ -8,6 +8,7 @@ import org.springframework.util.ClassUtils
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import java.lang.reflect.Method
+import java.util.*
 import kotlin.reflect.full.isSubclassOf
 
 @Controller
@@ -21,7 +22,7 @@ class ViewActionController(val context: ApplicationContext) {
     @PostConstruct
     fun registerViewActionEndpoints() {
         val viewComponentBeans = context.getBeansWithAnnotation(ViewComponent::class.java)
-        viewComponentBeans.forEach { (name, viewComponentBean) ->
+        viewComponentBeans.forEach { (viewComponentName, viewComponentBean) ->
             val beanType = ClassUtils.getUserClass(viewComponentBean.javaClass)
             val viewComponentMethods = beanType.methods
             viewComponentMethods.forEach { method ->
@@ -29,7 +30,8 @@ class ViewActionController(val context: ApplicationContext) {
                     it.annotationClass == ViewAction::class
                 }.let { methodIsViewAction ->
                     if(methodIsViewAction){
-                        viewActionMap["$name/${method.name}"] = ViewActionData(viewComponentBean,method)
+                        viewActionMap["${viewComponentName.lowercase()}/${method.name.lowercase()}"] =
+                            ViewActionData(viewComponentBean,method)
                     }
                 }
             }
@@ -44,7 +46,8 @@ class ViewActionController(val context: ApplicationContext) {
         @PathVariable viewActionMethodName: String
     ): IViewContext {
         logger.info("ViewComponent: $viewComponentName, viewActionMethod: $viewActionMethodName")
-        val viewActionData = viewActionMap["$viewComponentName/$viewActionMethodName"] ?: throw ViewActionNotFoundException()
+        val viewActionData = viewActionMap["${viewComponentName.lowercase()}/${viewActionMethodName.lowercase()}"]
+            ?: throw ViewActionNotFoundException()
         val returnValue = viewActionData.viewActionMethod.invoke(
             viewActionData.viewComponentObject
         )
@@ -55,4 +58,7 @@ class ViewActionController(val context: ApplicationContext) {
         throw Error("Not working")
     }
 
+    fun String.lowercase(): String {
+        return this.lowercase(Locale.getDefault())
+    }
 }
