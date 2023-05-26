@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Order(1)
-class ViewActionFilter : Filter {
+class ViewActionFilter(val viewActionConfiguration: ViewActionConfiguration) : Filter {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val capturingResponseWrapper = CapturingResponseWrapper(response as HttpServletResponse)
         chain.doFilter(request,capturingResponseWrapper)
@@ -24,13 +24,14 @@ class ViewActionFilter : Filter {
 
         document.firstChild()?.attr("id",viewComponentName)
         val viewActions = document.getElementsByAttribute("view:action")
-        viewActions.forEach {
-            val methodName = it.attr("view:action")
-            viewActions.removeAttr("view:action")
-            viewActions.attr("hx-post",
-                "/$viewComponentName/${methodName}")
-            viewActions.attr("hx-target","#$viewComponentName")
-            viewActions.attr("hx-swap","outerHTML")
+        viewActions.forEach {el ->
+            val methodName = el.attr("view:action")
+            el.removeAttr("view:action")
+//            TODO: How to get the Information from the ViewAction
+            el.attr("hx-post",
+                "/$viewComponentName/$methodName")
+            el.attr("hx-target","#$viewComponentName")
+            el.attr("hx-swap","outerHTML")
         }
         response.writer.write(document.outerHtml())
 

@@ -8,5 +8,8 @@
             <td th:text="${item}"></td>
         </tr>
     </table>
+    <button view:action="countUp"> Count Up</button>
+
+    <h1 th:text="${counter}"></h1>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </div>
