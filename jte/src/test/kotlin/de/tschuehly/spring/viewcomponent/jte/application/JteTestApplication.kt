@@ -7,10 +7,10 @@ import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Import
 
 @SpringBootApplication
-@Import(JteViewComponentAutoConfiguration::class,ThymeleafAutoConfiguration::class)
-class TestApplication
+@Import(JteViewComponentAutoConfiguration::class)
+class JteTestApplication
 
 
 fun main(args: Array<String>) {
-    runApplication<TestApplication>(*args)
+    runApplication<JteTestApplication>(*args)
 }

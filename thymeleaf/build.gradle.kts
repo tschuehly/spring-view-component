@@ -58,7 +58,9 @@ tasks.jar{
 	archiveClassifier.set("")
 }
 
-
+tasks.withType<Jar>{
+	from(sourceSets.main.get().output.resourcesDir)
+}
 sourceSets {
 	test {
 		resources {

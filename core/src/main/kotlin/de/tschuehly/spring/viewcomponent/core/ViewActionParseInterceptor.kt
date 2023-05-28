@@ -20,6 +20,7 @@ class ViewActionParseInterceptor : HandlerInterceptor {
         if(response is CapturingResponseWrapper){
             val captureResponse: CapturingResponseWrapper = response
             captureResponse.viewComponentBean = modelAndView?.modelMap?.get("viewComponentBean")
+            super.postHandle(request, captureResponse, handler, modelAndView)
         }
         super.postHandle(request, response, handler, modelAndView)
     }

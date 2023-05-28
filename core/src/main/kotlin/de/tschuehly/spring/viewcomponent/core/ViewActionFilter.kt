@@ -20,20 +20,23 @@ class ViewActionFilter(val viewActionConfiguration: ViewActionConfiguration) : F
         val content = capturingResponseWrapper.captureAsString
         val document = Jsoup.parse(content,"", Parser.xmlParser())
         val viewComponentName = capturingResponseWrapper.viewComponentBean?.javaClass?.simpleName?.lowercase()
-            ?: throw Error("componentName is null")
 
-        document.firstChild()?.attr("id",viewComponentName)
-        val viewActions = document.getElementsByAttribute("view:action")
-        viewActions.forEach {el ->
-            val methodName = el.attr("view:action")
-            el.removeAttr("view:action")
+        if(viewComponentName != null){
+            document.firstChild()?.attr("id",viewComponentName)
+            val viewActions = document.getElementsByAttribute("view:action")
+            viewActions.forEach {el ->
+                val methodName = el.attr("view:action")
+                el.removeAttr("view:action")
 //            TODO: How to get the Information from the ViewAction
-            el.attr("hx-post",
-                "/$viewComponentName/$methodName")
-            el.attr("hx-target","#$viewComponentName")
-            el.attr("hx-swap","outerHTML")
+                el.attr("hx-post",
+                    "/$viewComponentName/$methodName")
+                el.attr("hx-target","#$viewComponentName")
+                el.attr("hx-swap","outerHTML")
+            }
+            response.writer.write(document.outerHtml())
+
         }
-        response.writer.write(document.outerHtml())
+        response.writer.write(content)
 
     }
 

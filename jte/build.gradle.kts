@@ -56,6 +56,26 @@ tasks.jar{
     // Remove `plain` postfix from jar file name
     archiveClassifier.set("")
 }
+tasks.withType<Jar>{
+    from(sourceSets.main.get().output.resourcesDir)
+}
+sourceSets {
+    test {
+        resources {
+            srcDir("src/test/kotlin")
+            exclude("**/*.kt")
+        }
+    }
+    main {
+        resources {
+            srcDir("src/main/kotlin")
+            exclude("**/*.kt")
+        }
+    }
+
+}
+
+
 publishing{
     publications {
 
@@ -125,13 +145,4 @@ jreleaser {
         }
     }
 
-}
-
-sourceSets {
-    test {
-        resources {
-            srcDir("src/test/kotlin")
-            exclude("**/*.kt")
-        }
-    }
 }

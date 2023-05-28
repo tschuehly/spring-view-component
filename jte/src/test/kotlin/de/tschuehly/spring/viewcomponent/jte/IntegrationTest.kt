@@ -1,6 +1,6 @@
 package de.tschuehly.spring.viewcomponent.jte
 
-import de.tschuehly.spring.viewcomponent.jte.application.TestApplication
+import de.tschuehly.spring.viewcomponent.jte.application.JteTestApplication
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.get
 
 
 @SpringBootTest(
-    classes = [TestApplication::class]
+    classes = [JteTestApplication::class]
 )
 @AutoConfigureMockMvc
 class IntegrationTest(
