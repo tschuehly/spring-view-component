@@ -15,7 +15,6 @@ import org.thymeleaf.dialect.IDialect
 import org.thymeleaf.spring6.SpringTemplateEngine
 import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import org.thymeleaf.templatemode.TemplateMode
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.FileTemplateResolver
 import org.thymeleaf.templateresolver.ITemplateResolver
 import java.io.File
@@ -48,20 +47,6 @@ class ThymeleafViewComponentAutoConfiguration {
         }
         engine.addDialect(ThymeleafViewComponentDialect())
         return engine
-    }
-
-
-    @Bean
-    @ConditionalOnProperty("viewcomponent.localDevelopment", matchIfMissing = true, havingValue = "false")
-    fun viewComponentTemplateResolver(): ClassLoaderTemplateResolver {
-        val viewComponentTemplateResolver = ClassLoaderTemplateResolver()
-        viewComponentTemplateResolver.prefix = ""
-        viewComponentTemplateResolver.suffix = ".html"
-        viewComponentTemplateResolver.templateMode = TemplateMode.HTML
-        viewComponentTemplateResolver.characterEncoding = "UTF-8"
-        viewComponentTemplateResolver.order = 1
-        viewComponentTemplateResolver.checkExistence = true
-        return viewComponentTemplateResolver
     }
 
     @Bean

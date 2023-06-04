@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.5.3"
+version = "0.5.4"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,10 +21,13 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core:0.5.3")
+	api("de.tschuehly:spring-view-component-core:0.5.4")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-devtools")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-actuator")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
@@ -54,6 +57,24 @@ tasks.jar{
 	// Remove `plain` postfix from jar file name
 	archiveClassifier.set("")
 }
+
+
+sourceSets {
+	test {
+		resources {
+			srcDir("src/test/kotlin")
+			exclude("**/*.kt")
+		}
+	}
+	main {
+		resources {
+			srcDir("src/main/kotlin")
+			exclude("**/*.kt")
+		}
+	}
+
+}
+
 publishing{
 	publications {
 

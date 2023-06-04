@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-jte:0.5.3")
+    implementation("de.tschuehly:spring-view-component-jte:0.5.4")
 //    implementation("de.tschuehly:spring-view-component-jte")
 
     implementation("org.springframework.boot:spring-boot-starter")

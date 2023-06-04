@@ -75,9 +75,9 @@ Next we define the HTML in the HomeViewComponent.[jte/html] in the same package 
 // HomeViewComponent.html
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:text="${helloWorld}"></div>
+<div>${helloWorld}</div>
 <br>
-<strong th:text="${coffee}"></strong>
+<strong>${coffee}</strong>
 </body>
 </html>
 ````
@@ -112,24 +112,6 @@ If we now access the root url path of our spring application we can see that the
 
 ### Nesting components:
 
-We can also embed components to our templates:
-
-#### Thymeleaf
-We can nest components with the attribute `view:component="componentName"`.
-
-```html
-<div view:component="navigationViewComponent"></div>
-```
-
-When our render method has parameters we can pass them by using the `.render(parameter)` method.
-
-```html
-
-<div view:component="parameterViewComponent.render('Hello World')"></div>
-```
-
-#### JTE
-
 We can nest component by passing the component to our template as a ViewProperty:
 
 ```kotlin
@@ -140,11 +122,24 @@ class HomeViewComponent(
     private val parameterViewComponent: ParameterViewComponent
 ) {
     fun render() = ViewContext(
-        "exampleViewComponent" toProperty exampleViewComponent,
+        "exampleViewContext" toProperty exampleViewComponent.render(),
         "parameterViewComponent" toProperty parameterViewComponent
     )
 }
 ```
+
+#### Thymeleaf
+We can nest components with the attribute `view:component="${viewContext}"`.
+
+```html
+<div view:component="${exampleViewComponent}"></div>
+
+<div view:component="${parameterViewComponent.render('Hello World')}"></div>
+```
+
+#### JTE
+
+
 We can then invoke the render method on the ViewComponent, both with parameter or without parameter
 ```html
 @import de.tschuehly.jteviewcomponentdemo.web.example.ExampleViewComponent
@@ -153,7 +148,7 @@ We can then invoke the render method on the ViewComponent, both with parameter o
 @param ExampleViewComponent exampleViewComponent
 @param ParameterViewComponent parameterViewComponent
 
-${exampleViewComponent.render()}
+${exampleViewComponent}
 ${parameterViewComponent.render("This is a parameter")}
 ```
 
@@ -213,6 +208,42 @@ If we now access the root url path of our spring application we can see that the
 
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
+### Layout components
+
+If you want to create a Layout you can do that by passing `viewComponent.render()` as parameter.
+
+
+```kotlin
+@ViewComponent
+class LayoutViewComponent {
+    fun render(nestedViewComponent: ViewContext) = ViewContext(
+        "nestedViewComponent" toProperty nestedViewComponent
+    )
+}
+```
+
+```html
+<nav>
+    This is a Navbar
+</nav>
+
+<div view:component="${nestedViewComponent}"></div>
+
+<footer>
+    This is a footer
+</footer>
+```
+```kotlin
+@Controller
+class Router(
+    private val simpleViewComponent: SimpleViewComponent,
+    private val layoutViewComponent: LayoutViewComponent
+) {
+    @GetMapping("/layout")
+    fun layoutComponent() = layoutViewComponent.render(simpleViewComponent.render())
+}
+```
+
 ### Composing pages from components
 
 **Currently only supported in Thymeleaf !!!**
@@ -271,13 +302,21 @@ tasks.withType<Jar>{
 }
 
 sourceSets {
+    test {
+        resources {
+            srcDir("src/test/kotlin")
+            exclude("**/*.kt")
+        }
+    }
     main {
         resources {
             srcDir("src/main/kotlin")
             exclude("**/*.kt")
         }
     }
+
 }
+
 ```
 #### Thymeleaf Dependency
 

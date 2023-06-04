@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.5.3"
+version = "0.5.4"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.5.3")
+    api("de.tschuehly:spring-view-component-core:0.5.4")
     implementation("gg.jte:jte-spring-boot-starter-3:2.3.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
@@ -128,9 +128,9 @@ jreleaser {
 }
 
 sourceSets {
-    main {
+    test {
         resources {
-            srcDir("src/main/kotlin")
+            srcDir("src/test/kotlin")
             exclude("**/*.kt")
         }
     }

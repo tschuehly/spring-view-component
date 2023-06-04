@@ -1,17 +1,18 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
-import de.tschuehly.spring.viewcomponent.core.*
-import org.springframework.beans.factory.NoSuchBeanDefinitionException
+import de.tschuehly.spring.viewcomponent.core.IViewContext
+import de.tschuehly.spring.viewcomponent.core.ViewComponentProcessingException
+import de.tschuehly.spring.viewcomponent.core.toMap
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
 import org.thymeleaf.engine.AttributeName
+import org.thymeleaf.engine.EngineEventUtils
 import org.thymeleaf.exceptions.TemplateProcessingException
 import org.thymeleaf.model.IProcessableElementTag
 import org.thymeleaf.processor.element.AbstractAttributeTagProcessor
 import org.thymeleaf.processor.element.IElementTagStructureHandler
 import org.thymeleaf.spring6.SpringTemplateEngine
 import org.thymeleaf.spring6.context.SpringContextUtils
-import org.thymeleaf.standard.expression.StandardExpressions
 import org.thymeleaf.templatemode.TemplateMode
 
 
@@ -40,36 +41,16 @@ class ThymeleafViewComponentProcessor(dialectPrefix: String) :
         attributeValue: String,
         structureHandler: IElementTagStructureHandler
     ) {
+
+        val expression = EngineEventUtils.computeAttributeExpression(context, tag, attributeName, attributeValue)
+
         val webContext = context as WebEngineContext
-        val configuration = webContext.configuration
-
-        val parser = StandardExpressions.getExpressionParser(configuration)
-        val (componentName, expressionString) = if (attributeValue.contains(Regex(".render\\(.*\\)"))) {
-            Pair(attributeValue.split(".render(")[0], "\${@$attributeValue}")
-        } else {
-            Pair(attributeValue, "\${@$attributeValue.render()}")
-        }
-        val appCtx = SpringContextUtils.getApplicationContext(webContext)
-
-        try {
-            appCtx.getBean(componentName)
-        } catch (e: NoSuchBeanDefinitionException) {
-            throw ViewComponentBeanNotFoundException("No ViewComponentBean with the name: \"$componentName\" found")
-        }
-
-        val expression = parser.parseExpression(webContext, expressionString)
         val viewContext = try {
             expression.execute(webContext) as IViewContext
         } catch (e: TemplateProcessingException) {
-            try {
-                val supplierExpression =
-                    parser.parseExpression(webContext, expressionString.replace(".render(", ".get("))
-                supplierExpression.execute(webContext) as IViewContext
-            } catch (e: TemplateProcessingException) {
-                throw ViewComponentProcessingException(e.message, e.cause)
-            }
-
+            throw ViewComponentProcessingException(e.message, e.cause)
         }
+        val appCtx = SpringContextUtils.getApplicationContext(webContext)
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
         SpringContextUtils.getRequestContext(webContext).model.putAll(viewContext.contextAttributes.toMap())
         webContext.setVariables(viewContext.contextAttributes.toMap())
