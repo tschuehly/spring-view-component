@@ -15,6 +15,7 @@ import org.thymeleaf.dialect.IDialect
 import org.thymeleaf.spring6.SpringTemplateEngine
 import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import org.thymeleaf.templatemode.TemplateMode
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.FileTemplateResolver
 import org.thymeleaf.templateresolver.ITemplateResolver
 import java.io.File
@@ -67,7 +68,17 @@ class ThymeleafViewComponentAutoConfiguration {
         fileViewComponentTemplateResolver.checkExistence = true
         return fileViewComponentTemplateResolver
     }
-
+    @Bean
+    fun viewComponentTemplateResolver(): ClassLoaderTemplateResolver {
+        val templateResolver = ClassLoaderTemplateResolver()
+        templateResolver.prefix = ""
+        templateResolver.suffix = ".html"
+        templateResolver.templateMode = TemplateMode.HTML
+        templateResolver.characterEncoding = "UTF-8"
+        templateResolver.order = 1
+        templateResolver.checkExistence = true
+        return templateResolver
+    }
     @Bean
     fun thymeleafViewContextContainerMethodReturnValueHandler(
         thymeleafViewResolver: ThymeleafViewResolver

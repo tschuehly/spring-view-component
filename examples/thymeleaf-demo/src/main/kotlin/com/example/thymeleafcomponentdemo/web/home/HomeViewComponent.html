@@ -16,22 +16,14 @@
 
     <h3>Out of band response Test:</h3>
     <div id="table" >
-        <div view:component="tableViewComponent"></div>
+        <div view:component="${tableViewComponent}"></div>
 
     </div>
     <br>
     <button hx-get="/table-oob" hx-target="#table">Get Site Update</button>
 
-
-
-
-
-
-
-
-
     <br><br>
-    <div view:component="parameterViewComponent.render(coffee, null)"></div>
+    <div view:component="${parameterViewComponent}"></div>
 
 </body>
 </html>

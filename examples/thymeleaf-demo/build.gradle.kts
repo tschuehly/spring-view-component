@@ -19,7 +19,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.5.4")
+    implementation("de.tschuehly:spring-view-component-thymeleaf")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
