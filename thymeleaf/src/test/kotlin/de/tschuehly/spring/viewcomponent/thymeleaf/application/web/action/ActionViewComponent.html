@@ -1,15 +1,23 @@
 <div>
-    <form view:action="addItem">
-        <input type="text" name="item">
-        <button type="submit">Save Item</button>
-    </form>
-    <table><tr><th>Item</th></tr>
-        <tr th:each="item : ${itemList}">
-            <td th:text="${item}"></td>
-        </tr>
-    </table>
-    <button view:action="countUp"> Count Up</button>
+  <h2>ViewAction Post AddItem</h2>
+  <form view:action="addItem">
+    <input type="text" name="item">
+    <button type="submit">Save Item</button>
+  </form>
+  <table>
+    <tr>
+      <th>Item</th>
+    </tr>
+    <tr th:each="item : ${itemList}">
+      <td th:text="${item}"></td>
+    </tr>
+  </table>
 
-    <h1 th:text="${counter}"></h1>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <h2>ViewAction Get CountUp</h2>
+
+  <button view:action="countUp">Default ViewAction [GET]</button>
+
+  <h1 th:text="${counter}"></h1>
+  <script src="https://unpkg.com/htmx.org@1.9.2/dist/htmx.js"></script>
+
 </div>

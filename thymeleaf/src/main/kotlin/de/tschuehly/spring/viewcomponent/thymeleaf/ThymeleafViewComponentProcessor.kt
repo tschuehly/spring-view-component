@@ -1,6 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
+import de.tschuehly.spring.viewcomponent.core.ViewAction
 import de.tschuehly.spring.viewcomponent.core.ViewComponentProcessingException
 import de.tschuehly.spring.viewcomponent.core.toMap
 import org.thymeleaf.context.ITemplateContext
@@ -8,6 +9,7 @@ import org.thymeleaf.context.WebEngineContext
 import org.thymeleaf.engine.AttributeName
 import org.thymeleaf.engine.EngineEventUtils
 import org.thymeleaf.exceptions.TemplateProcessingException
+import org.thymeleaf.model.AttributeValueQuotes
 import org.thymeleaf.model.IProcessableElementTag
 import org.thymeleaf.processor.element.AbstractAttributeTagProcessor
 import org.thymeleaf.processor.element.IElementTagStructureHandler
@@ -50,6 +52,7 @@ class ThymeleafViewComponentProcessor(dialectPrefix: String) :
         } catch (e: TemplateProcessingException) {
             throw ViewComponentProcessingException(e.message, e.cause)
         }
+        val viewComponentName = viewContext.componentBean?.javaClass?.simpleName?.lowercase() ?: throw ViewComponentProcessingException("viewContext.componentBean of expression $attributeValue is somehow null",null)
         val appCtx = SpringContextUtils.getApplicationContext(webContext)
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
         SpringContextUtils.getRequestContext(webContext).model.putAll(viewContext.contextAttributes.toMap())
@@ -57,11 +60,13 @@ class ThymeleafViewComponentProcessor(dialectPrefix: String) :
 
         val modelFactory = webContext.modelFactory
         val model = modelFactory.createModel().let {
+            it.add(modelFactory.createOpenElementTag("div", mapOf("id" to viewComponentName,ViewAction.nestedViewComponentAttributeName to ""),AttributeValueQuotes.DOUBLE,false))
             it.add(
                 modelFactory.createText(
                     engine.process(viewContext.componentTemplate, webContext)
                 )
             )
+            it.add(modelFactory.createCloseElementTag("div"))
             return@let it
         }
         structureHandler.replaceWith(model, false)
