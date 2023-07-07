@@ -39,7 +39,7 @@ class ViewActionFilter(val viewActionConfiguration: ViewActionConfiguration) : F
 
     private fun processRootElementViewComponent(document: Document, viewComponentName: String) {
 
-        if(document.getElementsByAttribute(ViewAction.attributeName).size == 0){
+        if(document.getElementsByAttribute(ViewActionConstant.attributeName).size == 0){
             // No view:actions in root viewcomponent to process
             return
         }
@@ -67,7 +67,7 @@ class ViewActionFilter(val viewActionConfiguration: ViewActionConfiguration) : F
     }
 
     private fun addHtmxAttrForNestedViewComponents(document: Element) {
-        val nestedViewComponents = document.getElementsByAttribute(ViewAction.nestedViewComponentAttributeName)
+        val nestedViewComponents = document.getElementsByAttribute(ViewActionConstant.nestedViewComponentAttributeName)
         nestedViewComponents.forEach { viewComponentElement ->
             replaceViewActionAttrWithHtmxAttr(viewComponentElement)
         }
@@ -81,10 +81,10 @@ class ViewActionFilter(val viewActionConfiguration: ViewActionConfiguration) : F
             "Id with name of viewcomponent is needed on the viewcomponent element, this should be set " +
                     "by the templating engine when processing nested viewcomponents", null
         )
-        val viewActions = viewComponentElement.getElementsByAttribute(ViewAction.attributeName)
-        viewActions.forEach { el ->
-            val methodName = el.attr(ViewAction.attributeName)
-            el.removeAttr(ViewAction.attributeName)
+        val postViewActions = viewComponentElement.getElementsByAttribute(ViewActionConstant.attributeName)
+        postViewActions.forEach { el ->
+            val methodName = el.attr(ViewActionConstant.attributeName)
+            el.removeAttr(ViewActionConstant.attributeName)
             //            TODO: Here we need to set the HTTP Method from the view:action somehow
             el.attr(
                 "hx-post",

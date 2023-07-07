@@ -1,7 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
-import de.tschuehly.spring.viewcomponent.core.ViewAction
+import de.tschuehly.spring.viewcomponent.core.ViewActionConstant
 import de.tschuehly.spring.viewcomponent.core.ViewComponentProcessingException
 import de.tschuehly.spring.viewcomponent.core.toMap
 import org.thymeleaf.context.ITemplateContext
@@ -52,22 +52,36 @@ class ThymeleafViewComponentProcessor(dialectPrefix: String) :
         } catch (e: TemplateProcessingException) {
             throw ViewComponentProcessingException(e.message, e.cause)
         }
-        val viewComponentName = viewContext.componentBean?.javaClass?.simpleName?.lowercase() ?: throw ViewComponentProcessingException("viewContext.componentBean of expression $attributeValue is somehow null",null)
+        val viewComponentName = viewContext.componentBean?.javaClass?.simpleName?.lowercase()
+            ?: throw ViewComponentProcessingException(
+                "viewContext.componentBean of expression $attributeValue is somehow null",
+                null
+            )
         val appCtx = SpringContextUtils.getApplicationContext(webContext)
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
         SpringContextUtils.getRequestContext(webContext).model.putAll(viewContext.contextAttributes.toMap())
         webContext.setVariables(viewContext.contextAttributes.toMap())
 
         val modelFactory = webContext.modelFactory
-        val model = modelFactory.createModel().let {
-            it.add(modelFactory.createOpenElementTag("div", mapOf("id" to viewComponentName,ViewAction.nestedViewComponentAttributeName to ""),AttributeValueQuotes.DOUBLE,false))
-            it.add(
+        val model = modelFactory.createModel().let { model ->
+            model.add(
+                modelFactory.createOpenElementTag(
+                    "div",
+                    mapOf(
+                        "id" to viewComponentName,
+                        ViewActionConstant.nestedViewComponentAttributeName to ""
+                    ),
+                    AttributeValueQuotes.DOUBLE,
+                    false
+                )
+            )
+            model.add(
                 modelFactory.createText(
                     engine.process(viewContext.componentTemplate, webContext)
                 )
             )
-            it.add(modelFactory.createCloseElementTag("div"))
-            return@let it
+            model.add(modelFactory.createCloseElementTag("div"))
+            return@let model
         }
         structureHandler.replaceWith(model, false)
     }

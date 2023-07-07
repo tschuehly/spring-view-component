@@ -1,6 +1,6 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf.application.web.action
 
-import de.tschuehly.spring.viewcomponent.core.ViewAction
+import de.tschuehly.spring.viewcomponent.core.PostViewAction
 import de.tschuehly.spring.viewcomponent.core.ViewComponent
 import de.tschuehly.spring.viewcomponent.core.toProperty
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
@@ -19,13 +19,13 @@ class ActionViewComponent(
         "counter" toProperty counter
     )
 
-    @ViewAction
+    @PostViewAction
     fun addItem(actionFormDTO: ActionFormDTO): ViewContext {
         exampleService.addItemToList(actionFormDTO.item)
         return render()
     }
 // TODO: Get doesn't work yet
-    @ViewAction(method = RequestMethod.GET)
+    @PostViewAction
     fun countUp(): ViewContext{
         counter += 1
         return render()
