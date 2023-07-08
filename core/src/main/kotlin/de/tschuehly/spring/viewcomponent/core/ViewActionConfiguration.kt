@@ -3,7 +3,6 @@ package de.tschuehly.spring.viewcomponent.core
 import jakarta.annotation.PostConstruct
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.util.ClassUtils
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo
@@ -12,8 +11,14 @@ import org.springframework.web.util.pattern.PathPatternParser
 import java.lang.reflect.Method
 
 @Configuration
-class ViewActionConfiguration(val context: ApplicationContext,
-                              val requestMappingHandlerMapping: RequestMappingHandlerMapping){
+class ViewActionConfiguration(
+    val context: ApplicationContext,
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
+    val requestMappingHandlerMapping: RequestMappingHandlerMapping
+) {
+
+    val viewActionMapping = mutableMapOf<String, PathMapping>()
+    //TODO: extract to seperate class/registry with unique constraints etc
 
     @PostConstruct
     fun registerViewActionEndpoints() {
@@ -32,56 +37,63 @@ class ViewActionConfiguration(val context: ApplicationContext,
         viewComponentBean: Any
     ) {
         viewComponentMethods.forEach { method ->
-            processViewComponentMethods(method,viewComponentName,viewComponentBean)
+            processViewComponentMethods(method, viewComponentName, viewComponentBean)
         }
     }
 
     private fun processViewComponentMethods(method: Method, viewComponentName: String, viewComponentBean: Any) {
         method.declaredAnnotations.forEach { declaredAnnotation ->
-            val pathMapping = when (declaredAnnotation.annotationClass) {
-                PostViewAction::class -> RequestMethod.POST toPath (declaredAnnotation as PostViewAction).path
-                GetViewAction::class -> RequestMethod.GET toPath(declaredAnnotation as GetViewAction).path
-                PutViewAction::class -> RequestMethod.PUT toPath (declaredAnnotation as PutViewAction).path
-                PatchViewAction::class -> RequestMethod.PATCH toPath(declaredAnnotation as PatchViewAction).path
-                DeleteViewAction::class -> RequestMethod.DELETE toPath(declaredAnnotation as DeleteViewAction).path
+            val viewActionPair = when (declaredAnnotation.annotationClass) {
+                PostViewAction::class -> RequestMethod.POST to (declaredAnnotation as PostViewAction).path
+                GetViewAction::class -> RequestMethod.GET to (declaredAnnotation as GetViewAction).path
                 else -> return@forEach
+            }
+            val pathMapping = if (viewActionPair.second == "") {
+                PathMapping("/$viewComponentName/${method.name}".lowercase(), viewActionPair.first, method)
+            } else {
+                PathMapping(viewActionPair.second.lowercase(), viewActionPair.first, method)
+
             }
             createRequestMappingForAnnotation(
                 viewComponentName = viewComponentName,
                 viewComponentBean = viewComponentBean,
                 mapping = pathMapping,
-                method = method
             )
         }
     }
 
     class PathMapping(
+        val path: String,
         val requestMethod: RequestMethod,
-        val path: String
+        val method: Method
     )
 
-    infix fun RequestMethod.toPath(that: String) = PathMapping(this, that)
-
+    fun viewActionKey(
+        viewComponentName: String,
+        viewActionMethodName: String
+    ): String {
+        return "${viewComponentName}_${viewActionMethodName}".lowercase()
+    }
     private fun createRequestMappingForAnnotation(
         viewComponentName: String,
         viewComponentBean: Any,
         mapping: PathMapping,
-        method: Method,
     ) {
-
-        val path = if (mapping.path == "") {
-            "/${viewComponentName.lowercase()}/${method.name}".lowercase()
-        } else mapping.path.lowercase()
         val options = RequestMappingInfo.BuilderConfiguration();
         val parser = PathPatternParser();
         parser.isCaseSensitive = false
         options.patternParser = parser
         requestMappingHandlerMapping.registerMapping(
-            RequestMappingInfo.paths(path)
+            /* mapping = */ RequestMappingInfo.paths(mapping.path)
                 .methods(mapping.requestMethod).options(options).build(),
-            viewComponentBean,
-            method
+            /* handler = */ viewComponentBean,
+            /* method = */ mapping.method
         )
+        val key = viewActionKey(viewComponentName, mapping.method.name)
+        if (viewActionMapping.containsKey(key)) {
+            throw ViewActionConfigurationException("Cannot create duplicate path mapping")
+        }
+        viewActionMapping[key] = mapping
     }
 
 }

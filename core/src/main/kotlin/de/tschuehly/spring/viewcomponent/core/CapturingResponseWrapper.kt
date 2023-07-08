@@ -8,13 +8,13 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.io.PrintWriter
-import kotlin.reflect.jvm.internal.impl.serialization.deserialization.ProtoContainer
 
 internal class CapturingResponseWrapper(response: HttpServletResponse) : HttpServletResponseWrapper(response) {
     private val capture: ByteArrayOutputStream
     private var output: ServletOutputStream? = null
     private var writer: PrintWriter? = null
     var viewComponentBean: Any? = null
+
     init {
         capture = ByteArrayOutputStream(response.bufferSize)
     }
@@ -28,6 +28,7 @@ internal class CapturingResponseWrapper(response: HttpServletResponse) : HttpSer
                 }
 
                 override fun setWriteListener(writeListener: WriteListener) {}
+
                 @Throws(IOException::class)
                 override fun write(b: Int) {
                     capture.write(b)
