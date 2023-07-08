@@ -9,15 +9,15 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import org.springframework.web.util.pattern.PathPatternParser
 import java.lang.reflect.Method
-
+import de.tschuehly.spring.viewcomponent.core.ViewActionRegistry.PathMapping
 @Configuration
 class ViewActionConfiguration(
     val context: ApplicationContext,
     @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    val requestMappingHandlerMapping: RequestMappingHandlerMapping
+    val requestMappingHandlerMapping: RequestMappingHandlerMapping,
+    val viewActionRegistry: ViewActionRegistry
 ) {
 
-    val viewActionMapping = mutableMapOf<String, PathMapping>()
     //TODO: extract to seperate class/registry with unique constraints etc
 
     @PostConstruct
@@ -52,7 +52,11 @@ class ViewActionConfiguration(
                 else -> return@forEach
             }
             val pathMapping = if (viewActionPair.second == "") {
-                PathMapping("/$viewComponentName/${method.name}".lowercase(), viewActionPair.first, method)
+                PathMapping(
+                    "/$viewComponentName/${method.name}".lowercase(),
+                    viewActionPair.first,
+                    method
+                )
             } else {
                 PathMapping(viewActionPair.second.lowercase(), viewActionPair.first, method)
 
@@ -65,18 +69,9 @@ class ViewActionConfiguration(
         }
     }
 
-    class PathMapping(
-        val path: String,
-        val requestMethod: RequestMethod,
-        val method: Method
-    )
 
-    fun viewActionKey(
-        viewComponentName: String,
-        viewActionMethodName: String
-    ): String {
-        return "${viewComponentName}_${viewActionMethodName}".lowercase()
-    }
+
+
     private fun createRequestMappingForAnnotation(
         viewComponentName: String,
         viewComponentBean: Any,
@@ -92,11 +87,7 @@ class ViewActionConfiguration(
             /* handler = */ viewComponentBean,
             /* method = */ mapping.method
         )
-        val key = viewActionKey(viewComponentName, mapping.method.name)
-        if (viewActionMapping.containsKey(key)) {
-            throw ViewActionConfigurationException("Cannot create duplicate path mapping")
-        }
-        viewActionMapping[key] = mapping
+        viewActionRegistry.registerMapping(viewComponentName, mapping)
     }
 
 }

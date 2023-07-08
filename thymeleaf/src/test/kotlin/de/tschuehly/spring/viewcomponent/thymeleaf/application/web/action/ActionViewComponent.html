@@ -24,7 +24,21 @@
     </tr>
   </table>
 
+  <h2>ViewAction Put/Patch Person Form</h2>
 
+  <form th:object="${person}" style="display: inline-grid; gap: 0.5rem">
+    <label>
+      Name <input type="text" th:field="*{name}">
+    </label>
+    <label>
+      Age: <input type="number" th:field="*{age}">
+    </label>
+    <label>
+      Location: <input type="text" th:field="*{location}">
+    </label>
+    <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
+    <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
+  </form>
   <script src="https://unpkg.com/htmx.org@1.9.2/dist/htmx.js"></script>
 
 </div>

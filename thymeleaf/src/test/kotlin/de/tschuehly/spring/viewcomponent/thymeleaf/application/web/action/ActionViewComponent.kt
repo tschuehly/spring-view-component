@@ -10,25 +10,31 @@ import javax.swing.text.View
 class ActionViewComponent(
     val exampleService: ExampleService
 ) {
-    var counter = 0;
 
     fun render() = ViewContext(
-        "helloThere" toProperty "ViewAction is working!",
         "itemList" toProperty exampleService.someData,
-        "counter" toProperty counter
+        "counter" toProperty counter,
+        "person" toProperty person
     )
 
-    @GetViewAction("/helloWim/countUp")
+    var counter = 0;
+
+    @GetViewAction("/customPath/countUp")
     fun countUp(): ViewContext{
         counter += 1
         return render()
     }
 
+
+    class ActionFormDTO(
+        val item: String
+    )
     @PostViewAction
     fun addItem(actionFormDTO: ActionFormDTO): ViewContext {
         exampleService.addItemToList(actionFormDTO.item)
         return render()
     }
+
 
     @DeleteViewAction
     fun deleteItem(id: Int): ViewContext{
@@ -36,7 +42,24 @@ class ActionViewComponent(
         return render()
     }
 
-    class ActionFormDTO(
-        val item: String
+
+    var person = Person(
+        name = "Thomas", age = 23, location = "Ludwigsburg"
+    )
+
+    @PatchViewAction
+    fun savePersonPatch(person: Person): ViewContext {
+        this.person = person
+        return render()
+    }
+    @PutViewAction
+    fun savePersonPut(person: Person): ViewContext {
+        this.person = person
+        return render()
+    }
+    class Person(
+        val name: String,
+        val age: Int,
+        val location: String
     )
 }

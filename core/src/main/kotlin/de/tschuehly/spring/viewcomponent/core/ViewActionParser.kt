@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestMethod
 
 @Service
-class ViewActionParser(val viewActionConfiguration: ViewActionConfiguration) {
+class ViewActionParser(
+    val viewActionRegistry: ViewActionRegistry
+) {
     fun parseViewComponent(viewComponentName: String, htmlString: String): String {
 
         val document = Jsoup.parse(htmlString, "", Parser.xmlParser())
@@ -71,12 +73,7 @@ class ViewActionParser(val viewActionConfiguration: ViewActionConfiguration) {
             val splitMethodAttribute = el.attr(ViewActionConstant.attributeName).split("?")
             val methodName = splitMethodAttribute[0]
             el.removeAttr(ViewActionConstant.attributeName)
-            val viewActionKey = viewActionConfiguration.viewActionKey(viewComponentName, methodName)
-            val viewActionMapping = viewActionConfiguration.viewActionMapping[viewActionKey]
-                ?: throw ViewComponentProcessingException(
-                    "ViewActionMapping with the key $viewActionKey not found",
-                    null
-                )
+            val viewActionMapping = viewActionRegistry.getMapping(viewComponentName,methodName)
             val path = splitMethodAttribute.getOrNull(1)?.let { pathAttributeString ->
                 "${viewActionMapping.path}?$pathAttributeString"
             } ?: viewActionMapping.path
