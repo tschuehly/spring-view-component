@@ -19,14 +19,14 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 repositories {
     mavenCentral()
 }
-
 dependencies {
     api("de.tschuehly:spring-view-component-core:0.5.5-RC1")
-    implementation("gg.jte:jte-spring-boot-starter-3:2.3.0")
+//    implementation("gg.jte:jte-spring-boot-starter-3:3.0.0")
+    implementation(files("E:\\Programmieren\\jte\\jte-spring-boot-starter-3\\target\\jte-spring-boot-starter-3-3.0.1-SNAPSHOT.jar"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
-    implementation("gg.jte:jte:2.3.0")
+    implementation("gg.jte:jte:3.0.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -15,5 +15,7 @@ class JteViewComponentAutoConfiguration(
     private val jteTemplateEngine: TemplateEngine
 ) {
     @Bean
-    fun jteViewContextAspect() = JteViewContextAspect(jteTemplateEngine)
+    fun jteViewContextAspect(): JteViewContextAspect {
+        return JteViewContextAspect(jteTemplateEngine)
+    }
 }

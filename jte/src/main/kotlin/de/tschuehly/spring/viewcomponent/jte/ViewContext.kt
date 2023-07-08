@@ -25,7 +25,6 @@ class ViewContext(
     }
 
     override fun writeTo(output: TemplateOutput) {
-
         jteTemplateEngine?.render("$componentTemplate.jte", contextAttributes.toMap(), output)
             ?: throw Error("JteTemplateEngine is null")
     }

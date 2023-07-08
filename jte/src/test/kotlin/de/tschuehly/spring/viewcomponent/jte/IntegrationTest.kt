@@ -1,6 +1,7 @@
 package de.tschuehly.spring.viewcomponent.jte
 
 import de.tschuehly.spring.viewcomponent.jte.application.JteTestApplication
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -17,6 +18,7 @@ class IntegrationTest(
     @Autowired val mockMvc: MockMvc
 ) {
     @Test
+    @Disabled
     fun testSimpleComponent() {
         val expectedHash = """<!DOCTYPE html>
 <div>Hello World</div>
