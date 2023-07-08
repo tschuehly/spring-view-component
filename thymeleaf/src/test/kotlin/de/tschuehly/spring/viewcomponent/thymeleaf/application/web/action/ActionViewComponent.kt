@@ -1,12 +1,10 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf.application.web.action
 
-import de.tschuehly.spring.viewcomponent.core.GetViewAction
-import de.tschuehly.spring.viewcomponent.core.PostViewAction
-import de.tschuehly.spring.viewcomponent.core.ViewComponent
-import de.tschuehly.spring.viewcomponent.core.toProperty
+import de.tschuehly.spring.viewcomponent.core.*
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.core.ExampleService
 import org.springframework.web.bind.annotation.RequestMethod
+import javax.swing.text.View
 
 @ViewComponent
 class ActionViewComponent(
@@ -20,14 +18,21 @@ class ActionViewComponent(
         "counter" toProperty counter
     )
 
+    @GetViewAction("/helloWim/countUp")
+    fun countUp(): ViewContext{
+        counter += 1
+        return render()
+    }
+
     @PostViewAction
     fun addItem(actionFormDTO: ActionFormDTO): ViewContext {
         exampleService.addItemToList(actionFormDTO.item)
         return render()
     }
-    @GetViewAction("/helloWim/countUp")
-    fun countUp(): ViewContext{
-        counter += 1
+
+    @DeleteViewAction
+    fun deleteItem(id: Int): ViewContext{
+        exampleService.deleteItem(id)
         return render()
     }
 

@@ -1,4 +1,10 @@
 <div>
+
+  <h2>ViewAction Get CountUp</h2>
+
+  <button view:action="countUp">Default ViewAction [GET]</button>
+  <h3 th:text="${counter}"></h3>
+
   <h2>ViewAction Post AddItem</h2>
   <form view:action="addItem">
     <input type="text" name="item">
@@ -7,17 +13,18 @@
   <table>
     <tr>
       <th>Item</th>
+      <th>Action</th>
     </tr>
     <tr th:each="item : ${itemList}">
-      <td th:text="${item}"></td>
+      <td>
+        <span th:text="${item.value}"></span>
+        <button th:view:action="|deleteItem?id=${item.key}|">Delete Item [[${item.key}]]</button>
+      </td>
+
     </tr>
   </table>
 
-  <h2>ViewAction Get CountUp</h2>
 
-  <button view:action="countUp">Default ViewAction [GET]</button>
-
-  <h1 th:text="${counter}"></h1>
   <script src="https://unpkg.com/htmx.org@1.9.2/dist/htmx.js"></script>
 
 </div>

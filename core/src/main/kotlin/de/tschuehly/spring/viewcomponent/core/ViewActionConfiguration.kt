@@ -44,8 +44,11 @@ class ViewActionConfiguration(
     private fun processViewComponentMethods(method: Method, viewComponentName: String, viewComponentBean: Any) {
         method.declaredAnnotations.forEach { declaredAnnotation ->
             val viewActionPair = when (declaredAnnotation.annotationClass) {
-                PostViewAction::class -> RequestMethod.POST to (declaredAnnotation as PostViewAction).path
                 GetViewAction::class -> RequestMethod.GET to (declaredAnnotation as GetViewAction).path
+                PostViewAction::class -> RequestMethod.POST to (declaredAnnotation as PostViewAction).path
+                PutViewAction::class -> RequestMethod.PUT to (declaredAnnotation as PutViewAction).path
+                PatchViewAction::class -> RequestMethod.PATCH to (declaredAnnotation as PatchViewAction).path
+                DeleteViewAction::class -> RequestMethod.DELETE to (declaredAnnotation as DeleteViewAction).path
                 else -> return@forEach
             }
             val pathMapping = if (viewActionPair.second == "") {
