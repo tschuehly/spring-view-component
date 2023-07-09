@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class JteViewContextAspect(
     private val jteTemplateEngine: TemplateEngine
 ) {
-    @Pointcut("@within(de.tschuehly.spring.viewcomponent.core.ViewComponent)")
+    @Pointcut("@within(de.tschuehly.spring.viewcomponent.core.component.ViewComponent)")
     fun isViewComponent() {
         //
     }

@@ -1,5 +1,8 @@
-package de.tschuehly.spring.viewcomponent.core
+package de.tschuehly.spring.viewcomponent.core.component
 
+import de.tschuehly.spring.viewcomponent.core.IViewContext
+import de.tschuehly.spring.viewcomponent.core.action.CapturingResponseWrapper
+import de.tschuehly.spring.viewcomponent.core.toMap
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.NativeWebRequest
@@ -23,8 +26,12 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
             (IViewContext::class.java.isAssignableFrom(it.javaClass))
         } as IViewContext
         mavContainer.view = viewContext.componentTemplate
+        val response = webRequest.nativeResponse
+        if(response is CapturingResponseWrapper){
+            response.viewComponentBean = viewContext.componentBean
+        }
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
-        mavContainer.addAttribute("viewComponentBean",viewContext.componentBean)
+//        mavContainer.addAttribute("viewComponentBean",viewContext.componentBean)
     }
 
 }

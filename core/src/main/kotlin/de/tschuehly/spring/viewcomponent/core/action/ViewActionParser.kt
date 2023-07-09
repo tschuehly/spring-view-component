@@ -1,5 +1,7 @@
-package de.tschuehly.spring.viewcomponent.core
+package de.tschuehly.spring.viewcomponent.core.action
 
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProcessingException
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
@@ -12,20 +14,12 @@ class ViewActionParser(
 ) {
     fun parseViewComponent(viewComponentName: String, htmlString: String): String {
 
-        val doc = parseToDocument(htmlString)
-        addHtmxAttrForNestedViewComponents(doc)
-        processRootElementViewComponent(doc, viewComponentName)
-        return doc.outerHtml()
-    }
+        val document = Jsoup.parse(htmlString, "", Parser.xmlParser())
 
-    private fun parseToDocument(htmlString: String): Document {
-        val nodeList = Parser.parseFragment(htmlString, Document(""), "")
-        val doc = Document("")
+        addHtmxAttrForNestedViewComponents(document)
 
-        nodeList.forEach {
-            doc.appendChild(it)
-        }
-        return doc
+        processRootElementViewComponent(document, viewComponentName)
+        return document.outerHtml()
     }
 
     private fun processRootElementViewComponent(document: Document, viewComponentName: String) {
@@ -34,8 +28,9 @@ class ViewActionParser(
             // No view:actions in root viewcomponent to process
             return
         }
+        val childElement = getSingleChildElement(document)
 
-        if (document.nodeName() == "html") {
+        if (childElement.nodeName() == "html") {
             // set id on body if it is a whole page that is returned, because htmx cannot swap html element itself
             val bodyElement = document.selectFirst("body")
                 ?: throw ViewComponentProcessingException(
@@ -45,9 +40,18 @@ class ViewActionParser(
             bodyElement.attr("id", viewComponentName)
             replaceViewActionAttrWithHtmxAttr(bodyElement)
         } else {
-            document.attr("id", viewComponentName)
-            replaceViewActionAttrWithHtmxAttr(document)
+            childElement.attr("id", viewComponentName)
+            replaceViewActionAttrWithHtmxAttr(childElement)
         }
+    }
+
+    private fun getSingleChildElement(document: Document): Element {
+        val firstChild = document.firstElementChild()
+        if (document.lastElementChild() != firstChild || firstChild == null) throw ViewComponentProcessingException(
+            "ViewComponent need to have one root html node",
+            null
+        )
+        return firstChild
     }
 
     private fun addHtmxAttrForNestedViewComponents(document: Element) {
@@ -70,7 +74,7 @@ class ViewActionParser(
             val splitMethodAttribute = el.attr(ViewActionConstant.attributeName).split("?")
             val methodName = splitMethodAttribute[0]
             el.removeAttr(ViewActionConstant.attributeName)
-            val viewActionMapping = viewActionRegistry.getMapping(viewComponentName, methodName)
+            val viewActionMapping = viewActionRegistry.getMapping(viewComponentName,methodName)
             val path = splitMethodAttribute.getOrNull(1)?.let { pathAttributeString ->
                 "${viewActionMapping.path}?$pathAttributeString"
             } ?: viewActionMapping.path

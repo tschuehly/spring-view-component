@@ -6,3 +6,6 @@ logging:
 spring:
   thymeleaf:
     cache: false
+viewcomponent:
+  viewaction:
+    enabled: true

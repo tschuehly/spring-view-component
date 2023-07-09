@@ -1,6 +1,6 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf.application.web
 
-import de.tschuehly.spring.viewcomponent.core.ViewContextContainer
+import de.tschuehly.spring.viewcomponent.core.component.ViewContextContainer
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.action.ActionViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.header.HeaderViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.web.index.IndexViewComponent

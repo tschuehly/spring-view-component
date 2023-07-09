@@ -1,6 +1,6 @@
 package de.tschuehly.spring.viewcomponent.jte.application.web
 
-import de.tschuehly.spring.viewcomponent.core.ViewContextContainer
+import de.tschuehly.spring.viewcomponent.core.component.ViewContextContainer
 import de.tschuehly.spring.viewcomponent.jte.application.web.action.ActionViewComponent
 import de.tschuehly.spring.viewcomponent.jte.application.web.header.HeaderViewComponent
 import de.tschuehly.spring.viewcomponent.jte.application.web.index.IndexViewComponent
@@ -9,7 +9,6 @@ import de.tschuehly.spring.viewcomponent.jte.application.web.simple.SimpleViewCo
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 class TestController(

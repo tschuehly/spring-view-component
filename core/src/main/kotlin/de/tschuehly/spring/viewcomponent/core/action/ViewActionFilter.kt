@@ -1,4 +1,4 @@
-package de.tschuehly.spring.viewcomponent.core
+package de.tschuehly.spring.viewcomponent.core.action
 
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain

@@ -1,10 +1,10 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf.application.web.action
 
 import de.tschuehly.spring.viewcomponent.core.*
+import de.tschuehly.spring.viewcomponent.core.action.*
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.core.ExampleService
-import org.springframework.web.bind.annotation.RequestMethod
-import javax.swing.text.View
 
 @ViewComponent
 class ActionViewComponent(

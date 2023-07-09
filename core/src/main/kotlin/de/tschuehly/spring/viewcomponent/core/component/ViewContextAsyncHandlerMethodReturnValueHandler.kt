@@ -1,5 +1,7 @@
-package de.tschuehly.spring.viewcomponent.core
+package de.tschuehly.spring.viewcomponent.core.component
 
+import de.tschuehly.spring.viewcomponent.core.IViewContext
+import de.tschuehly.spring.viewcomponent.core.toMap
 import org.springframework.core.MethodParameter
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component

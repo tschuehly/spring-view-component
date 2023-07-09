@@ -1,5 +1,6 @@
 package de.tschuehly.spring.viewcomponent.core
 
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentChangeListener
 import jakarta.annotation.PostConstruct
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher
@@ -11,9 +12,16 @@ import java.io.File
 import java.time.Duration
 
 @Configuration
-@ComponentScan
-class ViewComponentAutoConfiguration {
+@ComponentScan("de.tschuehly.spring.viewcomponent.core.component")
+class ViewComponentAutoConfiguration(
+) {
 
+
+    @ConditionalOnProperty("viewcomponent.viewaction.enabled", havingValue = "true")
+    @ComponentScan("de.tschuehly.spring.viewcomponent.core.action")
+    class ViewActionConfiguration {
+
+    }
 
     @Bean
     @ConditionalOnProperty("viewcomponent.localDevelopment")
@@ -34,8 +42,6 @@ class ViewComponentAutoConfiguration {
     class StartWatcherConfiguration(
         val fileSystemWatcher: FileSystemWatcher
     ) {
-
-
         @PostConstruct
         fun startWatcher() {
             fileSystemWatcher.start()

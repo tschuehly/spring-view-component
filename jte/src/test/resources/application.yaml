@@ -4,3 +4,7 @@ logging:
     org.springframework.web: TRACE
 server:
   port: 8084
+
+viewcomponent:
+  viewaction:
+    enabled: true

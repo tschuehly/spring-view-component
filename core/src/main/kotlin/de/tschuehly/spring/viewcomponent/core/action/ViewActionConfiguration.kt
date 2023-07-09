@@ -1,5 +1,6 @@
-package de.tschuehly.spring.viewcomponent.core
+package de.tschuehly.spring.viewcomponent.core.action
 
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import jakarta.annotation.PostConstruct
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Configuration
@@ -9,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import org.springframework.web.util.pattern.PathPatternParser
 import java.lang.reflect.Method
-import de.tschuehly.spring.viewcomponent.core.ViewActionRegistry.PathMapping
+import de.tschuehly.spring.viewcomponent.core.action.ViewActionRegistry.PathMapping
 @Configuration
 class ViewActionConfiguration(
     val context: ApplicationContext,

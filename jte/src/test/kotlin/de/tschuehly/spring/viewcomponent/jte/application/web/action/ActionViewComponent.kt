@@ -1,6 +1,8 @@
 package de.tschuehly.spring.viewcomponent.jte.application.web.action
 
 import de.tschuehly.spring.viewcomponent.core.*
+import de.tschuehly.spring.viewcomponent.core.action.*
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import de.tschuehly.spring.viewcomponent.jte.ViewContext
 import de.tschuehly.spring.viewcomponent.jte.application.core.ExampleService
 

@@ -1,7 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.ViewComponentAutoConfiguration
-import de.tschuehly.spring.viewcomponent.core.ViewComponentProperties
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

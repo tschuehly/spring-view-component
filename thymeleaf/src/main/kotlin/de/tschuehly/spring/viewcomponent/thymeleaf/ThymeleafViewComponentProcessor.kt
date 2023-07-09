@@ -1,8 +1,8 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
-import de.tschuehly.spring.viewcomponent.core.ViewActionConstant
-import de.tschuehly.spring.viewcomponent.core.ViewComponentProcessingException
+import de.tschuehly.spring.viewcomponent.core.action.ViewActionConstant
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProcessingException
 import de.tschuehly.spring.viewcomponent.core.toMap
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext

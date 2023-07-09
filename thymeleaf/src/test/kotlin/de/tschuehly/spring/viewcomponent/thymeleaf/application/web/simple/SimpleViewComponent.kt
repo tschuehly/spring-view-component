@@ -1,7 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf.application.web.simple
 
-import de.tschuehly.spring.viewcomponent.core.PostViewAction
-import de.tschuehly.spring.viewcomponent.core.ViewComponent
+import de.tschuehly.spring.viewcomponent.core.action.PostViewAction
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import de.tschuehly.spring.viewcomponent.core.toProperty
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 import de.tschuehly.spring.viewcomponent.thymeleaf.application.core.ExampleService

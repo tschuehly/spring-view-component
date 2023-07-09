@@ -1,5 +1,6 @@
-package de.tschuehly.spring.viewcomponent.core
+package de.tschuehly.spring.viewcomponent.core.component
 
+import de.tschuehly.spring.viewcomponent.core.IViewContext
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -10,7 +11,7 @@ import kotlin.reflect.full.isSubclassOf
 @Aspect
 @Component
 class ViewComponentAspect {
-    @Pointcut("@within(de.tschuehly.spring.viewcomponent.core.ViewComponent)")
+    @Pointcut("@within(de.tschuehly.spring.viewcomponent.core.component.ViewComponent)")
     fun isViewComponent() {
         //
     }

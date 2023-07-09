@@ -2,8 +2,8 @@
   "groups": [
     {
       "name": "spring.view-component",
-      "type": "de.tschuehly.spring.viewcomponent.core.ViewComponentProperties",
-      "sourceType": "de.tschuehly.spring.viewcomponent.core.ViewComponentProperties"
+      "type": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties",
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
     }
   ],
   "properties": [
@@ -11,7 +11,7 @@
       "name": "spring.view-component.local-development",
       "type": "java.lang.Boolean",
       "description": "If set to true loads templates from the filesystem allowing for hot reload",
-      "sourceType": "de.tschuehly.spring.viewcomponent.core.ViewComponentProperties"
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
     }
   ],
   "hints": []
