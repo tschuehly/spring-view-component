@@ -1,4 +1,4 @@
-package de.tschuehly.spring.viewcomponent.thymeleaf.application.web
+package de.tschuehly.spring.viewcomponent.jte.application.web
 
 import de.tschuehly.spring.viewcomponent.core.ViewContextContainer
 import de.tschuehly.spring.viewcomponent.jte.application.web.action.ActionViewComponent

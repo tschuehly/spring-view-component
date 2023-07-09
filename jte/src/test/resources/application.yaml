@@ -1,4 +1,6 @@
-gg.jte.templateLocation: src/test/kotlin
+gg.jte.templateLocation: jte/src/test/kotlin
 logging:
   level:
     org.springframework.web: TRACE
+server:
+  port: 8084

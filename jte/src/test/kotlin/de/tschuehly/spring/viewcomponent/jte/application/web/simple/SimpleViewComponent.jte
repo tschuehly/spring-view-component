@@ -1,4 +1,5 @@
+@param String helloWorld
 <div>
   <h2>This is the SimpleViewComponent</h2>
-  <div th:text="${helloWorld}"></div>
+  <div>${helloWorld}</div>
 </div>
