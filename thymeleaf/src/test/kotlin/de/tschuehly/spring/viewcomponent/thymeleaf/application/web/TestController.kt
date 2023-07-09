@@ -38,11 +38,6 @@ class TestController(
     fun multiComponent() =
         ViewContextContainer(simpleViewComponent.render(), layoutViewComponent.render(simpleViewComponent.render()))
 
-    @GetMapping("/header")
-    fun header(): String {
-        return "test"
-    }
-
     @ModelAttribute("header")
     fun headerComponent() = headerViewComponent.render("TestTitle")
 }

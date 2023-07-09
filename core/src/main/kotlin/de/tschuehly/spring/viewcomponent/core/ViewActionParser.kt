@@ -2,7 +2,9 @@ package de.tschuehly.spring.viewcomponent.core
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Document.OutputSettings
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
 import org.jsoup.parser.Parser
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.RequestMethod
@@ -12,13 +14,17 @@ class ViewActionParser(
     val viewActionRegistry: ViewActionRegistry
 ) {
     fun parseViewComponent(viewComponentName: String, htmlString: String): String {
-
-        val document = Jsoup.parse(htmlString, "", Parser.xmlParser())
-
-        addHtmxAttrForNestedViewComponents(document)
-
-        processRootElementViewComponent(document, viewComponentName)
-        return document.outerHtml()
+        val nodeList = Parser.parseFragment(htmlString,Document(""),"")
+        val doc = Document("")
+        val nodes = nodeList.toTypedArray<Node>() // the node list gets modified when re-parented
+        nodes.forEach {
+            doc.appendChild(it)
+        }
+//        val settings = OutputSettings().also { it.prettyPrint(false) }
+//        doc.outputSettings(settings)
+        addHtmxAttrForNestedViewComponents(doc)
+        processRootElementViewComponent(doc, viewComponentName)
+        return doc.outerHtml()
     }
 
     private fun processRootElementViewComponent(document: Document, viewComponentName: String) {
@@ -73,7 +79,7 @@ class ViewActionParser(
             val splitMethodAttribute = el.attr(ViewActionConstant.attributeName).split("?")
             val methodName = splitMethodAttribute[0]
             el.removeAttr(ViewActionConstant.attributeName)
-            val viewActionMapping = viewActionRegistry.getMapping(viewComponentName,methodName)
+            val viewActionMapping = viewActionRegistry.getMapping(viewComponentName, methodName)
             val path = splitMethodAttribute.getOrNull(1)?.let { pathAttributeString ->
                 "${viewActionMapping.path}?$pathAttributeString"
             } ?: viewActionMapping.path
