@@ -51,4 +51,10 @@ sourceSets {
             exclude("**/*.kt")
         }
     }
+    test {
+        resources {
+            srcDir("src/test/kotlin")
+            exclude("**/*.kt")
+        }
+    }
 }
