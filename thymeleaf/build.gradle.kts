@@ -28,6 +28,8 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-actuator")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.webjars:webjars-locator:0.47")
+	testImplementation("org.webjars.npm:htmx.org:1.9.2")
 }
 
 tasks.withType<KotlinCompile> {

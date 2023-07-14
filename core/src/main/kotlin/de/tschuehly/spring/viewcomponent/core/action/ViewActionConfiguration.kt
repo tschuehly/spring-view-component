@@ -19,8 +19,6 @@ class ViewActionConfiguration(
     val viewActionRegistry: ViewActionRegistry
 ) {
 
-    //TODO: extract to seperate class/registry with unique constraints etc
-
     @PostConstruct
     fun registerViewActionEndpoints() {
         val viewComponentBeans = context.getBeansWithAnnotation(ViewComponent::class.java)

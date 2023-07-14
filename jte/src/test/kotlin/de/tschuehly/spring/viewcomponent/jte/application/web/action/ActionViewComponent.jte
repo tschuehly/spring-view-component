@@ -1,10 +1,10 @@
 @param de.tschuehly.spring.viewcomponent.jte.application.web.action.ActionViewComponent.Person person
-@param java.util.HashMap<String,String> itemList
+@param java.util.HashMap<Integer,String> itemList
 @param Integer counter
 
 <html>
 <head>
-    <script src="https://unpkg.com/htmx.org@1.9.2/dist/htmx.js"></script>
+    <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
 </head>
 <body>
 
@@ -16,9 +16,8 @@
 
 <h2>ViewAction Post AddItem</h2>
 <form view:action="addItem">
-    <label>
-        Item:
-    </label>
+    <input type="text" name="item">
+    <button type="submit">Save Item</button>
 </form>
 <table>
     <tr>
@@ -29,11 +28,28 @@
         <tr>
             <td>
                 <span>${item.getValue()}</span>
+            </td>
+            <td>
                 <button view:action="deleteItem?id=${item.getKey()}">Delete Item ${item.getKey()}</button>
             </td>
-
         </tr>
     @endfor
 </table>
+
+<h2>ViewAction Put/Patch Person Form</h2>
+
+<form style="display: inline-grid; gap: 0.5rem">
+    <label>
+        Name <input type="text" name="name" value="${person.getName()}">
+    </label>
+    <label>
+        Age: <input type="number" name="age" value="${person.getAge()}">
+    </label>
+    <label>
+        Location: <input type="text" name="location" value="${person.getLocation()}">
+    </label>
+    <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
+    <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
+</form>
 </body>
 </html>

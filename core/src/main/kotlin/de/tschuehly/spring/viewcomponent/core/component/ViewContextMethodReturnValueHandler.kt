@@ -26,12 +26,10 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
             (IViewContext::class.java.isAssignableFrom(it.javaClass))
         } as IViewContext
         mavContainer.view = viewContext.componentTemplate
-        val response = webRequest.nativeResponse
-        if(response is CapturingResponseWrapper){
-            response.viewComponentBean = viewContext.componentBean
+        if(webRequest.nativeResponse is CapturingResponseWrapper){
+            (webRequest.nativeResponse as CapturingResponseWrapper).viewComponentBean = viewContext.componentBean
         }
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
-//        mavContainer.addAttribute("viewComponentBean",viewContext.componentBean)
     }
 
 }

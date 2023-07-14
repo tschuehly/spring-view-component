@@ -17,7 +17,7 @@ class ActionViewComponent(
         "person" toProperty person
     )
 
-    var counter = 0;
+    var counter: Int = 0
 
     @GetViewAction("/customPath/countUp")
     fun countUp(): ViewContext{

@@ -5,11 +5,12 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
-@Order(1)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 class ViewActionFilter(
     private val viewActionParser: ViewActionParser
 ) : Filter {
