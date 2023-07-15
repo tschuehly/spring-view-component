@@ -2,12 +2,8 @@
 @param java.util.HashMap<Integer,String> itemList
 @param Integer counter
 
-<html>
-<head>
-    <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
-</head>
-<body>
-
+<div>
+<script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
@@ -51,5 +47,4 @@
     <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
     <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
 </form>
-</body>
-</html>
+</div>

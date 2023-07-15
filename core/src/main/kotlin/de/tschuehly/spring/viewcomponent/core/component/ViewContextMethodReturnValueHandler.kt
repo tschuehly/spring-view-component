@@ -28,9 +28,21 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
         } as IViewContext
         mavContainer.view = viewContext.componentTemplate
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
-        if(webRequest.nativeResponse is CapturingResponseWrapper){
-            (webRequest.nativeResponse as CapturingResponseWrapper).viewComponentBean = viewContext.componentBean
+        val response = webRequest.nativeResponse
+        if (response is HttpServletResponseWrapper) {
+            setResponseBean(response,viewContext)
         }
     }
 
+
+    private fun setResponseBean(wrapper: HttpServletResponseWrapper, viewContext: IViewContext) {
+        if (wrapper is CapturingResponseWrapper) {
+            wrapper.viewComponentBean = viewContext.componentBean
+            return
+        }
+        val response = wrapper.response
+        if(response is HttpServletResponseWrapper){
+            setResponseBean(response, viewContext)
+        }
+    }
 }

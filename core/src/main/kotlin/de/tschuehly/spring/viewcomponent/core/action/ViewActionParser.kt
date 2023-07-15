@@ -13,11 +13,8 @@ class ViewActionParser(
     val viewActionRegistry: ViewActionRegistry
 ) {
     fun parseViewComponent(viewComponentName: String, htmlString: String): String {
-
         val document = Jsoup.parse(htmlString, "", Parser.xmlParser())
-
         addHtmxAttrForNestedViewComponents(document)
-
         processRootElementViewComponent(document, viewComponentName)
         return document.outerHtml()
     }

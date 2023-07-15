@@ -35,10 +35,6 @@ class TestController(
     @GetMapping("/layout")
     fun layoutComponent() = layoutViewComponent.render(simpleViewComponent.render())
 
-    @GetMapping("/multi")
-    fun multiComponent() =
-        ViewContextContainer(simpleViewComponent.render(), layoutViewComponent.render(simpleViewComponent.render()))
-
     @GetMapping("/header")
     fun header(): String {
         return "test"
