@@ -5,6 +5,10 @@ Spring ViewComponent allows you to create typesafe, reusable & encapsulated serv
 GitHub developed a similar Library for [Ruby on Rails](https://viewcomponent.org/) to ease the development of the very site
 you are on right now.
 
+##### Table of Contents  
+- [Creating a ViewComponent](#creating-a-viewcomponent)
+- [Nesting ViewComponents](#nesting-components)
+- [Java and Maven Examples](#java)
 ## What’s a ViewComponent?
 
 Think of ViewComponents as an evolution of the presenter pattern, inspired by [React](https://reactjs.org/docs/react-component.html). 
@@ -38,19 +42,13 @@ or you can use [JTE](https://github.com/casid/jte)
 <div>${helloWorld}</div>
 ```
 
-# Usage
-
-If you want to use the library with [Java and Maven](#java) you can skip ahead
-
-## Kotlin
-
 [Installation with Gradle](#gradle-installation)
 
 [Thymeleaf Example](https://github.com/tschuehly/spring-view-component/tree/master/examples/thymeleaf-demo)
 [JTE Example](https://github.com/tschuehly/spring-view-component/tree/master/examples/jte-demo)
 
 
-### Creating a ViewComponent
+## Creating a ViewComponent
 
 We just need to add the @ViewComponent annotation to a class and define a render() method that returns a ViewContext. We
 can pass the properties we want to use in our template.
@@ -70,7 +68,7 @@ class HomeViewComponent(
 
 Next we define the HTML in the HomeViewComponent.[jte/html] in the same package as our ViewComponent Class.
 
-#### Thymeleaf
+### Thymeleaf
 ````html 
 // HomeViewComponent.html
 <html xmlns:th="http://www.thymeleaf.org">
@@ -81,7 +79,7 @@ Next we define the HTML in the HomeViewComponent.[jte/html] in the same package 
 </body>
 </html>
 ````
-#### JTE
+### JTE
 ````html 
 // HomeViewComponent.jte
 <html>
@@ -110,7 +108,7 @@ class Router(
 If we now access the root url path of our spring application we can see that the component renders properly:
 ![thymeleaf-view-component-example](https://user-images.githubusercontent.com/33346637/222275655-b80a45b0-3a3d-4bd6-909a-1b54ab8cc925.png)
 
-### Nesting components:
+## Nesting components:
 
 We can nest component by passing the component to our template as a ViewProperty:
 
@@ -128,7 +126,7 @@ class HomeViewComponent(
 }
 ```
 
-#### Thymeleaf
+### Thymeleaf
 We can nest components with the attribute `view:component="${viewContext}"`.
 
 ```html
@@ -137,7 +135,7 @@ We can nest components with the attribute `view:component="${viewContext}"`.
 <div view:component="${parameterViewComponent.render('Hello World')}"></div>
 ```
 
-#### JTE
+### JTE
 
 
 We can then invoke the render method on the ViewComponent, both with parameter or without parameter
@@ -152,7 +150,7 @@ ${exampleViewComponent}
 ${parameterViewComponent.render("This is a parameter")}
 ```
 
-### Parameter components:
+## Parameter components:
 
 We can also create components with parameters. We can either use default values when we pass a null value, get a
 property from a Service or we can throw a custom error.
@@ -208,7 +206,7 @@ If we now access the root url path of our spring application we can see that the
 
 ![viewcomponent-parameter](https://user-images.githubusercontent.com/33346637/222275688-7f301ff7-4a69-4062-ae69-1dd6c9983a7a.png)
 
-### Layout components
+## Layout components
 
 If you want to create a Layout you can do that by passing `viewComponent.render()` as parameter.
 
@@ -244,9 +242,14 @@ class Router(
 }
 ```
 
-### ViewAction: Interactivity with HTMX
+## ViewAction: Interactivity with HTMX
 
 With ViewActions you can create interactive ViewComponents based on [htmx](https://htmx.org/) without having to reload the page.
+
+ViewAction integration needs to enable in your application.properties:
+```
+spring.view-component.view-action.enabled=true
+```
 
 Here you can see a ViewComponent with a ViewAction that increments a counter.
 
@@ -350,7 +353,7 @@ class ActionViewComponent(
 ```
 
 
-### Composing pages from components
+## Composing pages from components
 
 **!!! Currently only supported in Thymeleaf !!!**
 
@@ -372,7 +375,7 @@ class Router(
 }
 ```
 
-### Serverless components - Spring Cloud Function support
+## Serverless components - Spring Cloud Function support
 
 **Currently only supported in Thymeleaf !!!**
 
@@ -398,7 +401,7 @@ class HomeViewComponent(
     )
 }
 ```
-### Gradle Installation
+## Gradle Installation
 
 Add this snippet to your build.gradle.kts:
 ```kotlin
@@ -424,7 +427,7 @@ sourceSets {
 }
 
 ```
-#### Thymeleaf Dependency
+### Thymeleaf Dependency
 
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-thymeleaf) on Maven Central
 
@@ -434,7 +437,7 @@ dependencies {
     implementation("de.tschuehly:spring-view-component-thymeleaf:LATEST_VERSION")
 }
 ```
-#### JTE Dependency
+### JTE Dependency
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-jte) on Maven Central
 
 ```kotlin
@@ -446,7 +449,7 @@ dependencies {
 
 
 
-## Java
+# Java
 
 **The Templates don't differ with Java following are java code snippet examples you can use with the templates defined above in the [Kotlin](#kotlin) Part**
 
@@ -454,7 +457,7 @@ dependencies {
 
 [Demo Repository with Java and Maven](https://github.com/tschuehly/view-component-java-maven-demo/tree/master)
 
-### Creating a ViewComponent
+## Creating a ViewComponent with Java
 
 ```java
 // HomeViewComponent.java
@@ -494,7 +497,7 @@ public class Router {
 }
 ```
 
-### Parameter components:
+## Parameter components with Java
 
 ```java
 
@@ -534,7 +537,7 @@ public class HomeViewComponent {
 
 ```
 
-### Composing pages from components
+## Composing pages from components
 
 ```java
 // Router.java
@@ -558,7 +561,7 @@ public class Router {
 }
 ```
 
-### Serverless components - Spring Cloud Function support
+## Serverless components - Spring Cloud Function support
 
 ```java
 // HomeViewComponent.java
@@ -609,7 +612,8 @@ Add this to your pom.xml:
 ```
 
 
-#### Thymeleaf Dependency
+### Thymeleaf Dependency
+[LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-thymeleaf) on Maven Central
 ```xml
 <dependency>
     <groupId>de.tschuehly</groupId>
@@ -617,9 +621,8 @@ Add this to your pom.xml:
     <version>LATEST_VERSION</version>
 </dependency>
 ```
-[LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-thymeleaf) on Maven Central
 
-#### JTE Dependency
+### JTE Dependency
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-jte) on Maven Central
 
 ```xml
@@ -630,10 +633,10 @@ Add this to your pom.xml:
 </dependency>
 ```
 
-## General Configuration
+# General Configuration
 
 
-### Local Development
+## Local Development
 
 To enable live reload of the components on each save without rebuilding the application add this configuration:
 
