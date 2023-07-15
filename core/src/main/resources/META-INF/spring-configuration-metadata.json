@@ -12,6 +12,12 @@
       "type": "java.lang.Boolean",
       "description": "If set to true loads templates from the filesystem allowing for hot reload",
       "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
+    },
+    {
+      "name": "spring.view-component.view-action.enabled",
+      "type": "java.lang.Boolean",
+      "description": "If set to true parses view:action properties to HTMX attributes",
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
     }
   ],
   "hints": []

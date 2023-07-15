@@ -17,14 +17,12 @@ class ViewComponentAutoConfiguration(
 ) {
 
 
-    @ConditionalOnProperty("viewcomponent.viewaction.enabled", havingValue = "true")
+    @ConditionalOnProperty("spring.view-component.view-action.enabled", havingValue = "true")
     @ComponentScan("de.tschuehly.spring.viewcomponent.core.action")
-    class ViewActionConfiguration {
-
-    }
+    class ViewActionConfiguration {}
 
     @Bean
-    @ConditionalOnProperty("viewcomponent.localDevelopment")
+    @ConditionalOnProperty("spring.view-component.local-development")
     fun viewComponentFileSystemWatcher(applicationContext: ApplicationContext): FileSystemWatcher {
         val fileSystemWatcher = FileSystemWatcher(true, Duration.ofMillis(500), Duration.ofMillis(300))
         if (File("src/main/kotlin").isDirectory) {

@@ -7,22 +7,25 @@ plugins {
     kotlin("plugin.spring") version "1.7.22"
 }
 
-group = "com.example"
+group = "de.tschuehly"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
+    mavenLocal()
+//    maven {
+//        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+//        mavenContent {
+//            snapshotsOnly()
+//        }
+//    }
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-
-    implementation("de.tschuehly:spring-view-component-thymeleaf")
-
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.6.0-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

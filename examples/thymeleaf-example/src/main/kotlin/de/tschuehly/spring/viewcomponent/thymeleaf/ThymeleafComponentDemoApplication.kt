@@ -1,4 +1,4 @@
-package com.example.thymeleafcomponentdemo
+package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
