@@ -244,9 +244,116 @@ class Router(
 }
 ```
 
+### ViewAction: Interactivity with HTMX
+
+With ViewActions you can create interactive ViewComponents based on [htmx](https://htmx.org/) without having to reload the page.
+
+Here you can see a ViewComponent with a ViewAction that increments a counter.
+
+You define a ViewAction inside your HTML template with the `view:action` attribute.
+A ViewAction enabled ViewComponent always needs to have one root element.
+```html
+// ActionViewComponent.html
+<div>
+  <script defer src="https://unpkg.com/htmx.org@1.9.3"></script>
+  <button view:action="countUp">Default ViewAction [GET]</button>
+  <h3 th:text="${counter}"></h3>
+</div>
+
+```
+Here is the corresponding ViewComponent class that has a `@GetViewAction` annotation on the countUp method.
+
+As you can see the attribute value of the `view:action="countUp"` correlates to the countUp method in our ViewComponent class.
+
+```kotlin
+// ActionViewComponent.kt
+@ViewComponent
+class ActionViewComponent(
+    val exampleService: ExampleService
+) {
+    var counter = 0
+    
+    fun render() = ViewContext(
+        "counter" toProperty counter,
+    )
+
+    @GetViewAction
+    fun countUp(): ViewContext {
+        counter += 1
+        return render()
+    }
+}
+```
+
+Behind the scenes Spring ViewComponent parses the template to htmx attributes.
+
+The hx-get attribute will create a http get request to the `/actionviewcomponent/countup` endpoint that is automatically generated.
+
+The `/actionviewcomponent/countup` endpoint will return the re-rendered ActionViewComponent template. 
+
+The `hx-target="#actionviewcomponent"` and the `hx-swap="outerHTML"` attributes will then swap the returned HTML to the div with the `id="actionviewcomponent"` that is automatically added to the root div.
+
+
+```html
+<div id="actionviewcomponent">
+  <script defer src="https://unpkg.com/htmx.org@1.9.3"></script>
+  <h2>ViewAction Get CountUp</h2>
+  <button hx-get="/actionviewcomponent/countup" hx-target="#actionviewcomponent" hx-swap="outerHTML">
+    Default ViewAction [GET]
+  </button>
+</div>
+```
+
+You can use also pass a custom path as annotation parameter: `@PostViewAction("/customPath/addItemAction")`
+
+You can use different ViewAction Annotations that map to the corresponding htmx ajax methods: https://htmx.org/docs/#ajax
+
+- `@GetViewAction`
+- `@PostViewAction`
+- `@PutViewAction`
+- `@PatchViewAction`
+- `@DeleteViewAction`
+
+```kotlin
+@ViewComponent
+class ActionViewComponent(
+    val exampleService: ExampleService
+) {
+    fun render() = ViewContext(
+        "itemList" toProperty exampleService.someData,
+        "person" toProperty exampleService.person
+    )
+
+    @PostViewAction("/customPath/addItemAction")
+    fun addItem(actionFormDTO: ActionFormDTO): ViewContext {
+        exampleService.addItemToList(actionFormDTO.item)
+        return render()
+    }
+    
+    @PutViewAction
+    fun savePersonPut(person: Person): ViewContext {
+        this.person = person
+        return render()
+    }
+
+    @PatchViewAction
+    fun savePersonPatch(person: Person): ViewContext {
+        this.person = person
+        return render()
+    }
+    
+    @DeleteViewAction
+    fun deleteItem(id: Int): ViewContext {
+        exampleService.deleteItem(id)
+        return render()
+    }
+}
+```
+
+
 ### Composing pages from components
 
-**Currently only supported in Thymeleaf !!!**
+**!!! Currently only supported in Thymeleaf !!!**
 
 If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in
 your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
