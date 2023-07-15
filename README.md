@@ -259,7 +259,6 @@ A ViewAction enabled ViewComponent always needs to have one root element.
   <button view:action="countUp">Default ViewAction [GET]</button>
   <h3 th:text="${counter}"></h3>
 </div>
-
 ```
 Here is the corresponding ViewComponent class that has a `@GetViewAction` annotation on the countUp method.
 

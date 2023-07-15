@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.6.0-SNAPSHOT"
+version = "0.6.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
