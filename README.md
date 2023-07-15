@@ -303,7 +303,7 @@ The `hx-target="#actionviewcomponent"` and the `hx-swap="outerHTML"` attributes 
 </div>
 ```
 
-You can use also pass a custom path as annotation parameter: `@PostViewAction("/customPath/addItemAction")`
+You can also pass a custom path as annotation parameter: `@PostViewAction("/customPath/addItemAction")`
 
 You can use different ViewAction Annotations that map to the corresponding htmx ajax methods: https://htmx.org/docs/#ajax
 
