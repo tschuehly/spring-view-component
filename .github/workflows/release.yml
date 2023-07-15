@@ -1,6 +1,8 @@
 name: Publish package to the Maven Central Repository
 on:
   push:
+    branches:
+      - '**-snapshot'
     tags:
       - v*
   pull_request:
