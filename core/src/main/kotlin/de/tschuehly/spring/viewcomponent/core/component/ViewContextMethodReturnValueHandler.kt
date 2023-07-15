@@ -3,6 +3,7 @@ package de.tschuehly.spring.viewcomponent.core.component
 import de.tschuehly.spring.viewcomponent.core.IViewContext
 import de.tschuehly.spring.viewcomponent.core.action.CapturingResponseWrapper
 import de.tschuehly.spring.viewcomponent.core.toMap
+import jakarta.servlet.http.HttpServletResponseWrapper
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.NativeWebRequest
@@ -26,8 +27,10 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
             (IViewContext::class.java.isAssignableFrom(it.javaClass))
         } as IViewContext
         mavContainer.view = viewContext.componentTemplate
-        if(webRequest.nativeResponse is CapturingResponseWrapper){
-            (webRequest.nativeResponse as CapturingResponseWrapper).viewComponentBean = viewContext.componentBean
+        (webRequest.nativeResponse as HttpServletResponseWrapper).response.let {
+            if(it is CapturingResponseWrapper){
+                it.viewComponentBean = viewContext.componentBean
+            }
         }
         mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
     }
