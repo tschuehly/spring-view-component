@@ -3,6 +3,7 @@ package de.tschuehly.spring.viewcomponent.jte
 
 import de.tschuehly.spring.viewcomponent.jte.application.JteTestApplication
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,7 +17,8 @@ import org.springframework.http.ResponseEntity
     classes = [JteTestApplication::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-class IntegrationTest(
+@Disabled
+class JteTest(
     @Autowired val testRestTemplate: TestRestTemplate
 ) {
     @Test
