@@ -16,5 +16,13 @@ class ViewContext(override val contextAttributes: Array<out ViewProperty>) :
         this.componentTemplate = componentTemplate
 
     }
+    companion object{
+        @JvmStatic
+        fun of(vararg contextAttributes: ViewProperty): ViewContext {
+            return ViewContext(
+                *contextAttributes
+            )
+        }
+    }
 
 }
