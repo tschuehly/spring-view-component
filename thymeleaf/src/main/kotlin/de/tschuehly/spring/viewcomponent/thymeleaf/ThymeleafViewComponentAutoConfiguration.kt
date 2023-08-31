@@ -10,10 +10,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.thymeleaf.dialect.IDialect
 import org.thymeleaf.spring6.SpringTemplateEngine
-import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import org.thymeleaf.templatemode.TemplateMode
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.FileTemplateResolver
@@ -51,7 +49,7 @@ class ThymeleafViewComponentAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty("viewcomponent.localDevelopment")
+    @ConditionalOnProperty("spring.view-component.local-development")
     fun fileViewComponentTemplateResolver(): FileTemplateResolver {
         val fileViewComponentTemplateResolver = FileTemplateResolver()
         if (File("src/main/kotlin").isDirectory) {
@@ -68,6 +66,7 @@ class ThymeleafViewComponentAutoConfiguration {
         fileViewComponentTemplateResolver.checkExistence = true
         return fileViewComponentTemplateResolver
     }
+
     @Bean
     fun viewComponentTemplateResolver(): ClassLoaderTemplateResolver {
         val templateResolver = ClassLoaderTemplateResolver()
@@ -78,12 +77,6 @@ class ThymeleafViewComponentAutoConfiguration {
         templateResolver.order = 1
         templateResolver.checkExistence = true
         return templateResolver
-    }
-    @Bean
-    fun thymeleafViewContextContainerMethodReturnValueHandler(
-        thymeleafViewResolver: ThymeleafViewResolver
-    ): HandlerMethodReturnValueHandler {
-        return ThymeleafViewContextContainerMethodReturnValueHandler(thymeleafViewResolver)
     }
 
 

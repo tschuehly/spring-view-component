@@ -18,16 +18,16 @@ class ViewComponentAspect {
 
     @Around("isViewComponent() && execution(* *(..))")
     fun renderInject(joinPoint: ProceedingJoinPoint): IViewContext {
-
         val returnValue = joinPoint.proceed()
-        if (returnValue::class.isSubclassOf(IViewContext::class)) {
+        val viewContext = if(IViewContext::class.java.isAssignableFrom(returnValue.javaClass)){
             returnValue as IViewContext
-            val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
-            val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".", "/") + "/"
-            returnValue.componentTemplate = "$componentPackage$componentName"
-            returnValue.componentBean = joinPoint.target
-            return returnValue
+        }else{
+            throw ViewComponentException("${returnValue.javaClass} needs to implement ViewContext abstract class")
         }
-        throw Error("render() method does not return ViewContext")
+        val componentName = joinPoint.`this`.javaClass.simpleName.substringBefore("$$")
+        val componentPackage = joinPoint.`this`.javaClass.`package`.name.replace(".", "/") + "/"
+        IViewContext.componentBean = joinPoint.target
+        IViewContext.componentTemplate  = "$componentPackage$componentName"
+        return viewContext
     }
 }

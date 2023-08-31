@@ -242,16 +242,16 @@ class Router(
 }
 ```
 
+## Local Development
+
+You can enable hot-reloading of the templates in development:
+```properties
+spring.view-component.local-development=true
+```
+
 ## ViewAction: Interactivity with HTMX
 
 With ViewActions you can create interactive ViewComponents based on [htmx](https://htmx.org/) without having to reload the page.
-
-ViewAction integration needs to enable in your application.properties:
-```
-spring.view-component.view-action.enabled=true
-```
-
-Here you can see a ViewComponent with a ViewAction that increments a counter.
 
 You define a ViewAction inside your HTML template with the `view:action` attribute.
 A ViewAction enabled ViewComponent always needs to have one root element.
@@ -293,14 +293,14 @@ The hx-get attribute will create a http get request to the `/actionviewcomponent
 
 The `/actionviewcomponent/countup` endpoint will return the re-rendered ActionViewComponent template. 
 
-The `hx-target="#actionviewcomponent"` and the `hx-swap="outerHTML"` attributes will then swap the returned HTML to the div with the `id="actionviewcomponent"` that is automatically added to the root div.
+The `hx-target="#actionviewcomponent"` attribute will swap the returned HTML to the div with the `id="actionviewcomponent"` that is automatically added to the root div.
 
 
 ```html
 <div id="actionviewcomponent">
   <script defer src="https://unpkg.com/htmx.org@1.9.3"></script>
   <h2>ViewAction Get CountUp</h2>
-  <button hx-get="/actionviewcomponent/countup" hx-target="#actionviewcomponent" hx-swap="outerHTML">
+  <button hx-get="/actionviewcomponent/countup" hx-target="#actionviewcomponent">
     Default ViewAction [GET]
   </button>
 </div>
@@ -308,7 +308,7 @@ The `hx-target="#actionviewcomponent"` and the `hx-swap="outerHTML"` attributes 
 
 You can also pass a custom path as annotation parameter: `@PostViewAction("/customPath/addItemAction")`
 
-You can use different ViewAction Annotations that map to the corresponding htmx ajax methods: https://htmx.org/docs/#ajax
+You can use different ViewAction Annotations that map to the corresponding [htmx ajax methods](https://htmx.org/docs/#ajax): 
 
 - `@GetViewAction`
 - `@PostViewAction`
@@ -401,28 +401,7 @@ class HomeViewComponent(
     )
 }
 ```
-## Gradle Installation
 
-Add this snippet to your build.gradle.kts:
-```kotlin
-// build.gradle.kts
-sourceSets {
-    test {
-        resources {
-            srcDir("src/test/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-    main {
-        resources {
-            srcDir("src/main/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-
-}
-
-```
 ### Thymeleaf Dependency
 
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-thymeleaf) on Maven Central
@@ -431,6 +410,7 @@ sourceSets {
 // build.gradle.kts
 dependencies {
     implementation("de.tschuehly:spring-view-component-thymeleaf:LATEST_VERSION")
+    kapt("de.tschuehly:spring-view-component-core:LATEST_VERSION")
 }
 ```
 ### JTE Dependency
@@ -459,16 +439,12 @@ dependencies {
 // HomeViewComponent.java
 @ViewComponent
 public class HomeViewComponent {
-    private final ExampleService exampleService;
-
-    public HomeViewComponent(ExampleService exampleService) {
-        this.exampleService = exampleService;
-    }
-
+    @Autowired
+    private ExampleService exampleService;
+    
     public ViewContext render() {
-        return new ViewContext(
-                ViewProperty.of("helloWorld", "Hello World"),
-                ViewProperty.of("coffee", exampleService.getCoffee())
+        return ViewContext.of(
+                ViewProperty.of("helloWorld", "Hello World")
         );
     }
 }
@@ -480,11 +456,8 @@ public class HomeViewComponent {
 // Router.java
 @Controller
 public class Router {
-    private final HomeViewComponent homeViewComponent;
-
-    public Router(HomeViewComponent homeViewComponent) {
-        this.HomeViewComponent = homeViewComponent;
-    }
+    @Autowired
+    private HomeViewComponent homeViewComponent;
 
     @GetMapping("/")
     ViewContext homeView() {
@@ -496,19 +469,17 @@ public class Router {
 ## Parameter components with Java
 
 ```java
-
 @ViewComponent
 public class ParameterViewComponent {
     public ViewContext render(String parameter) throws Exception {
         if (parameter == null) {
             throw new Exception("You need to pass in a parameter");
         }
-        return new ViewContext(
+        return ViewContext.of(
                 ViewProperty.of("office", parameter)
         );
     }
 }
-
 ```
 
 
@@ -516,17 +487,12 @@ public class ParameterViewComponent {
 // HomeViewComponent.java
 @ViewComponent
 public class HomeViewComponent {
-    private final ExampleService exampleService;
-
-    public HomeViewComponent(ExampleService exampleService) {
-        this.exampleService = exampleService;
-    }
+    @Autowired
+    private ExampleService exampleService;
 
     public ViewContext render() {
-        return new ViewContext(
-                ViewProperty.of("helloWorld", "Hello World"),
-                ViewProperty.of("coffee", exampleService.getCoffee()),
-                ViewProperty.of("office", exampleService.getOfficeHours())
+        return ViewContext.of(
+                ViewProperty.of("helloWorld", "Hello World")
         );
     }
 }
@@ -539,17 +505,14 @@ public class HomeViewComponent {
 // Router.java
 @Controller
 public class Router {
-    private final NavigationViewComponent navigationViewComponent;
-    private final TableViewComponent tableViewComponent;
-
-    public Router(NavigationViewComponent navigationViewComponent, TableViewComponent tableViewComponent) {
-        this.navigationViewComponent = navigationViewComponent;
-        this.tableViewComponent = tableViewComponent;
-    }
-
+    @Autowired
+    private NavigationViewComponent navigationViewComponent;
+    @Autowired
+    private TableViewComponent tableViewComponent;
+    
     @GetMapping("/multi-component")
     ViewContextContainer multipleComponent() {
-        return new ViewContextContainer(
+        return ViewContextContainer.of(
                 this.navigationViewComponent.render(),
                 this.tableViewComponent.render()
         );
@@ -563,18 +526,13 @@ public class Router {
 // HomeViewComponent.java
 @ViewComponent
 public class HomeViewComponent implements Supplier<ViewContext> {
-    private final ExampleService exampleService;
-
-    public HomeViewComponent(ExampleService exampleService) {
-        this.exampleService = exampleService;
-    }
+    @Autowired
+    private ExampleService exampleService;
 
     @Override
     public ViewContext get() {
-        return new ViewContext(
-                ViewProperty.of("helloWorld", "Hello World"),
-                ViewProperty.of("coffee", exampleService.getCoffee()),
-                ViewProperty.of("office", exampleService.getOfficeHours())
+        return ViewContext.of(
+                ViewProperty.of("helloWorld", "Hello World")
         );
     }
 }
@@ -588,19 +546,22 @@ Add this to your pom.xml:
 
 <project>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.html</include>
-                    <include>**/*.jte</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>5
-                <version>3.3.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>de.tschuehly</groupId>
+                            <artifactId>spring-view-component-core</artifactId>
+                            <version>${de.tschuehly.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -627,15 +588,4 @@ Add this to your pom.xml:
     <artifactId>spring-view-component-jte</artifactId>
     <version>LATEST_VERSION</version>
 </dependency>
-```
-
-# General Configuration
-
-
-## Local Development
-
-To enable live reload of the components on each save without rebuilding the application add this configuration:
-
-```properties
-spring.view-component.localDevelopment=true
 ```

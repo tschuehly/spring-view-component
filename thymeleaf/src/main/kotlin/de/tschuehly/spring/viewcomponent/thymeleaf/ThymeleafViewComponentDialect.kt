@@ -9,7 +9,7 @@ class ThymeleafViewComponentDialect : AbstractProcessorDialect(
 ) {
     override fun getProcessors(dialectPrefix: String): MutableSet<IProcessor> {
         return mutableSetOf(
-            ThymeleafViewComponentProcessor(dialectPrefix)
+            ThymeleafViewComponentTagProcessor(dialectPrefix)
         )
 
     }

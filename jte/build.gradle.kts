@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "3.1.0"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.1.2"
+    id("io.spring.dependency-management") version "1.1.2"
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
 
@@ -13,14 +13,15 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.6.0"
+version = "0.6.2-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.6.0")
+    api("de.tschuehly:spring-view-component-core:0.6.2-SNAPSHOT")
+    implementation("io.github.classgraph:classgraph:4.8.162")
 //    implementation("gg.jte:jte-spring-boot-starter-3:3.0.0")
     implementation(files("./jte-spring-boot-starter-3-3.0.2-SNAPSHOT.jar"))
     implementation("org.springframework.boot:spring-boot-starter-web")

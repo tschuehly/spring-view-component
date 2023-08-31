@@ -1,0 +1,48 @@
+<html>
+<head>
+  <script src="http://localhost:35729/livereload.js"></script>
+  <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
+</head>
+<body>
+<h2>ViewAction Get CountUp</h2>
+
+<button view:action="countUp">Default ViewAction [GET]</button>
+<h3 th:text="${counter}"></h3>
+
+<h2>ViewAction Post AddItem</h2>
+<form view:action="addItem">
+  <input type="text" name="item">
+  <button type="submit">Save Item</button>
+</form>
+<table>
+  <tr>
+    <th>Item</th>
+    <th>Action</th>
+  </tr>
+  <tr th:each="item : ${itemList}">
+    <td>
+      <span th:text="${item.value}"></span>
+    </td>
+    <td>
+      <button th:view:action="|deleteItem?id=${item.key}|">Delete Item [[${item.key}]]</button>
+    </td>
+  </tr>
+</table>
+
+<h2>ViewAction Put/Patch Person Form</h2>
+
+<form th:object="${person}" style="display: inline-grid; gap: 0.5rem">
+  <label>
+    Name <input type="text" th:field="*{name}">
+  </label>
+  <label>
+    Age: <input type="number" th:field="*{age}">
+  </label>
+  <label>
+    Location: <input type="text" th:field="*{location}">
+  </label>
+  <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
+  <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
+</form>
+</body>
+</html>
