@@ -22,7 +22,7 @@ class JteViewComponentCompiler() : ViewComponentCompiler {
         )
 
 
-        config.classPath = classDirectory
+        config.classPath = null
         val compiler = TemplateCompiler(
             /* config = */ config,
             /* codeResolver = */ DirectoryCodeResolver(rootDir),

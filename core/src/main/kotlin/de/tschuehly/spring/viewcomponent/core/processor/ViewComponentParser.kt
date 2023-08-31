@@ -27,17 +27,16 @@ class ViewComponentParser(
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
-
         try {
             val clazz = Class.forName("de.tschuehly.spring.viewcomponent.jte.JteViewComponentCompiler")
             val compiler = (clazz.getConstructor().newInstance() as ViewComponentCompiler)
-
             val classDir = getClassDirPath(rootDir)
             compiler.compile(
                 rootDir = resourceDirPath.toAbsolutePath(),
                 names = srcFile.name,
                 classDirectory = listOf(
-                    classDir.toAbsolutePath().toString()
+                    Path.of("jte-classes").toAbsolutePath().toString()
+                    // classDir.toAbsolutePath().toString()
                 )
             )
         } catch (e: ClassNotFoundException) {
