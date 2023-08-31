@@ -1,0 +1,31 @@
+<html>
+
+<nav>
+    This is a Navbar
+</nav>
+
+<body>
+<div id="actionviewcomponent" nestedviewcomponent=""><div>
+    <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
+    <h2>ViewAction Get CountUp</h2>
+
+    <button view:action="countUp">Default ViewAction [GET]</button>
+    <h3>0</h3>
+
+    <h2>ViewAction Post AddItem</h2>
+    <form view:action="addItem">
+        <input type="text" name="item">
+        <button type="submit">Save Item</button>
+    </form>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Action</th>
+        </tr>
+    </table>
+</div></div>
+</body>
+<footer>
+    This is a footer
+</footer>
+</html>

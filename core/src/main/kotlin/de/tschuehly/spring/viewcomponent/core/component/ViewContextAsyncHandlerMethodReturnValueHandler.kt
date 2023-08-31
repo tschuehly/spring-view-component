@@ -34,8 +34,8 @@ class ViewContextAsyncHandlerMethodReturnValueHandler() : AsyncHandlerMethodRetu
         val viewContext = responseEntity.body?.takeIf {
             IViewContext::class.java.isAssignableFrom(it.javaClass)
         } as IViewContext
-        mavContainer.view = viewContext.componentTemplate
-        mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
+        mavContainer.view = IViewContext.componentTemplate
+//        mavContainer.addAllAttributes(viewContext.contextAttributes.toMap())
     }
 
     override fun isAsyncReturnValue(returnValue: Any?, returnType: MethodParameter): Boolean {

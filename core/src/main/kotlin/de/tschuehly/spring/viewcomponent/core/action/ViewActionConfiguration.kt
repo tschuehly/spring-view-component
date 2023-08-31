@@ -11,6 +11,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.util.pattern.PathPatternParser
 import java.lang.reflect.Method
 import de.tschuehly.spring.viewcomponent.core.action.ViewActionRegistry.PathMapping
+import org.slf4j.LoggerFactory
+
 @Configuration
 class ViewActionConfiguration(
     val context: ApplicationContext,
@@ -23,8 +25,9 @@ class ViewActionConfiguration(
     fun registerViewActionEndpoints() {
         val viewComponentBeans = context.getBeansWithAnnotation(ViewComponent::class.java)
 
-        viewComponentBeans.forEach { (viewComponentName, viewComponentBean) ->
+        viewComponentBeans.forEach { (_, viewComponentBean) ->
             val beanType = ClassUtils.getUserClass(viewComponentBean.javaClass)
+            val viewComponentName = beanType.simpleName
             val viewComponentMethods = beanType.methods
             processViewComponentBean(viewComponentMethods, viewComponentName, viewComponentBean)
         }

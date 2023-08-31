@@ -1,5 +1,6 @@
 package de.tschuehly.spring.viewcomponent.core.action
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMethod
 import java.lang.reflect.Method
@@ -8,11 +9,14 @@ import java.lang.reflect.Method
 class ViewActionRegistry {
     private val viewActionMapping = mutableMapOf<String, PathMapping>()
 
+    private val logger = LoggerFactory.getLogger(ViewActionRegistry::class.java)
+
     fun registerMapping(viewComponentName: String, mapping: PathMapping) {
         val key = viewActionKey(viewComponentName, mapping.method.name)
         if (viewActionMapping.containsKey(key)) {
             throw ViewActionRegistryException("Cannot register duplicate path mapping")
         }
+        logger.info("Registered endpoint ${mapping.path} to $viewComponentName::${mapping.method.name}")
         viewActionMapping[key] = mapping
     }
 
