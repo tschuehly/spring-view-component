@@ -7,25 +7,18 @@ plugins {
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("kapt") version "1.8.21"
-    id("gg.jte.gradle") version("3.0.2")
+  //  id("gg.jte.gradle") version("3.0.2")
 }
 
 group = "de.tschuehly"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-jte{
-    generate()
-}
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
 }
 
-//jte {
-//    sourceDirectory.set(Path.of("src/main/kotlin"))
-//    generate()
-//}
 dependencies {
 //    implementation("de.tschuehly:spring-view-component-jte:0.6.0")
     implementation("de.tschuehly:spring-view-component-jte:0.6.2-SNAPSHOT")
@@ -54,17 +47,10 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-//sourceSets {
-//    main {
-//        resources {
-//            srcDir("src/main/kotlin")
-//            exclude("**/*.kt")
-//        }
-//    }
-//    test {
-//        resources {
-//            srcDir("src/test/kotlin")
-//            exclude("**/*.kt")
-//        }
-//    }
-//}
+sourceSets{
+    main{
+        java{
+            srcDir("build/generated-sources/jte")
+        }
+    }
+}

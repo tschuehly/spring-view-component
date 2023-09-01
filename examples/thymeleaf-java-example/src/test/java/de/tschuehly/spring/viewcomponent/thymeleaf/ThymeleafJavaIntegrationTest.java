@@ -54,14 +54,14 @@ class ThymeleafJavaIntegrationTest {
                           <script src="http://localhost:35729/livereload.js"></script>
                           <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
                         </head>
-                        <body>
+                        <body id="actionviewcomponent">
                         <h2>ViewAction Get CountUp</h2>
 
-                        <button view:action="countUp">Default ViewAction [GET]</button>
+                        <button hx-get="/custompath/countup" hx-target="#actionviewcomponent">Default ViewAction [GET]</button>
                         <h3>0</h3>
 
                         <h2>ViewAction Post AddItem</h2>
-                        <form view:action="addItem">
+                        <form hx-post="/actionviewcomponent/additem" hx-target="#actionviewcomponent">
                           <input type="text" name="item">
                           <button type="submit">Save Item</button>
                         </form>
@@ -85,8 +85,8 @@ class ThymeleafJavaIntegrationTest {
                           <label>
                             Location: <input type="text" id="location" name="location" value="Ludwigsburg">
                           </label>
-                          <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
-                          <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
+                          <button type="submit" hx-put="/actionviewcomponent/savepersonput" hx-target="#actionviewcomponent">Save Changes using Put</button>
+                          <button type="submit" hx-patch="/actionviewcomponent/savepersonpatch" hx-target="#actionviewcomponent">Save Changes using Patch</button>
                         </form>
                         </body>
                         </html>
@@ -103,23 +103,24 @@ class ThymeleafJavaIntegrationTest {
                 //language=html
                 """
                         <html>
-                        <body>
+                        <body id="layoutviewcomponent">
                         <nav>
                           This is the NavBar
                         </nav>
-                        <div id="actionviewcomponent" data-nested-view-component><html xmlns="http://www.w3.org/1999/xhtml">
+                        <div id="actionviewcomponent" data-nested-view-component>
+                        <html xmlns="http://www.w3.org/1999/xhtml">
                         <head>
                           <script src="http://localhost:35729/livereload.js"></script>
                           <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
                         </head>
-                        <body>
+                        <body id="actionviewcomponent">
                         <h2>ViewAction Get CountUp</h2>
 
-                        <button view:action="countUp">Default ViewAction [GET]</button>
+                        <button hx-get="/custompath/countup" hx-target="#actionviewcomponent">Default ViewAction [GET]</button>
                         <h3>0</h3>
 
                         <h2>ViewAction Post AddItem</h2>
-                        <form view:action="addItem">
+                        <form hx-post="/actionviewcomponent/additem" hx-target="#actionviewcomponent">
                           <input type="text" name="item">
                           <button type="submit">Save Item</button>
                         </form>
@@ -143,12 +144,12 @@ class ThymeleafJavaIntegrationTest {
                           <label>
                             Location: <input type="text" id="location" name="location" value="Ludwigsburg">
                           </label>
-                          <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
-                          <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
+                          <button type="submit" hx-put="/actionviewcomponent/savepersonput" hx-target="#actionviewcomponent">Save Changes using Put</button>
+                          <button type="submit" hx-patch="/actionviewcomponent/savepersonpatch" hx-target="#actionviewcomponent">Save Changes using Patch</button>
                         </form>
                         </body>
-                        </html></div>
-
+                        </html>
+                        </div>
                         <footer>
                           This is a footer
                         </footer>
@@ -166,7 +167,7 @@ class ThymeleafJavaIntegrationTest {
         var expectedHtml =
                 """
                         <html>
-                        <body>
+                        <body id="layoutviewcomponent">
                         <nav>
                           This is the NavBar
                         </nav>
@@ -198,16 +199,16 @@ class ThymeleafJavaIntegrationTest {
         );
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(
-                expectedHtml,
-                response.getBody()
+                rmWhitespaceBetweenHtmlTags(expectedHtml),
+                rmWhitespaceBetweenHtmlTags(response.getBody())
         );
     }
 
     String rmWhitespaceBetweenHtmlTags(String html) {
-        return html.replace("(?<=>)(\\s*)(?=\\w)", "")
-                .replace("(?<=\\w)(\\s*)(?=<)", "")
-                .replace("(?<=>)(\\s*)(?=<)", "")
-                .replace("\n", "")
+        return html.replaceAll("(?<=>)(\\s*)(?=\\w)", "")
+                .replaceAll("(?<=\\w)(\\s*)(?=<)", "")
+                .replaceAll("(?<=>)(\\s*)(?=<)", "")
+                .replaceAll("\r\n", "")
                 .trim();
     }
 }

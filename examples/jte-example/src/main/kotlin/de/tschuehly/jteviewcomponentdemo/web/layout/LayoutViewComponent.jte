@@ -1,5 +1,4 @@
-@import de.tschuehly.spring.viewcomponent.jte.ViewContext
-@param ViewContext nestedViewComponent
+@param de.tschuehly.spring.viewcomponent.jte.ViewContext nestedViewComponent
 <html>
 
 <nav>
