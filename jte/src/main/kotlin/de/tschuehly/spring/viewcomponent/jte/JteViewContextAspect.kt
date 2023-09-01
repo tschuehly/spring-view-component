@@ -1,5 +1,6 @@
 package de.tschuehly.spring.viewcomponent.jte
 
+import de.tschuehly.spring.viewcomponent.core.IViewContext
 import gg.jte.TemplateEngine
 import gg.jte.springframework.boot.autoconfigure.JteProperties
 import org.aspectj.lang.annotation.AfterReturning
@@ -24,9 +25,9 @@ class JteViewContextAspect(
     }
 
     @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "viewContext")
-    fun renderInject(viewContext: ViewContext): ViewContext {
-        viewContext.jteTemplateEngine = jteTemplateEngine
-        viewContext.templateSuffix = jteProperties.templateSuffix
+    fun renderInject(viewContext: IViewContext): IViewContext {
+        IViewContext.jteTemplateEngine = jteTemplateEngine
+        IViewContext.templateSuffx = jteProperties.templateSuffix
         return viewContext
     }
 }

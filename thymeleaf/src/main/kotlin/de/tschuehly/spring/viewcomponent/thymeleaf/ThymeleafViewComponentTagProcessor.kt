@@ -63,12 +63,9 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         SpringContextUtils.getRequestContext(webContext).model.putAll(IViewContext.getAttributes(viewContext))
         webContext.setVariables(IViewContext.getAttributes(viewContext))
 
-        val componentName = viewContext.javaClass.enclosingClass.simpleName.substringBefore("$$")
-        val componentPackage = viewContext.javaClass.enclosingClass.`package`.name.replace(".", "/") + "/"
-
         val modelFactory = webContext.modelFactory
         val viewComponentBody = modelFactory.createText(
-            engine.process("$componentPackage$componentName", webContext)
+            engine.process(IViewContext.getTemplate(viewContext), webContext)
         )
 
         structureHandler.setAttribute("id", viewContext.javaClass.enclosingClass.simpleName.lowercase())

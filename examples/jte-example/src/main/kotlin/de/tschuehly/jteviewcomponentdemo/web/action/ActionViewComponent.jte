@@ -1,14 +1,16 @@
 @param de.tschuehly.jteviewcomponentdemo.web.action.ActionViewComponent.Person person
 @param java.util.HashMap<Integer,String> itemList
 @param Integer counter
-
-<div>TEST12
-<script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
+<html>
+<head>
+    <script src="http://localhost:35729/livereload.js"></script>
+    <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
+</head>
+<body>
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
 <h3>${counter}</h3>
-
 
 <h2>ViewAction Post AddItem</h2>
 <form view:action="addItem">
@@ -36,15 +38,16 @@
 
 <form style="display: inline-grid; gap: 0.5rem">
     <label>
-        Name <input type="text" name="name" value="${person.getName()}">
+        Name <input type="text" id="name" name="name" value="${person.getName()}">
     </label>
     <label>
-        Age: <input type="number" name="age" value="${person.getAge()}">
+        Age: <input type="number" id="age" name="age" value="${person.getAge()}">
     </label>
     <label>
-        Location: <input type="text" name="location" value="${person.getLocation()}">
+        Location: <input type="text" id="location" name="location" value="${person.getLocation()}">
     </label>
     <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
     <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
 </form>
-</div>
+</body>
+</html>
