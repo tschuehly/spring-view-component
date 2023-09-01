@@ -6,7 +6,6 @@ import de.tschuehly.jteviewcomponentdemo.web.layout.LayoutViewComponent
 import de.tschuehly.jteviewcomponentdemo.web.simple.SimpleViewComponent
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ModelAttribute
 
 @Controller
 class TestController(

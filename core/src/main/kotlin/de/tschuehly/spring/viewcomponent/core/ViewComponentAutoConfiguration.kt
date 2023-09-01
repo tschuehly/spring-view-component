@@ -6,8 +6,10 @@ import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentProcessingE
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.devtools.classpath.ClassPathRestartStrategy
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -20,7 +22,10 @@ class ViewComponentAutoConfiguration {
 
     @Configuration
     @ConditionalOnProperty("spring.view-component.local-development")
-    class LocalDevConfig {
+    class LocalDevConfig(
+        private val classPathRestartStrategy: ClassPathRestartStrategy,
+        private val eventPublisher: ApplicationEventPublisher
+    ) {
         val gradleKotlinBuildDir = "build/classes/kotlin/main/"
         val javaMavenBuildDir = "target/classes/"
         private val logger = LoggerFactory.getLogger(LocalDevConfig::class.java)
@@ -33,7 +38,14 @@ class ViewComponentAutoConfiguration {
             val (srcDir, buildType) = getSrcDir(classPath)
             logger.info("Registering fileSystemWatcher: ${srcDir.path}")
             fileSystemWatcher.addSourceDirectory(srcDir)
-            fileSystemWatcher.addListener(ViewComponentChangeListener(applicationContext, buildType))
+            fileSystemWatcher.addListener(
+                ViewComponentChangeListener(
+                    applicationContext,
+                    buildType,
+                    classPathRestartStrategy,
+                    eventPublisher
+                )
+            )
             fileSystemWatcher.start()
             return fileSystemWatcher
         }

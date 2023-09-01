@@ -21,30 +21,68 @@ class ViewComponentParser(
         MAVEN, GRADLE
     }
 
-    fun parseFile() {
+    fun parseFile(isLiveReload: Boolean) {
         val parsedHtml = parseSrcHtmlFile()
         val (rootDir, packagePath) = getRootDirAndPackagePath(srcFile, messager)
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
-        try {
-            val clazz = Class.forName("de.tschuehly.spring.viewcomponent.jte.JteViewComponentCompiler")
-            val compiler = (clazz.getConstructor().newInstance() as ViewComponentCompiler)
-            val classDir = getClassDirPath(rootDir)
-            compiler.compile(
-                rootDir = resourceDirPath.toAbsolutePath(),
-                names = srcFile.name,
-                classDirectory = listOf(
-                    Path.of("jte-classes").toAbsolutePath().toString()
-                    // classDir.toAbsolutePath().toString()
-                )
-            )
+        compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
+
+
+    }
+
+    private fun compileJte(
+        rootDir: String,
+        isLiveReload: Boolean,
+        resourceDirPath: Path,
+        resourceHtmlFile: File,
+        packagePath: String
+    ) {
+        val jetCompilerClazz = try {
+            Class.forName("de.tschuehly.spring.viewcomponent.jte.JteViewComponentCompiler")
         } catch (e: ClassNotFoundException) {
             messager?.printMessage(
                 Diagnostic.Kind.NOTE,
                 "If you don't use JTE this message can be ignored: JteViewComponentCompiler not found"
             )
+            return
         }
+        val compiler = (jetCompilerClazz.getConstructor().newInstance() as ViewComponentCompiler)
+        val classDir = getGeneratedSourcesDir(rootDir)
+        val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
+            it.substring(0, it.length - 1)
+        }
+        if (isLiveReload) {
+            compiler.compile(
+                rootDir = resourceDirPath.toAbsolutePath(),
+                names = srcFile.name,
+                classDirectory = listOf(
+                    FileSystems.getDefault()
+                        .getPath(
+                            rootDir,
+                            "build",
+                            "classes",
+                            "java",
+                            "main"
+                        ).toAbsolutePath().toString()
+
+                ),
+                packageName
+            )
+            resourceHtmlFile.delete()
+            return
+        }
+        compiler.generate(
+            rootDir = resourceDirPath.toAbsolutePath(),
+            names = srcFile.name,
+            classDirectory = listOf(
+                classDir.toAbsolutePath().toString()
+            ),
+            packageName
+        )
+        resourceHtmlFile.delete()
+
     }
 
     private fun File.writeAll(
@@ -66,10 +104,10 @@ class ViewComponentParser(
             .getPath(rootDir, "target", "classes", packagePath)
     }
 
-    private fun getClassDirPath(rootDir: String): Path {
+    private fun getGeneratedSourcesDir(rootDir: String): Path {
         return if (buildType == BuildType.GRADLE) {
             FileSystems.getDefault()
-                .getPath(rootDir, "build", "classes", "kotlin", "main")
+                .getPath(rootDir, "build", "generated-sources", "jte")
         } else {
             FileSystems.getDefault()
                 .getPath(rootDir, "target", "classes")
