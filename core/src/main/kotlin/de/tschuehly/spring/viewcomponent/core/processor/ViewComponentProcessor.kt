@@ -14,8 +14,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Name
 import javax.lang.model.element.TypeElement
-import javax.lang.model.type.TypeVisitor
-import javax.lang.model.util.SimpleTypeVisitor14
 import javax.tools.Diagnostic
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
@@ -52,7 +50,7 @@ class ViewComponentProcessor : AbstractProcessor() {
                     viewComponentName = viewComponentName,
                     messager = messager,
                 )
-                viewComponentParser.parseFile()
+                viewComponentParser.parseFile(false)
             }
         }
         return true

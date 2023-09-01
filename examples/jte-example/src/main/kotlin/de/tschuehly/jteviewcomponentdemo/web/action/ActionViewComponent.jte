@@ -2,7 +2,7 @@
 @param java.util.HashMap<Integer,String> itemList
 @param Integer counter
 
-<div>
+<div>TEST12
 <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
 <h2>ViewAction Get CountUp</h2>
 

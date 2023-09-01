@@ -22,7 +22,7 @@ repositories {
 dependencies {
     api("de.tschuehly:spring-view-component-core:0.6.2-SNAPSHOT")
     implementation("io.github.classgraph:classgraph:4.8.162")
-//    implementation("gg.jte:jte-spring-boot-starter-3:3.0.0")
+//    implementation("gg.jte:jte-spring-boot-starter-3:3.0.4-SNAPSHOT")
     implementation(files("./jte-spring-boot-starter-3-3.0.2-SNAPSHOT.jar"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")

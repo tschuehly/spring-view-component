@@ -2,6 +2,7 @@ package de.tschuehly.spring.viewcomponent.core.processor
 
 import java.nio.file.Path
 
-fun interface ViewComponentCompiler {
-    fun compile(rootDir: Path, names: String, classDirectory: List<String>): String
+interface ViewComponentCompiler {
+    fun generate(rootDir: Path, names: String, classDirectory: List<String>, packageName: String): String
+    fun compile(rootDir: Path, names: String, classDirectory: List<String>, packageName: String): String
 }

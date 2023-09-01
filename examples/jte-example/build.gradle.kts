@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.file.Path
 
 plugins {
     id("org.springframework.boot") version "3.1.2"
@@ -13,17 +14,26 @@ group = "de.tschuehly"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
+jte{
+    generate()
+}
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
 }
 
-jte {
-    precompile()
-}
+//jte {
+//    sourceDirectory.set(Path.of("src/main/kotlin"))
+//    generate()
+//}
 dependencies {
+//    implementation("de.tschuehly:spring-view-component-jte:0.6.0")
     implementation("de.tschuehly:spring-view-component-jte:0.6.2-SNAPSHOT")
     kapt("de.tschuehly:spring-view-component-core:0.6.2-SNAPSHOT")
+
+    implementation("org.webjars.npm:htmx.org:1.9.2")
+    implementation("org.webjars:webjars-locator:0.47")
+
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -44,17 +54,17 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-    test {
-        resources {
-            srcDir("src/test/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-}
+//sourceSets {
+//    main {
+//        resources {
+//            srcDir("src/main/kotlin")
+//            exclude("**/*.kt")
+//        }
+//    }
+//    test {
+//        resources {
+//            srcDir("src/test/kotlin")
+//            exclude("**/*.kt")
+//        }
+//    }
+//}
