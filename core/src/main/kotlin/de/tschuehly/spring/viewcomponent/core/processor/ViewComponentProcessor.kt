@@ -117,16 +117,10 @@ class ViewComponentProcessor : AbstractProcessor() {
                 )
             }
 
-//        if (!renderReturnType.toString().contains("ViewContext")) {
-//            messager.printMessage(
-//                Diagnostic.Kind.ERROR,
-//                "Your render method in the $element needs to return a ViewContext"
-//            )
-//            throw ViewComponentProcessingException(
-//                "Your render method in the $element needs to return a ViewContext",
-//                null
-//            )
-//        }
+        val viewProperties = ((element.enclosedElements.filter { it.kind == ElementKind.METHOD }
+            .find { it.simpleName.toString() == "render" })?.asType().toString().substring(2)
+            .let { name -> element.enclosedElements.find { it.toString() == name } })
+            ?.enclosedElements?.filter { it.kind == ElementKind.FIELD }
     }
 
     private fun getSrcHtmlFile(srcDirPath: Path, viewComponentName: Name, messager: Messager): File {
