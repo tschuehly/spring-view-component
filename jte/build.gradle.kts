@@ -13,14 +13,14 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.6.2-SNAPSHOT"
+version = "0.7.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.6.2-SNAPSHOT")
+    api("de.tschuehly:spring-view-component-core:0.7.0-SNAPSHOT")
     implementation("io.github.classgraph:classgraph:4.8.162")
     implementation(files("./jte-spring-boot-starter-3-3.0.2-SNAPSHOT.jar"))
     implementation("org.springframework.boot:spring-boot-starter-web")
