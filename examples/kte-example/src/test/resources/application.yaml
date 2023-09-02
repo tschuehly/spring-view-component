@@ -1,0 +1,10 @@
+gg.jte.templateLocation: jte/src/test/kotlin
+logging:
+  level:
+    org.springframework.web: TRACE
+server:
+  port: 8084
+spring:
+  view-component:
+    view-action:
+      enabled: true

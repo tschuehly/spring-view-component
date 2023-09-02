@@ -1,0 +1,17 @@
+@param nestedViewComponent: de.tschuehly.spring.viewcomponent.jte.ViewContext
+<html>
+
+<nav>
+  This is a Navbar
+</nav>
+
+<body>
+${nestedViewComponent}
+
+</body>
+
+
+<footer>
+  This is a footer
+</footer>
+</html>
