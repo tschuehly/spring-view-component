@@ -16,11 +16,9 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
 }
 
 dependencies {
-//    implementation("de.tschuehly:spring-view-component-jte:0.6.0")
     implementation("de.tschuehly:spring-view-component-jte:0.6.2-SNAPSHOT")
     kapt("de.tschuehly:spring-view-component-core:0.6.2-SNAPSHOT")
 
@@ -46,6 +44,9 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 sourceSets{
     main{
