@@ -140,8 +140,8 @@ We can nest components with the attribute `view:component="${viewContext}"`.
 
 We can then invoke the render method on the ViewComponent, both with parameter or without parameter
 ```html
-@import de.tschuehly.jteviewcomponentdemo.web.example.ExampleViewComponent
-@import de.tschuehly.jteviewcomponentdemo.web.para.ParameterViewComponent
+@import de.tschuehly.kteviewcomponentexample.web.example.ExampleViewComponent
+@import de.tschuehly.kteviewcomponentexample.web.para.ParameterViewComponent
 
 @param ExampleViewComponent exampleViewComponent
 @param ParameterViewComponent parameterViewComponent

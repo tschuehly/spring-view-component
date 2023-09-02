@@ -5,18 +5,14 @@ import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.Advised
 import org.springframework.aop.support.AopUtils
-import org.springframework.boot.devtools.classpath.ClassPathRestartStrategy
 import org.springframework.boot.devtools.filewatch.ChangedFiles
 import org.springframework.boot.devtools.filewatch.FileChangeListener
 import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationEventPublisher
 
 
 class ViewComponentChangeListener(
     private val applicationContext: ApplicationContext,
-    private val buildType: ViewComponentParser.BuildType,
-    private val classPathRestartStrategy: ClassPathRestartStrategy,
-    private val eventPublisher: ApplicationEventPublisher
+    private val buildType: ViewComponentParser.BuildType
 ) : FileChangeListener {
     private val logger = LoggerFactory.getLogger(ViewComponentChangeListener::class.java)
     override fun onChange(changeSet: MutableSet<ChangedFiles>) {

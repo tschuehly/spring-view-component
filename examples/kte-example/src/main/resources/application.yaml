@@ -3,5 +3,6 @@ spring.view-component.local-development: true
 logging:
   level:
     org.springframework.web: TRACE
+    de.tschuehly.spring.viewcomponent: DEBUG
 server:
   port: 8081

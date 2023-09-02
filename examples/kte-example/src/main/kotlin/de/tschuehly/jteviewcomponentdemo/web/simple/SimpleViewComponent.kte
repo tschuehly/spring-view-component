@@ -1,5 +1,0 @@
-@param helloWorld: String
-<div>
-  <h2>This is the SimpleViewComponent</h2>
-  <div>${helloWorld}</div>
-</div>

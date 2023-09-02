@@ -41,9 +41,7 @@ class ViewComponentAutoConfiguration {
             fileSystemWatcher.addListener(
                 ViewComponentChangeListener(
                     applicationContext,
-                    buildType,
-                    classPathRestartStrategy,
-                    eventPublisher
+                    buildType
                 )
             )
             fileSystemWatcher.start()
