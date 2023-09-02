@@ -49,40 +49,47 @@ class ViewComponentParser(
             return
         }
         val compiler = (jetCompilerClazz.getConstructor().newInstance() as ViewComponentCompiler)
-        val classDir = getGeneratedSourcesDir(rootDir)
+
         val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
             it.substring(0, it.length - 1)
         }
-        if (isLiveReload) {
-            compiler.compile(
+
+        if (isLiveReload == false) {
+            val classDir = getGeneratedSourcesDir(rootDir)
+            compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
                 names = srcFile.name,
                 classDirectory = listOf(
-                    FileSystems.getDefault()
-                        .getPath(
-                            rootDir,
-                            "build",
-                            "classes",
-                            "java",
-                            "main"
-                        ).toAbsolutePath().toString()
-
+                    classDir.toAbsolutePath().toString()
                 ),
                 packageName
             )
             resourceHtmlFile.delete()
             return
         }
-        compiler.generate(
+
+        val languageType = if (resourceHtmlFile.extension == "kte") {
+            "kotlin"
+        } else {
+            "java"
+        }
+        compiler.compile(
             rootDir = resourceDirPath.toAbsolutePath(),
             names = srcFile.name,
             classDirectory = listOf(
-                classDir.toAbsolutePath().toString()
+                FileSystems.getDefault()
+                    .getPath(
+                        rootDir,
+                        "build",
+                        "classes",
+                        languageType,
+                        "main"
+                    ).toAbsolutePath().toString()
+
             ),
             packageName
         )
         resourceHtmlFile.delete()
-
     }
 
     private fun File.writeAll(
