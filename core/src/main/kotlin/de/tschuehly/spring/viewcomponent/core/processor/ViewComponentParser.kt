@@ -28,8 +28,6 @@ class ViewComponentParser(
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
         compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
-
-
     }
 
     private fun compileJte(

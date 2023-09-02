@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-jte:0.6.2-SNAPSHOT")
-    kapt("de.tschuehly:spring-view-component-core:0.6.2-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-jte:0.7.0-SNAPSHOT")
+    kapt("de.tschuehly:spring-view-component-core:0.7.0-SNAPSHOT")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator:0.47")
