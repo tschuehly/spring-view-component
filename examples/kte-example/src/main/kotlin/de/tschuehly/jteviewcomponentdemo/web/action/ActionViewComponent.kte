@@ -1,0 +1,53 @@
+@param person: de.tschuehly.jteviewcomponentdemo.web.action.ActionViewComponent.Person
+@param itemList: MutableMap<Int, String>
+@param counter: Int
+<html>
+<head>
+    <script src="http://localhost:35729/livereload.js"></script>
+    <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
+</head>
+<body>
+<h2>ViewAction Get CountUp</h2>
+
+<button view:action="countUp">Default ViewAction [GET]</button>
+<h3>${counter}</h3>
+
+<h2>ViewAction Post AddItem</h2>
+<form view:action="addItem">
+    <input type="text" name="item">
+    <button type="submit">Save Item</button>
+</form>
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Action</th>
+    </tr>
+    @for(item in itemList)
+        <tr>
+            <td>
+                <span>${item.value}</span>
+            </td>
+            <td>
+                <button view:action="deleteItem?id=${item.key}">Delete Item ${item.key}</button>
+            </td>
+        </tr>
+    @endfor
+</table>
+
+<h2>ViewAction Put/Patch Person Form</h2>
+
+<form style="display: inline-grid; gap: 0.5rem">
+    <label>
+        Name <input type="text" id="name" name="name" value="${person.name}">
+    </label>
+    <label>
+        Age: <input type="number" id="age" name="age" value="${person.age}">
+    </label>
+    <label>
+        Location: <input type="text" id="location" name="location" value="${person.location}">
+    </label>
+    <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
+    <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
+</form>
+</body>
+</html>
