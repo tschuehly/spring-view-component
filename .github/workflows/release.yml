@@ -34,6 +34,11 @@ jobs:
           cd ./examples/thymeleaf-java-example
           chmod +x ./mvnw
           ./mvnw test
+      - name: run jte kotlin tests
+        run: |
+          cd ./examples/jte-example
+          chmod +x ./gradlew
+          ./gradlew test
   publish:
     needs: test
     runs-on: ubuntu-latest
