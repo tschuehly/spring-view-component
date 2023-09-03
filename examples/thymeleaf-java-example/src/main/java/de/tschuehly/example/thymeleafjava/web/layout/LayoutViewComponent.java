@@ -1,15 +1,16 @@
 package de.tschuehly.example.thymeleafjava.web.layout;
 
-import de.tschuehly.spring.viewcomponent.core.IViewContext;
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent;
+import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext;
 
 @ViewComponent
 public
 class LayoutViewComponent {
 
-    private record LayoutView(IViewContext nestedViewComponent) implements IViewContext{}
+    private record LayoutView(ViewContext nestedViewComponent) implements ViewContext {
+    }
 
-    public IViewContext render(IViewContext nestedViewComponent) {
+    public ViewContext render(ViewContext nestedViewComponent) {
         return new LayoutView(nestedViewComponent);
     }
 }

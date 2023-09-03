@@ -1,9 +1,9 @@
 package de.tschuehly.example.thymeleafjava.web.action;
 
-import de.tschuehly.spring.viewcomponent.core.IViewContext;
+import de.tschuehly.example.thymeleafjava.core.ExampleService;
 import de.tschuehly.spring.viewcomponent.core.action.*;
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent;
-import de.tschuehly.example.thymeleafjava.core.ExampleService;
+import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext;
 
 import java.util.Map;
 
@@ -15,16 +15,17 @@ public class ActionViewComponent {
         this.exampleService = exampleService;
     }
 
-    private record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements IViewContext {    }
+    private record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements ViewContext {
+    }
 
     Integer counter = 0;
 
-    public IViewContext render() {
+    public ViewContext render() {
         return new ActionView(counter, exampleService.itemList, person);
     }
 
     @GetViewAction(path = "/customPath/countUp")
-    public IViewContext countUp() {
+    public ViewContext countUp() {
         counter += 1;
         return render();
     }
@@ -36,14 +37,14 @@ public class ActionViewComponent {
     }
 
     @PostViewAction
-    public IViewContext addItem(ActionFormDTO actionFormDTO) {
+    public ViewContext addItem(ActionFormDTO actionFormDTO) {
         exampleService.addItemToList(actionFormDTO.item);
         return render();
     }
 
 
     @DeleteViewAction
-    public IViewContext deleteItem(Integer id) {
+    public ViewContext deleteItem(Integer id) {
         exampleService.deleteItem(id);
         return render();
     }
@@ -54,13 +55,13 @@ public class ActionViewComponent {
     );
 
     @PatchViewAction
-    public IViewContext savePersonPatch(Person person) {
+    public ViewContext savePersonPatch(Person person) {
         this.person = person;
         return render();
     }
 
     @PutViewAction
-    public IViewContext savePersonPut(Person person) {
+    public ViewContext savePersonPut(Person person) {
         this.person = person;
         return render();
     }
