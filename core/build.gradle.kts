@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+//    runtimeOnly("de.tschuehly:spring-view-component-jte:0.7.0-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-devtools")

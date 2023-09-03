@@ -6,10 +6,9 @@ plugins {
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("kapt") version "1.8.21"
-    //id("com.google.devtools.ksp") version "1.8.21-1.0.11"
 }
 
-group = "de.tschuehly"
+group = "de.tschuehly.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 

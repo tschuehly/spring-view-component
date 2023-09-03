@@ -27,7 +27,9 @@ class ViewComponentParser(
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
-        compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
+        if(resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
+            compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
+        }
     }
 
     private fun compileJte(
@@ -41,8 +43,8 @@ class ViewComponentParser(
             Class.forName("de.tschuehly.spring.viewcomponent.jte.JteViewComponentCompiler")
         } catch (e: ClassNotFoundException) {
             messager?.printMessage(
-                Diagnostic.Kind.NOTE,
-                "If you don't use JTE this message can be ignored: JteViewComponentCompiler not found"
+                Diagnostic.Kind.ERROR,
+                "JteViewComponentCompiler not found"
             )
             return
         }
@@ -52,7 +54,7 @@ class ViewComponentParser(
             it.substring(0, it.length - 1)
         }
 
-        if (isLiveReload == false) {
+        if (!isLiveReload) {
             val classDir = getGeneratedSourcesDir(rootDir)
             compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
@@ -66,28 +68,40 @@ class ViewComponentParser(
             return
         }
 
-        val languageType = if (resourceHtmlFile.extension == "kte") {
-            "kotlin"
-        } else {
-            "java"
-        }
         compiler.compile(
             rootDir = resourceDirPath.toAbsolutePath(),
             names = srcFile.name,
             classDirectory = listOf(
-                FileSystems.getDefault()
-                    .getPath(
-                        rootDir,
-                        "build",
-                        "classes",
-                        languageType,
-                        "main"
-                    ).toAbsolutePath().toString()
-
+                getCompileDirectory(resourceHtmlFile, rootDir)
             ),
             packageName
         )
         resourceHtmlFile.delete()
+    }
+
+    private fun getCompileDirectory(resourceHtmlFile: File, rootDir: String): String {
+        if (buildType == BuildType.GRADLE) {
+            val language = if (resourceHtmlFile.extension == "kte") {
+                "kotlin"
+            } else {
+                "java"
+            }
+            return FileSystems.getDefault()
+                .getPath(
+                    rootDir,
+                    "build",
+                    "classes",
+                    language,
+                    "main"
+                ).toAbsolutePath().toString()
+        }
+
+        return FileSystems.getDefault()
+            .getPath(
+                rootDir,
+                "target",
+                "classes"
+            ).toAbsolutePath().toString()
     }
 
     private fun File.writeAll(
@@ -106,7 +120,7 @@ class ViewComponentParser(
             .getPath(rootDir, "build", "resources", "main", packagePath)
     } else {
         FileSystems.getDefault()
-            .getPath(rootDir, "target", "classes", packagePath)
+            .getPath(rootDir, "target", "resources","main", packagePath)
     }
 
     private fun getGeneratedSourcesDir(rootDir: String): Path {
@@ -115,7 +129,7 @@ class ViewComponentParser(
                 .getPath(rootDir, "build", "generated-sources", "jte")
         } else {
             FileSystems.getDefault()
-                .getPath(rootDir, "target", "classes")
+                .getPath(rootDir, "target", "generated-sources", "jte")
         }
     }
 
