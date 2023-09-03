@@ -112,7 +112,7 @@ class ViewComponentParser(
             .getPath(rootDir, "build", "resources", "main", packagePath)
     } else {
         FileSystems.getDefault()
-            .getPath(rootDir, "target", "resources","main", packagePath)
+            .getPath(rootDir, "target", "classes", packagePath)
     }
 
     private fun getGeneratedSourcesDir(rootDir: String): Path {

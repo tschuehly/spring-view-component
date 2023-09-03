@@ -2,9 +2,9 @@ package de.tschuehly.example.thymeleafjava.web;
 
 import de.tschuehly.example.thymeleafjava.web.layout.LayoutViewComponent;
 import de.tschuehly.example.thymeleafjava.web.index.IndexViewComponent;
-import de.tschuehly.spring.viewcomponent.core.IViewContext;
 import de.tschuehly.example.thymeleafjava.web.action.ActionViewComponent;
 import de.tschuehly.example.thymeleafjava.web.simple.SimpleViewComponent;
+import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -29,27 +29,27 @@ public class TestController {
     }
 
     @GetMapping("/")
-    IViewContext indexComponent() {
+    ViewContext indexComponent() {
         return indexViewComponent.render();
     }
 
     @GetMapping("/simple")
-    IViewContext simple() {
+    ViewContext simple() {
         return simpleViewComponent.render();
     }
 
     @GetMapping("/layout")
-    IViewContext layoutComponent() {
+    ViewContext layoutComponent() {
         return layoutViewComponent.render(simpleViewComponent.render());
     }
 
     @GetMapping("/action")
-    IViewContext actionComponent() {
+    ViewContext actionComponent() {
         return actionViewComponent.render();
     }
 
     @GetMapping("/nested-action")
-    IViewContext nestedActionComponent() {
+    ViewContext nestedActionComponent() {
         return layoutViewComponent.render(actionViewComponent.render());
     }
 
