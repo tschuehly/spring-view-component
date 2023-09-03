@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.nio.file.Path
 
 plugins {
     id("org.springframework.boot") version "3.1.2"
@@ -7,7 +6,6 @@ plugins {
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("kapt") version "1.8.21"
-  //  id("gg.jte.gradle") version("3.0.2")
 }
 
 group = "de.tschuehly"
@@ -16,6 +14,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -47,9 +46,9 @@ tasks.withType<Test> {
         events("passed", "skipped", "failed")
     }
 }
-sourceSets{
-    main{
-        java{
+sourceSets {
+    main {
+        java {
             srcDir("build/generated-sources/jte")
         }
     }
