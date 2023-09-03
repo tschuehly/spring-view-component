@@ -1,6 +1,5 @@
 package de.tschuehly.spring.viewcomponent.jte
 
-import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentCompiler
 import gg.jte.ContentType
 import gg.jte.TemplateConfig
 import gg.jte.compiler.TemplateCompiler
@@ -9,8 +8,8 @@ import gg.jte.runtime.Constants
 import java.nio.file.Path
 
 
-class JteViewComponentCompiler() : ViewComponentCompiler {
-    override fun generate(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
+class JteViewComponentCompiler() {
+    fun generate(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
         val config = TemplateConfig(
             ContentType.Html,
             Constants.PACKAGE_NAME_PRECOMPILED + packageName
@@ -25,7 +24,7 @@ class JteViewComponentCompiler() : ViewComponentCompiler {
         return compiler.generateAll().first()
     }
 
-    override fun compile(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
+    fun compile(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
         val config = TemplateConfig(
             ContentType.Html,
             Constants.PACKAGE_NAME_PRECOMPILED +packageName

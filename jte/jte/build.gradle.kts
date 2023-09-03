@@ -18,33 +18,32 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
-
 dependencies {
-    implementation("de.tschuehly:spring-view-component-jte-compiler:0.7.0-SNAPSHOT")
+    api("de.tschuehly:spring-view-component-core:0.7.0-SNAPSHOT")
+    implementation("gg.jte:jte-spring-boot-starter-3:3.1.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("org.springframework.boot:spring-boot-devtools")
-    implementation("io.projectreactor:reactor-core")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    api("gg.jte:jte:3.1.0")
+    api("gg.jte:jte-kotlin:3.1.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.webjars:webjars-locator:0.47")
+    testImplementation("org.webjars.npm:htmx.org:1.9.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf("-Xjsr305=strict","-Xjvm-default=all")
         jvmTarget = "17"
     }
 }
 
-
 tasks.withType<Test> {
     useJUnitPlatform()
 }
-
 tasks {
     bootJar {
         enabled = false
@@ -54,8 +53,6 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
-
-
 tasks.jar{
     enabled = true
     // Remove `plain` postfix from jar file name
@@ -67,14 +64,14 @@ publishing{
         create<MavenPublication>("Maven") {
             from(components["java"])
             groupId = "de.tschuehly"
-            artifactId = "spring-view-component-core"
-            description = "Create server rendered components with spring"
+            artifactId = "spring-view-component-jte"
+            description = "Create server rendered components with JTE"
         }
         withType<MavenPublication> {
             pom {
                 packaging = "jar"
-                name.set("spring-view-component-core")
-                description.set("Spring ViewComponent Core")
+                name.set("spring-view-component-jte")
+                description.set("Spring ViewComponent JTE")
                 url.set("https://github.com/tschuehly/spring-view-component/")
                 inceptionYear.set("2023")
                 licenses {
@@ -105,6 +102,7 @@ publishing{
     }
 }
 
+
 jreleaser {
     project {
         copyright.set("Thomas Schuehly")
@@ -130,4 +128,19 @@ jreleaser {
         }
     }
 
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/kotlin")
+            exclude("**/*.kt")
+        }
+    }
+    test {
+        resources {
+            srcDir("src/test/kotlin")
+            exclude("**/*.kt")
+        }
+    }
 }

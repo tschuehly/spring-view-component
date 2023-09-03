@@ -14,6 +14,9 @@ interface IViewContext {
                 }
             }.toMap()
         }
+        fun getComponentName(context: IViewContext): String {
+            return context.javaClass.enclosingClass.simpleName.substringBefore("$$").lowercase()
+        }
 
         fun getTemplate(context: IViewContext): String {
             val componentName = context.javaClass.enclosingClass.simpleName.substringBefore("$$")

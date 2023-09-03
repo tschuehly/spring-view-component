@@ -2,11 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "3.1.2"
-    id("io.spring.dependency-management") version "1.1.2"
     kotlin("jvm") version "1.8.21"
-    kotlin("plugin.spring") version "1.8.21"
-
     id("maven-publish")
     id("org.jreleaser") version "1.5.1"
     id("signing")
@@ -20,34 +16,14 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.7.0-SNAPSHOT")
-    implementation("io.github.classgraph:classgraph:4.8.162")
-    implementation("gg.jte:jte-spring-boot-starter-3:3.1.0")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-aop")
-
     api("gg.jte:jte:3.1.0")
     api("gg.jte:jte-kotlin:3.1.0")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    testImplementation("org.springframework.boot:spring-boot-starter-actuator")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.webjars:webjars-locator:0.47")
-    testImplementation("org.webjars.npm:htmx.org:1.9.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-tasks {
-    bootJar {
-        enabled = false
     }
 }
 java {
@@ -65,14 +41,14 @@ publishing{
         create<MavenPublication>("Maven") {
             from(components["java"])
             groupId = "de.tschuehly"
-            artifactId = "spring-view-component-jte"
-            description = "Create server rendered components with JTE"
+            artifactId = "spring-view-component-jte-compiler"
+            description = "Spring ViewComponent JTE Compiler"
         }
         withType<MavenPublication> {
             pom {
                 packaging = "jar"
-                name.set("spring-view-component-jte")
-                description.set("Spring ViewComponent JTE")
+                name.set("spring-view-component-jte-compiler")
+                description.set("Spring ViewComponent JTE Compiler")
                 url.set("https://github.com/tschuehly/spring-view-component/")
                 inceptionYear.set("2023")
                 licenses {
@@ -129,19 +105,4 @@ jreleaser {
         }
     }
 
-}
-
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-    test {
-        resources {
-            srcDir("src/test/kotlin")
-            exclude("**/*.kt")
-        }
-    }
 }
