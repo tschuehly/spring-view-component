@@ -46,10 +46,4 @@ tasks.withType<Test> {
         events("passed", "skipped", "failed")
     }
 }
-sourceSets {
-    main {
-        java {
-            srcDir("build/generated-sources/jte")
-        }
-    }
-}
+sourceSets.main.get().java.srcDir("build/generated-sources/jte")

@@ -1,15 +1,16 @@
 package de.tschuehly.example.jte.web.layout;
 
-import de.tschuehly.spring.viewcomponent.core.IViewContext;
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent;
+import de.tschuehly.spring.viewcomponent.jte.ViewContext;
 
 @ViewComponent
 public
 class LayoutViewComponent {
 
-    private record LayoutView(IViewContext nestedViewComponent) implements IViewContext{}
+    public record LayoutView(ViewContext nestedViewComponent) implements ViewContext {
+    }
 
-    public IViewContext render(IViewContext nestedViewComponent) {
+    public ViewContext render(ViewContext nestedViewComponent) {
         return new LayoutView(nestedViewComponent);
     }
 }

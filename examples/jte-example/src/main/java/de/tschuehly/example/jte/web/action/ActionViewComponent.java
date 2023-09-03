@@ -4,6 +4,7 @@ import de.tschuehly.example.jte.core.ExampleService;
 import de.tschuehly.spring.viewcomponent.core.IViewContext;
 import de.tschuehly.spring.viewcomponent.core.action.*;
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent;
+import de.tschuehly.spring.viewcomponent.jte.ViewContext;
 
 import java.util.Map;
 
@@ -15,11 +16,11 @@ public class ActionViewComponent {
         this.exampleService = exampleService;
     }
 
-    private record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements IViewContext {    }
+    private record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements ViewContext {    }
 
     Integer counter = 0;
 
-    public IViewContext render() {
+    public ActionView render() {
         return new ActionView(counter, exampleService.itemList, person);
     }
 

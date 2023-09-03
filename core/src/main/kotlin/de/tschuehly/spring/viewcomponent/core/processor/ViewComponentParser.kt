@@ -1,6 +1,7 @@
 package de.tschuehly.spring.viewcomponent.core.processor
 
 import de.tschuehly.spring.viewcomponent.core.action.*
+import de.tschuehly.spring.viewcomponent.jte.JteViewComponentCompiler
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -39,16 +40,7 @@ class ViewComponentParser(
         resourceHtmlFile: File,
         packagePath: String
     ) {
-        val jetCompilerClazz = try {
-            Class.forName("de.tschuehly.spring.viewcomponent.jte.JteViewComponentCompiler")
-        } catch (e: ClassNotFoundException) {
-            messager?.printMessage(
-                Diagnostic.Kind.ERROR,
-                "JteViewComponentCompiler not found"
-            )
-            return
-        }
-        val compiler = (jetCompilerClazz.getConstructor().newInstance() as ViewComponentCompiler)
+        val compiler = JteViewComponentCompiler()
 
         val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
             it.substring(0, it.length - 1)
