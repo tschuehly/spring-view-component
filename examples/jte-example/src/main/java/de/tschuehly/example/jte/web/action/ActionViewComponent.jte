@@ -1,4 +1,6 @@
-@param de.tschuehly.example.jte.web.action.ActionViewComponent.ActionView ctx
+@param de.tschuehly.example.jte.web.action.ActionViewComponent.Person person
+@param java.util.HashMap<Integer,String> itemList
+@param Integer counter
 
 <html>
 <head>
@@ -9,7 +11,7 @@
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
-<h3>${ctx.counter()}</h3>
+<h3>${counter}</h3>
 
 <h2>ViewAction Post AddItem</h2>
 <form view:action="addItem">
@@ -21,10 +23,10 @@
         <th>Item</th>
         <th>Action</th>
     </tr>
-    @for(var item: ctx.itemList().entrySet())
+    @for(var item: itemList.entrySet())
         <tr>
             <td>
-                <span>${item.getClass().getDeclaredField("value").getName()}</span>
+                <span>${item.getValue()}</span>
             </td>
             <td>
                 <button view:action="deleteItem?id=${item.getKey()}">Delete Item ${item.getKey()}</button>
@@ -37,13 +39,13 @@
 
 <form style="display: inline-grid; gap: 0.5rem">
     <label>
-        Name <input type="text" id="name" name="name" value="${ctx.person().name()}">
+        Name <input type="text" id="name" name="name" value="${person.name()}">
     </label>
     <label>
-        Age: <input type="number" id="age" name="age" value="${ctx.person().age()}">
+        Age: <input type="number" id="age" name="age" value="${person.age()}">
     </label>
     <label>
-        Location: <input type="text" id="location" name="location" value="${ctx.person().location()}">
+        Location: <input type="text" id="location" name="location" value="${person.location()}">
     </label>
     <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
     <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
