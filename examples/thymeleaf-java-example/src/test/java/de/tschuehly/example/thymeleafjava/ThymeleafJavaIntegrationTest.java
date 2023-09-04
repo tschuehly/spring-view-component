@@ -107,7 +107,7 @@ class ThymeleafJavaIntegrationTest {
                         <nav>
                           This is the NavBar
                         </nav>
-                        <div id="actionviewcomponent" data-nested-view-component>
+                        <div id="actionviewcomponent">
                         <html xmlns="http://www.w3.org/1999/xhtml">
                         <head>
                           <script src="http://localhost:35729/livereload.js"></script>
@@ -171,7 +171,7 @@ class ThymeleafJavaIntegrationTest {
                         <nav>
                           This is the NavBar
                         </nav>
-                        <div id="simpleviewcomponent" data-nested-view-component><div>
+                        <div id="simpleviewcomponent"><div>
                           <h2>This is the SimpleViewComponent</h2>
                           <div>Hello World</div>
                         </div></div>

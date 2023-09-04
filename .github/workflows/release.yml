@@ -17,13 +17,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Run chmod to make gradlew executable
+      - name: make gradle executable
         run: chmod +x ./gradlew
-      - name: publish local
-        run: |
-          ./gradlew :core:publishToMavenLocal
-          ./gradlew :thymeleaf:publishToMavenLocal
-          ./gradlew :jte:publishToMavenLocal
+      - name: publishToMavenLocal
+        run: ./gradlew :core:publishToMavenLocal :thymeleaf:publishToMavenLocal :jte:publishToMavenLocal :jte-compiler:publishToMavenLocal
       - name: run thymeleaf kotlin tests
         run: |
           cd ./examples/thymeleaf-kotlin-example
@@ -34,11 +31,16 @@ jobs:
           cd ./examples/thymeleaf-java-example
           chmod +x ./mvnw
           ./mvnw test
-      - name: run jte kotlin tests
+      - name: run kte kotlin tests
         run: |
-          cd ./examples/jte-example
+          cd ./examples/kte-example
           chmod +x ./gradlew
           ./gradlew test
+      - name: run jte java tests
+        run: |
+          cd ./examples/jte-example
+          chmod +x ./mvnw
+          ./mvnw test
   publish:
     needs: test
     runs-on: ubuntu-latest

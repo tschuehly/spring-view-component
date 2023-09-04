@@ -1,9 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
-import de.tschuehly.spring.viewcomponent.core.action.ViewActionConstant
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentProcessingException
-import de.tschuehly.spring.viewcomponent.core.toMap
 import org.slf4j.LoggerFactory
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
@@ -69,7 +67,6 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
             engine.process(IViewContext.getTemplate(viewContext), webContext)
         )
         structureHandler.setAttribute("id", viewContext.javaClass.enclosingClass.simpleName.lowercase())
-        structureHandler.setAttribute(ViewActionConstant.nestedViewComponentAttributeName, null)
         structureHandler.removeAttribute("view:component")
         structureHandler.setBody(viewComponentBody, true)
     }

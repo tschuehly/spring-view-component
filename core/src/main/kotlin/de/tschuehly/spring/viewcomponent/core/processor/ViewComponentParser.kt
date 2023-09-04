@@ -28,7 +28,7 @@ class ViewComponentParser(
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
-        if(resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
+        if (resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
             compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
         }
     }
