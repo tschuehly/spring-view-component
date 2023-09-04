@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="relative overflow-x-auto shadow-md rounded-lg">
+  <table class="w-full text-sm text-left text-gray-700">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+    <tr th:if="${layout.header != null}">
+      <th class="px-6 py-3 border-b" th:colspan="${layout.columns.size()}" th:text="${layout.header}"></th>
+    </tr>
+    <tr>
+      <th class="px-6 py-3" scope="col" th:each="column: ${layout.columns}" th:text="${column.header}"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="item: ${items}" th:if="${rowClick == null}">
+      <tr class="bg-white border-b hover:bg-gray-200">
+        <td class="px-6 py-4"
+            th:each="column: ${layout.columns}"
+            th:text="${item['__${column.columnField}__']}"
+        >
+        </td>
+      </tr>
+    </th:block>
+    <th:block th:each="item: ${items}" th:if="${rowClick != null}">
+      <tr class="bg-white border-b hover:bg-gray-200"
+          hx-trigger="click"
+          th:hx-get="${hasParameter == true } ? ${rowClick.path} + '/' + ${item['__${rowClick.parameterColumnIdentifierField}__']} : ''"
+          th:hx-target="${rowClick.target}"
+      >
+        <td class="px-6 py-4"
+            th:each="column: ${layout.columns}"
+            th:text="${item['__${column.columnField}__']}"
+        >
+        </td>
+      </tr>
+    </th:block>
+    </tbody>
+  </table>
+  <nav aria-label="Table navigation" class="flex justify-center pt-2 pb-2">
+    <ul class="inline-flex -space-x-px text-sm h-8">
+      <li>
+        <a class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
+           href="#">Previous</a>
+      </li>
+      <li>
+        <a class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+           href="#">1</a>
+      </li>
+      <li>
+        <a class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
+           href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+</html>

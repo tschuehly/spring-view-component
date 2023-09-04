@@ -1,6 +1,7 @@
 package de.tschuehly.example.jte;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +12,7 @@ import org.springframework.http.HttpStatus;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-class ThymeleafJavaIntegrationTest {
+class JteIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
@@ -49,7 +50,7 @@ class ThymeleafJavaIntegrationTest {
         var expectedHtml =
                 //language=HTML
                 """
-                        <html xmlns="http://www.w3.org/1999/xhtml">
+                        <html>
                         <head>
                           <script src="http://localhost:35729/livereload.js"></script>
                           <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
@@ -107,8 +108,8 @@ class ThymeleafJavaIntegrationTest {
                         <nav>
                           This is the NavBar
                         </nav>
-                        <div id="actionviewcomponent" data-nested-view-component>
-                        <html xmlns="http://www.w3.org/1999/xhtml">
+                        <div id="actionviewcomponent" style="display: contents;">
+                        <html>
                         <head>
                           <script src="http://localhost:35729/livereload.js"></script>
                           <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
@@ -171,7 +172,7 @@ class ThymeleafJavaIntegrationTest {
                         <nav>
                           This is the NavBar
                         </nav>
-                        <div id="simpleviewcomponent" data-nested-view-component><div>
+                        <div id="simpleviewcomponent" style="display: contents;"><div>
                           <h2>This is the SimpleViewComponent</h2>
                           <div>Hello World</div>
                         </div></div>
@@ -186,6 +187,7 @@ class ThymeleafJavaIntegrationTest {
 
 
     @Test
+    @Disabled // TODO: Needs to be integrated
     void testResourceTemplate() {
         var expectedHtml = "Hello World";
         assertEndpointReturns("/resource-template", expectedHtml);

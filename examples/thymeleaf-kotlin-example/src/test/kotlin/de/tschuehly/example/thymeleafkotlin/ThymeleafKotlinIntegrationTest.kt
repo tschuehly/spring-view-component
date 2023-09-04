@@ -107,7 +107,7 @@ class ThymeleafKotlinIntegrationTest(
                 <nav>
                   This is the NavBar
                 </nav>        
-                <div id="actionviewcomponent" data-nested-view-component>
+                <div id="actionviewcomponent">
                     <html>
                     <head>
                         <script src="http://localhost:35729/livereload.js"></script>
@@ -156,7 +156,7 @@ class ThymeleafKotlinIntegrationTest(
                 <html>
                 <body id="layoutviewcomponent">
                 <nav>This is the NavBar</nav>
-                <div id="simpleviewcomponent" data-nested-view-component>
+                <div id="simpleviewcomponent">
                   <div>
                       <h2>This is the SimpleViewComponent</h2>
                       <div>Hello World</div>

@@ -33,8 +33,6 @@ annotation class DeleteViewAction(
 
 object ViewActionConstant {
     val attributeName = "view:action"
-    val nestedViewComponentAttributeName = "data-nested-view-component"
-
 }
 
 

@@ -129,18 +129,3 @@ jreleaser {
     }
 
 }
-
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-    test {
-        resources {
-            srcDir("src/test/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-}
