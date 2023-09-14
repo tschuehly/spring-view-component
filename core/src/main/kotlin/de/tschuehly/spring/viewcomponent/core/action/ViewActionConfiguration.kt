@@ -12,6 +12,7 @@ import org.springframework.web.util.pattern.PathPatternParser
 import java.lang.reflect.Method
 import de.tschuehly.spring.viewcomponent.core.action.ViewActionRegistry.PathMapping
 import org.slf4j.LoggerFactory
+import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition
 
 @Configuration
 class ViewActionConfiguration(
@@ -85,6 +86,7 @@ class ViewActionConfiguration(
         options.patternParser = parser
         requestMappingHandlerMapping.registerMapping(
             /* mapping = */ RequestMappingInfo.paths(mapping.path)
+                .customCondition(HeadersRequestCondition("HX-Request"))
                 .methods(mapping.requestMethod).options(options).build(),
             /* handler = */ viewComponentBean,
             /* method = */ mapping.method
