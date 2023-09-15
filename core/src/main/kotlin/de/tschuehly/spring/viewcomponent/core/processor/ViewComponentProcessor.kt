@@ -2,6 +2,7 @@ package de.tschuehly.spring.viewcomponent.core.processor
 
 import de.tschuehly.spring.viewcomponent.core.action.*
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentParser.BuildType
+import org.springframework.util.CollectionUtils
 import java.io.File
 import java.io.IOException
 import java.nio.file.FileSystems
@@ -12,6 +13,7 @@ import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.Name
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
@@ -144,27 +146,41 @@ class ViewComponentProcessor : AbstractProcessor() {
         val methodList = element.enclosedElements.filter { it.kind == ElementKind.METHOD }.mapNotNull { method ->
             if (method.getAnnotation(GetViewAction::class.java) != null) {
                 val get = (method.getAnnotation(GetViewAction::class.java) as GetViewAction)
+                checkIfMethodIsPublic(method, element)
                 return@mapNotNull ViewActionMethod(method.simpleName.toString(), get.path, GetViewAction::class.java)
             }
             if (method.getAnnotation(PostViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PostViewAction::class.java) as PostViewAction)
-                return@mapNotNull ViewActionMethod(method.simpleName.toString(), get.path, PostViewAction::class.java)
+                val post = (method.getAnnotation(PostViewAction::class.java) as PostViewAction)
+                checkIfMethodIsPublic(method, element)
+                return@mapNotNull ViewActionMethod(method.simpleName.toString(), post.path, PostViewAction::class.java)
             }
             if (method.getAnnotation(PutViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PutViewAction::class.java) as PutViewAction)
-                return@mapNotNull ViewActionMethod(method.simpleName.toString(), get.path, PutViewAction::class.java)
+                val put = (method.getAnnotation(PutViewAction::class.java) as PutViewAction)
+                checkIfMethodIsPublic(method, element)
+                return@mapNotNull ViewActionMethod(method.simpleName.toString(), put.path, PutViewAction::class.java)
             }
             if (method.getAnnotation(PatchViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
-                return@mapNotNull ViewActionMethod(method.simpleName.toString(), get.path, PatchViewAction::class.java)
+                val patch = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
+                checkIfMethodIsPublic(method, element)
+                return@mapNotNull ViewActionMethod(method.simpleName.toString(), patch.path, PatchViewAction::class.java)
             }
             if (method.getAnnotation(DeleteViewAction::class.java) != null) {
-                val get = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
-                return@mapNotNull ViewActionMethod(method.simpleName.toString(), get.path, DeleteViewAction::class.java)
+                val delete = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
+                checkIfMethodIsPublic(method, element)
+                return@mapNotNull ViewActionMethod(method.simpleName.toString(), delete.path, DeleteViewAction::class.java)
             }
             return@mapNotNull null
         }
         return methodList
+    }
+
+    private fun checkIfMethodIsPublic(method: Element, element: Element) {
+        if (method.modifiers.contains(Modifier.PUBLIC) == false) {
+            throw ViewComponentProcessingException(
+                "Method: " + element.simpleName + "::" + method.simpleName + " needs to be public",
+                null
+            )
+        }
     }
 
 
