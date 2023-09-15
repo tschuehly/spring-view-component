@@ -16,7 +16,7 @@ class ViewActionRegistry {
         if (viewActionMapping.containsKey(key)) {
             throw ViewActionRegistryException("Cannot register duplicate path mapping")
         }
-        logger.info("Registered endpoint ${mapping.path} to $viewComponentName::${mapping.method.name}")
+        logger.info("Registered endpoint ${mapping.requestMethod}: ${mapping.path} to $viewComponentName::${mapping.method.name}")
         viewActionMapping[key] = mapping
     }
 

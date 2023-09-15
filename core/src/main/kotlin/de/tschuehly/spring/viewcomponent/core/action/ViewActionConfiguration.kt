@@ -61,7 +61,7 @@ class ViewActionConfiguration(
                     method
                 )
             } else {
-                PathMapping(viewActionPair.second.lowercase(), viewActionPair.first, method)
+                PathMapping(viewActionPair.second, viewActionPair.first, method)
 
             }
             createRequestMappingForAnnotation(
