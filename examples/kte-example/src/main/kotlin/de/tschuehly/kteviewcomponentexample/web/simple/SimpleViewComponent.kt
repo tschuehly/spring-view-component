@@ -10,9 +10,9 @@ import de.tschuehly.spring.viewcomponent.jte.ViewContext
 class SimpleViewComponent(
     val exampleService: ExampleService
 ) {
-    fun render() = HelloWorldView(exampleService.getHelloWorld())
+    fun render() = SimpleView(exampleService.getHelloWorld())
 
-    data class HelloWorldView(val helloWorld: String) : ViewContext
+    data class SimpleView(val helloWorld: String) : ViewContext
 
     @PostViewAction
     fun testAction(): IViewContext {
