@@ -64,7 +64,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         val modelFactory = webContext.modelFactory
 
         val viewComponentBody = modelFactory.createText(
-            engine.process(IViewContext.getTemplate(viewContext), webContext)
+            engine.process(IViewContext.getViewComponentTemplate(viewContext), webContext)
         )
         structureHandler.setAttribute("id", viewContext.javaClass.enclosingClass.simpleName.lowercase())
         structureHandler.removeAttribute("view:component")

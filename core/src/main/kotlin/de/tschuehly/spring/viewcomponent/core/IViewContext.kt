@@ -1,5 +1,7 @@
 package de.tschuehly.spring.viewcomponent.core
 
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentUtils
+
 interface IViewContext {
     companion object {
         var componentBean: Any? = null
@@ -14,14 +16,19 @@ interface IViewContext {
                 }
             }.toMap()
         }
-        fun getComponentName(context: IViewContext): String {
-            return context.javaClass.enclosingClass.simpleName.substringBefore("$$").lowercase()
+
+        fun getViewComponentName(context: IViewContext): String {
+            return ViewComponentUtils.getName(context.javaClass)
         }
 
-        fun getTemplate(context: IViewContext): String {
-            val componentName = context.javaClass.enclosingClass.simpleName.substringBefore("$$")
+        fun getViewComponentTemplate(context: IViewContext): String {
+            return getViewComponentTemplateWithoutSuffix(context) + templateSuffx
+        }
+
+        fun getViewComponentTemplateWithoutSuffix(context: IViewContext): String {
+            val componentName = ViewComponentUtils.getName(context.javaClass)
             val componentPackage = context.javaClass.enclosingClass.`package`.name.replace(".", "/") + "/"
-            return "$componentPackage$componentName$templateSuffx"
+            return "$componentPackage$componentName"
         }
     }
 }
