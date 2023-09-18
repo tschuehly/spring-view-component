@@ -1,6 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentUtils
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentProcessingException
 import org.slf4j.LoggerFactory
 import org.thymeleaf.context.ITemplateContext
@@ -66,7 +67,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         val viewComponentBody = modelFactory.createText(
             engine.process(IViewContext.getViewComponentTemplate(viewContext), webContext)
         )
-        structureHandler.setAttribute("id", viewContext.javaClass.enclosingClass.simpleName.lowercase())
+        structureHandler.setAttribute("id", ViewComponentUtils.getId(viewContext.javaClass))
         structureHandler.removeAttribute("view:component")
         structureHandler.setBody(viewComponentBody, true)
     }

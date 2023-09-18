@@ -15,7 +15,7 @@ public class ActionViewComponent {
         this.exampleService = exampleService;
     }
 
-    private record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements ViewContext {
+    public record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements ViewContext {
     }
 
     Integer counter = 0;
