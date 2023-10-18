@@ -22,15 +22,16 @@ class ViewComponentParser(
         MAVEN, GRADLE
     }
 
-    fun parseFile(isLiveReload: Boolean) {
+    fun parseFile(isLiveReload: Boolean): String? {
         val parsedHtml = parseSrcHtmlFile()
         val (rootDir, packagePath) = getRootDirAndPackagePath(srcFile, messager)
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
         if (resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
-            compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
+            return compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
         }
+        return null
     }
 
     private fun compileJte(
@@ -39,7 +40,7 @@ class ViewComponentParser(
         resourceDirPath: Path,
         resourceHtmlFile: File,
         packagePath: String
-    ) {
+    ): String? {
         val compiler = JteViewComponentCompiler()
 
         val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
@@ -48,7 +49,7 @@ class ViewComponentParser(
 
         if (!isLiveReload) {
             val classDir = getGeneratedSourcesDir(rootDir)
-            compiler.generate(
+            val file = compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
                 names = srcFile.name,
                 classDirectory = listOf(
@@ -57,7 +58,7 @@ class ViewComponentParser(
                 packageName
             )
             resourceHtmlFile.delete()
-            return
+            return file
         }
 
         compiler.compile(
@@ -69,6 +70,7 @@ class ViewComponentParser(
             packageName
         )
         resourceHtmlFile.delete()
+        return null
     }
 
     private fun getCompileDirectory(resourceHtmlFile: File, rootDir: String): String {
@@ -118,7 +120,7 @@ class ViewComponentParser(
     private fun getGeneratedSourcesDir(rootDir: String): Path {
         return if (buildType == BuildType.GRADLE) {
             FileSystems.getDefault()
-                .getPath(rootDir, "build", "generated-sources", "jte")
+                .getPath(rootDir, "build", "generated","sources","annotationProcessor","java","main")
         } else {
             FileSystems.getDefault()
                 .getPath(rootDir, "target", "generated-sources", "jte")
