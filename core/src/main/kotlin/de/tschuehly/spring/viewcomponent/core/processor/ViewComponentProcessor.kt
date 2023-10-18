@@ -8,6 +8,7 @@ import java.io.IOException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.Instant
 import java.util.*
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -17,6 +18,7 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.Name
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
+import javax.tools.StandardLocation
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
@@ -31,6 +33,7 @@ class ViewComponentProcessor : AbstractProcessor() {
         for (annotation in annotations) {
             for (element in roundEnv.getElementsAnnotatedWith(annotation)) {
                 val messager = processingEnv.messager
+                val filer = processingEnv.filer
                 val (rootDir, buildType) = processingEnv.getRootDirAndBuildType()
 
                 val separator = FileSystems.getDefault().separator
@@ -52,7 +55,28 @@ class ViewComponentProcessor : AbstractProcessor() {
                     viewComponentName = viewComponentName,
                     messager = messager,
                 )
-                viewComponentParser.parseFile(false)
+                val generatedFile = viewComponentParser.parseFile(false)
+                if (generatedFile != null) {
+                    val fil = filer.getResource(
+                        StandardLocation.SOURCE_OUTPUT,
+                        generatedFile.substringBeforeLast("/").replace("/","."),
+                        generatedFile.substringAfterLast("/")
+                    )
+                    val generatedSourceText = fil.openReader(true).use {
+                        it.readText()
+                    }
+                    val srcFile =
+                        processingEnv.filer.createSourceFile(generatedFile.replace("/", ".").replace(".java", ""))
+                    srcFile.openWriter().use {
+                        it.write(generatedSourceText)
+                        it.flush()
+                    }
+//                    srcFile.openReader(true).use {
+//                        val text = it.readText()
+//                        text
+//                    }
+                }
+
             }
         }
         return true
@@ -74,8 +98,19 @@ class ViewComponentProcessor : AbstractProcessor() {
 
     private fun ProcessingEnvironment.getJavaRootDir(): String {
         try {
-            val sourceFile = this.filer.createClassFile("gen_${Date().toInstant().toEpochMilli()}.java")
+            val fileName = "gen_${Date().toInstant().toEpochMilli()}"
+            val sourceFile = this.filer.createSourceFile(fileName)
             val srcDirPath = Paths.get(sourceFile.toUri()).toString()
+            sourceFile.openWriter().use {
+                it.close()
+            }
+
+            val fil = filer.getResource(
+                StandardLocation.SOURCE_OUTPUT,
+                "",
+                fileName
+            )
+            fil.delete()
             return srcDirPath
         } catch (e: IOException) {
             processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "Unable to determine source file path!")
@@ -162,12 +197,20 @@ class ViewComponentProcessor : AbstractProcessor() {
             if (method.getAnnotation(PatchViewAction::class.java) != null) {
                 val patch = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
                 checkIfMethodIsPublic(method, element)
-                return@mapNotNull ViewActionMethod(method.simpleName.toString(), patch.path, PatchViewAction::class.java)
+                return@mapNotNull ViewActionMethod(
+                    method.simpleName.toString(),
+                    patch.path,
+                    PatchViewAction::class.java
+                )
             }
             if (method.getAnnotation(DeleteViewAction::class.java) != null) {
                 val delete = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
                 checkIfMethodIsPublic(method, element)
-                return@mapNotNull ViewActionMethod(method.simpleName.toString(), delete.path, DeleteViewAction::class.java)
+                return@mapNotNull ViewActionMethod(
+                    method.simpleName.toString(),
+                    delete.path,
+                    DeleteViewAction::class.java
+                )
             }
             return@mapNotNull null
         }

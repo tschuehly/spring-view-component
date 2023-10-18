@@ -28,6 +28,7 @@ class ViewComponentAutoConfiguration {
     ) {
         val gradleKotlinBuildDir = "build/classes/kotlin/main/"
         val javaMavenBuildDir = "target/classes/"
+        val javaMavenTestBuildDir = "target/test-classes/"
         private val logger = LoggerFactory.getLogger(LocalDevConfig::class.java)
 
         @Bean
@@ -49,14 +50,14 @@ class ViewComponentAutoConfiguration {
         }
 
         private fun getSrcDir(classPath: String): Pair<File, BuildType> {
-            if (classPath.endsWith(gradleKotlinBuildDir)) {
+            if (classPath.endsWith(gradleKotlinBuildDir) ) {
                 val srcDir = classPath.split(gradleKotlinBuildDir)[0] + "/src/main/kotlin"
                 val file = File(srcDir)
                 if (file.exists()) {
                     return file to BuildType.GRADLE
                 }
             }
-            if (classPath.endsWith(javaMavenBuildDir)) {
+            if (classPath.endsWith(javaMavenBuildDir)|| classPath.endsWith(javaMavenTestBuildDir) ) {
                 val srcDir = classPath.split(javaMavenBuildDir)[0] + "src/main/java"
                 val file = File(srcDir)
                 if (file.exists()) {
