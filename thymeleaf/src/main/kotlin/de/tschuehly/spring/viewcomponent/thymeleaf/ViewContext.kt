@@ -4,4 +4,3 @@ import de.tschuehly.spring.viewcomponent.core.IViewContext
 
 interface ViewContext: IViewContext {
 }
-class EmptyViewContext(): ViewContext

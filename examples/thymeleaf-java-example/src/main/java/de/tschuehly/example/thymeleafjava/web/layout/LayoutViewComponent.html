@@ -4,7 +4,8 @@
 <nav>
   This is the NavBar
 </nav>
-<div view:component="${nestedViewComponent}"></div>
+<!--/*@thymesVar id="layoutView" type="de.tschuehly.example.thymeleafjava.web.layout.LayoutViewComponent.LayoutView"*/-->
+<div view:component="${layoutView.nestedViewComponent()}"></div>
 
 <footer>
   This is a footer

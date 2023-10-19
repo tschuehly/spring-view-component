@@ -1,9 +1,10 @@
 <html>
 <body>
+<!--/*@thymesVar id="layoutView" type="de.tschuehly.example.thymeleafkotlin.web.layout.LayoutViewComponent.LayoutView"*/-->
 <nav>
   This is the NavBar
 </nav>
-<div view:component="${nestedViewComponent}"></div>
+<div view:component="${layoutView.nestedViewComponent}"></div>
 
 <footer>
   This is a footer

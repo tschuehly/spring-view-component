@@ -4,19 +4,20 @@ import de.tschuehly.example.thymeleafkotlin.core.ExampleService
 import de.tschuehly.spring.viewcomponent.core.IViewContext
 import de.tschuehly.spring.viewcomponent.core.action.*
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
+import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 
 @ViewComponent
 class ActionViewComponent(
     val exampleService: ExampleService
 ) {
-    data class ActionView(val itemList: MutableMap<Int, String>, val counter: Int, val person: Person) : IViewContext
+    data class ActionView(val itemList: MutableMap<Int, String>, val counter: Int, val person: Person) : ViewContext
 
     fun render() = ActionView(exampleService.itemList, counter, person)
 
     var counter: Int = 0
 
     @GetViewAction("/customPath/countUp")
-    fun countUp(): IViewContext {
+    fun countUp(): ViewContext {
         counter += 1
         return render()
     }
@@ -51,14 +52,17 @@ class ActionViewComponent(
     }
 
     @PutViewAction
-    fun savePersonPut(person: Person): IViewContext {
-        this.person = person
+    fun savePersonPut(personDTO: PersonDTO): IViewContext {
+        this.person = personDTO.person ?: throw RuntimeException() //TODO: Property Binding failing
         return render()
     }
+    class PersonDTO(
+        val person: Person?
+    )
 
     class Person(
-        val name: String,
-        val age: Int,
-        val location: String
+        val name: String?,
+        val age: Int?,
+        val location: String?
     )
 }

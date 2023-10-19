@@ -1,6 +1,4 @@
-@param de.tschuehly.example.jte.web.action.ActionViewComponent.Person person
-@param java.util.HashMap<Integer,String> itemList
-@param Integer counter
+@param de.tschuehly.example.jte.web.action.ActionViewComponent.ActionView actionView
 
 <html>
 <head>
@@ -11,7 +9,7 @@
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
-<h3>${counter}</h3>
+<h3>${actionView.counter()}</h3>
 
 <h2>ViewAction Post AddItem</h2>
 <form view:action="addItem">
@@ -23,7 +21,7 @@
         <th>Item</th>
         <th>Action</th>
     </tr>
-    @for(var item: itemList.entrySet())
+    @for(var item: actionView.itemList().entrySet())
         <tr>
             <td>
                 <span>${item.getValue()}</span>
@@ -39,13 +37,13 @@
 
 <form style="display: inline-grid; gap: 0.5rem">
     <label>
-        Name <input type="text" id="name" name="name" value="${person.name()}">
+        Name <input type="text" id="name" name="name" value="${actionView.person().name()}">
     </label>
     <label>
-        Age: <input type="number" id="age" name="age" value="${person.age()}">
+        Age: <input type="number" id="age" name="age" value="${actionView.person().age()}">
     </label>
     <label>
-        Location: <input type="text" id="location" name="location" value="${person.location()}">
+        Location: <input type="text" id="location" name="location" value="${actionView.person().location()}">
     </label>
     <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
     <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>

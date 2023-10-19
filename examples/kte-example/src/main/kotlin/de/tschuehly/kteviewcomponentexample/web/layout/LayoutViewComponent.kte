@@ -1,4 +1,4 @@
-@param nestedViewComponent: de.tschuehly.spring.viewcomponent.jte.ViewContext
+@param layoutView:  de.tschuehly.kteviewcomponentexample.web.layout.LayoutViewComponent.LayoutView
 <html>
 
 <nav>
@@ -6,7 +6,7 @@
 </nav>
 
 <body>
-${nestedViewComponent}
+${layoutView.nestedViewComponent}
 
 </body>
 

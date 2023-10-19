@@ -24,7 +24,7 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
             (IViewContext::class.java.isAssignableFrom(it.javaClass))
         } as IViewContext
         mavContainer.view = IViewContext.componentTemplate
-        mavContainer.addAllAttributes(IViewContext.getAttributes(viewContext))
+        mavContainer.addAttribute(viewContext)
     }
 
 }

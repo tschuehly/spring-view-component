@@ -1,6 +1,4 @@
-@param person: de.tschuehly.kteviewcomponentexample.web.action.ActionViewComponent.Person
-@param itemList: MutableMap<Int, String>
-@param counter: Int
+@param actionView: de.tschuehly.kteviewcomponentexample.web.action.ActionViewComponent.ActionView
 <html>
 <head>
     <script src="http://localhost:35729/livereload.js"></script>
@@ -10,19 +8,19 @@
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
-<h3>${counter}</h3>
-
+<h3>${actionView.counter}</h3>
 <h2>ViewAction Post AddItem</h2>
 <form view:action="addItem">
     <input type="text" name="item">
     <button type="submit">Save Item</button>
 </form>
+
 <table>
     <tr>
         <th>Item</th>
         <th>Action</th>
     </tr>
-    @for(item in itemList)
+    @for(item in actionView.itemList)
         <tr>
             <td>
                 <span>${item.value}</span>
@@ -38,13 +36,13 @@
 
 <form style="display: inline-grid; gap: 0.5rem">
     <label>
-        Name <input type="text" id="name" name="name" value="${person.name}">
+        Name <input type="text" id="name" name="name" value="${actionView.person.name}">
     </label>
     <label>
-        Age: <input type="number" id="age" name="age" value="${person.age}">
+        Age: <input type="number" id="age" name="age" value="${actionView.person.age}">
     </label>
     <label>
-        Location: <input type="text" id="location" name="location" value="${person.location}">
+        Location: <input type="text" id="location" name="location" value="${actionView.person.location}">
     </label>
     <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
     <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>

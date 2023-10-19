@@ -1,5 +1,5 @@
-@param helloWorld: String
+@param simpleView: de.tschuehly.kteviewcomponentexample.web.simple.SimpleViewComponent.SimpleView
 <div>
-  <h2>This is the SimpleViewComponent</h2>
-  <div>${helloWorld}</div>
+    <h2>This is the SimpleViewComponent</h2>
+    <div>${simpleView.helloWorld}</div>
 </div>

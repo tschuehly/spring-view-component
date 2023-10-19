@@ -7,7 +7,8 @@
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
-<h3 th:text="${counter}"></h3>
+<!--/*@thymesVar id="actionView" type="de.tschuehly.example.thymeleafkotlin.web.action.ActionViewComponent.ActionView"*/-->
+<h3 th:text="${actionView.counter}"></h3>
 
 <h2>ViewAction Post AddItem</h2>
 <form view:action="addItem">
@@ -19,7 +20,7 @@
     <th>Item</th>
     <th>Action</th>
   </tr>
-  <tr th:each="item : ${itemList}">
+  <tr th:each="item : ${actionView.itemList}">
     <td>
       <span th:text="${item.value}"></span>
     </td>
@@ -31,7 +32,7 @@
 
 <h2>ViewAction Put/Patch Person Form</h2>
 
-<form th:object="${person}" style="display: inline-grid; gap: 0.5rem">
+<form th:object="${actionView.person}" style="display: inline-grid; gap: 0.5rem">
   <label>
     Name <input type="text" th:field="*{name}">
   </label>

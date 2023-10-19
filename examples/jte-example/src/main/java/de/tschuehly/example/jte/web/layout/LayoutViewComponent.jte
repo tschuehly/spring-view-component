@@ -1,10 +1,10 @@
-@param de.tschuehly.spring.viewcomponent.jte.ViewContext nestedViewComponent
+@param de.tschuehly.example.jte.web.layout.LayoutViewComponent.LayoutView layoutView
 <html>
 <body>
 <nav>
   This is the NavBar
 </nav>
-${nestedViewComponent}
+${layoutView.nestedViewComponent()}
 <footer>
   This is a footer
 </footer>
