@@ -22,6 +22,10 @@ class ViewComponentParser(
         MAVEN, GRADLE
     }
 
+    enum class Language(val directoryName: String) {
+        KOTLIN("kotlin"), JAVA("java")
+    }
+
     fun parseFile(isLiveReload: Boolean): String? {
         val parsedHtml = parseSrcHtmlFile()
         val (rootDir, packagePath) = getRootDirAndPackagePath(srcFile, messager)
@@ -47,8 +51,10 @@ class ViewComponentParser(
             it.substring(0, it.length - 1)
         }
 
+        val language = getLanguage(resourceHtmlFile)
+
         if (!isLiveReload) {
-            val classDir = getGeneratedSourcesDir(rootDir)
+            val classDir = getGeneratedSourcesDir(rootDir,language)
             val file = compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
                 names = srcFile.name,
@@ -73,19 +79,16 @@ class ViewComponentParser(
         return null
     }
 
+
     private fun getCompileDirectory(resourceHtmlFile: File, rootDir: String): String {
         if (buildType == BuildType.GRADLE) {
-            val language = if (resourceHtmlFile.extension == "kte") {
-                "kotlin"
-            } else {
-                "java"
-            }
+            val language = getLanguage(resourceHtmlFile)
             return FileSystems.getDefault()
                 .getPath(
                     rootDir,
                     "build",
                     "classes",
-                    language,
+                    language.directoryName,
                     "main"
                 ).toAbsolutePath().toString()
         }
@@ -96,6 +99,14 @@ class ViewComponentParser(
                 "target",
                 "classes"
             ).toAbsolutePath().toString()
+    }
+
+    private fun getLanguage(resourceHtmlFile: File): Language {
+        return if (resourceHtmlFile.extension == "kte") {
+            Language.KOTLIN
+        } else {
+            Language.JAVA
+        }
     }
 
     private fun File.writeAll(
@@ -117,11 +128,14 @@ class ViewComponentParser(
             .getPath(rootDir, "target", "classes", packagePath)
     }
 
-    private fun getGeneratedSourcesDir(rootDir: String): Path {
-        return if (buildType == BuildType.GRADLE) {
+    private fun getGeneratedSourcesDir(rootDir: String, language: Language): Path {
+        return if (buildType == BuildType.GRADLE && language == Language.KOTLIN) {
             FileSystems.getDefault()
-                .getPath(rootDir, "build", "generated","sources","annotationProcessor","java","main")
-        } else {
+                .getPath(rootDir, "build", "generated","source", "kapt","main")
+        } else if (buildType == BuildType.GRADLE && language == Language.JAVA){
+            FileSystems.getDefault()
+            .getPath(rootDir, "build", "generated", "sources", "annotationProcessor", "java", "main")
+        }else {
             FileSystems.getDefault()
                 .getPath(rootDir, "target", "generated-sources", "jte")
         }

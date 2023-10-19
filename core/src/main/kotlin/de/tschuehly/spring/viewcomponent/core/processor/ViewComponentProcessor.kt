@@ -47,7 +47,7 @@ class ViewComponentProcessor : AbstractProcessor() {
                     messager = messager,
                 )
                 val generatedFile = viewComponentParser.parseFile(false)
-                if (generatedFile != null) {
+                if (generatedFile != null && !generatedFile.endsWith("kt")) {
                     val fil = filer.getResource(
                         StandardLocation.SOURCE_OUTPUT,
                         generatedFile.substringBeforeLast("/").replace("/", "."),
