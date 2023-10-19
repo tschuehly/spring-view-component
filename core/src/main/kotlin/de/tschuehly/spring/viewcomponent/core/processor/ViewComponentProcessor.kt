@@ -2,25 +2,18 @@ package de.tschuehly.spring.viewcomponent.core.processor
 
 import de.tschuehly.spring.viewcomponent.core.action.*
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentParser.BuildType
-import org.springframework.util.CollectionUtils
 import java.io.File
 import java.io.IOException
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.Instant
 import java.util.*
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.Name
-import javax.lang.model.element.TypeElement
+import javax.lang.model.element.*
 import javax.tools.Diagnostic
 import javax.tools.StandardLocation
 import kotlin.io.path.absolute
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
 
@@ -40,8 +33,6 @@ class ViewComponentProcessor : AbstractProcessor() {
                 val packagePath = "${element.enclosingElement}".replace(".", separator)
                 val srcDir = getSrcDir(rootDir, messager)
                 val viewComponentDir = FileSystems.getDefault().getPath(srcDir.toString(), packagePath)
-                messager.printMessage(Diagnostic.Kind.NOTE, "SrcDirPath: " + viewComponentDir.absolutePathString())
-
                 val srcHtmlFile = getSrcHtmlFile(viewComponentDir, element.simpleName, messager)
                 val methodList = getViewActionMethods(element)
 
@@ -59,7 +50,7 @@ class ViewComponentProcessor : AbstractProcessor() {
                 if (generatedFile != null) {
                     val fil = filer.getResource(
                         StandardLocation.SOURCE_OUTPUT,
-                        generatedFile.substringBeforeLast("/").replace("/","."),
+                        generatedFile.substringBeforeLast("/").replace("/", "."),
                         generatedFile.substringAfterLast("/")
                     )
                     val generatedSourceText = fil.openReader(true).use {
@@ -71,10 +62,6 @@ class ViewComponentProcessor : AbstractProcessor() {
                         it.write(generatedSourceText)
                         it.flush()
                     }
-//                    srcFile.openReader(true).use {
-//                        val text = it.readText()
-//                        text
-//                    }
                 }
 
             }
@@ -100,18 +87,16 @@ class ViewComponentProcessor : AbstractProcessor() {
         try {
             val fileName = "gen_${Date().toInstant().toEpochMilli()}"
             val sourceFile = this.filer.createSourceFile(fileName)
-            val srcDirPath = Paths.get(sourceFile.toUri()).toString()
+
             sourceFile.openWriter().use {
                 it.close()
             }
 
-            val fil = filer.getResource(
-                StandardLocation.SOURCE_OUTPUT,
-                "",
-                fileName
-            )
-            fil.delete()
-            return srcDirPath
+
+            return Paths.get(sourceFile.toUri()).let {
+//                it.deleteExisting() TODO: Cannot delete
+                it.toString()
+            }
         } catch (e: IOException) {
             processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "Unable to determine source file path!")
         }
@@ -162,17 +147,18 @@ class ViewComponentProcessor : AbstractProcessor() {
 
     private fun getSrcHtmlFile(srcDirPath: Path, viewComponentName: Name, messager: Messager): File {
         val fileEndings = listOf(".html", ".jte", ".kte", ".th")
+        val testedFiles = mutableListOf<String>()
         fileEndings.forEach { fileEnding ->
             val file = srcDirPath.absolute().resolve("$viewComponentName$fileEnding").toFile()
             if (file.exists()) {
-                messager.printMessage(Diagnostic.Kind.NOTE, "Found file at ${file.path}")
+                messager.printMessage(Diagnostic.Kind.NOTE, "Found ViewComponent Template at ${file.path}")
                 return file
             }
-            messager.printMessage(Diagnostic.Kind.NOTE, "Didn't find file at ${file.path}")
+            testedFiles.add(file.path)
         }
         messager.printMessage(
             Diagnostic.Kind.ERROR,
-            "Couldn't find a file at $srcDirPath"
+            "Couldn't find a template for $viewComponentName tried at following paths: $testedFiles"
         )
         throw ViewComponentProcessingException("Couldn't find a file at $srcDirPath", null)
     }
