@@ -7,5 +7,5 @@ import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 class IndexViewComponent {
     fun render() = IndexView()
 
-    class IndexView : ViewContext
+    public class IndexView : ViewContext
 }

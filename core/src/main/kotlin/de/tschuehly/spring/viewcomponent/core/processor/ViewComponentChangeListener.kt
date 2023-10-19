@@ -5,26 +5,23 @@ import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.Advised
 import org.springframework.aop.support.AopUtils
+import org.springframework.boot.devtools.classpath.ClassPathChangedEvent
 import org.springframework.boot.devtools.filewatch.ChangedFiles
 import org.springframework.boot.devtools.filewatch.FileChangeListener
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationEventPublisher
 
 
 class ViewComponentChangeListener(
     private val applicationContext: ApplicationContext,
-    private val buildType: ViewComponentParser.BuildType
+    private val buildType: ViewComponentParser.BuildType,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) : FileChangeListener {
     private val logger = LoggerFactory.getLogger(ViewComponentChangeListener::class.java)
     override fun onChange(changeSet: MutableSet<ChangedFiles>) {
+
         if (
-            changeSet.any { changedFiles ->
-                changedFiles.files.any {
-                    it.relativeName.endsWith(".html") ||
-                            it.relativeName.endsWith(".th") ||
-                            it.relativeName.endsWith(".jte") ||
-                            it.relativeName.endsWith(".kte")
-                }
-            }
+            isTemplate(changeSet)
         ) {
             val srcFile = changeSet.first().files.first().file
             val bean = applicationContext.getBeansWithAnnotation(ViewComponent::class.java).filter {
@@ -42,8 +39,21 @@ class ViewComponentChangeListener(
                 viewComponentName = javaClass.simpleName.lowercase()
             )
             parser.parseFile(true)
+            if(srcFile.extension == "kte" || srcFile.extension == "jte"){
+                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, true))
+            }
         }
     }
+
+    private fun isTemplate(changeSet: MutableSet<ChangedFiles>) =
+        changeSet.any { changedFiles ->
+            changedFiles.files.any {
+                it.relativeName.endsWith(".html") ||
+                        it.relativeName.endsWith(".th") ||
+                        it.relativeName.endsWith(".jte") ||
+                        it.relativeName.endsWith(".kte")
+            }
+        }
 
     private fun getViewActionMethods(javaClass: Class<Any>) =
         javaClass.declaredMethods.mapNotNull { method ->

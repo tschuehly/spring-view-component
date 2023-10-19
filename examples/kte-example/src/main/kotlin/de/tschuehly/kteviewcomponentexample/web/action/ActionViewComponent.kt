@@ -14,7 +14,7 @@ class ActionViewComponent(
 
     fun render() = ActionView(exampleService.itemList, counter, person)
 
-    var counter: Int = 0
+    var counter: Int = 3
 
     @GetViewAction("/customPath/countUp")
     fun countUp(): IViewContext {
