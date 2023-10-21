@@ -5,7 +5,6 @@ import org.springframework.boot.devtools.classpath.ClassPathFileSystemWatcher
 import org.springframework.boot.devtools.classpath.ClassPathRestartStrategy
 import org.springframework.boot.devtools.filewatch.FileSystemWatcherFactory
 import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationEventPublisher
 import java.io.File
 import java.net.URL
 
@@ -19,7 +18,8 @@ class ViewComponentFileSystemWatcher(
     fileSystemWatcherFactory, restartStrategy, urls,
 ) {
 
-    val gradleKotlinBuildDir = "build/classes/kotlin/main/"
+    val kotlinGradleBuildDir = "build/classes/kotlin/main/"
+    val javaGradleBuildDir = "build/classes/java/main/"
     val javaMavenBuildDir = "target/classes/"
     val fileSystemWatcher = fileSystemWatcherFactory.fileSystemWatcher
     override fun afterPropertiesSet()  {
@@ -41,8 +41,15 @@ class ViewComponentFileSystemWatcher(
     }
 
     private fun getSrcDir(classPath: String): Pair<File, ViewComponentParser.BuildType> {
-        if (classPath.endsWith(gradleKotlinBuildDir)) {
-            val srcDir = classPath.split(gradleKotlinBuildDir)[0] + "/src/main/kotlin"
+        if (classPath.endsWith(kotlinGradleBuildDir)) {
+            val srcDir = classPath.split(kotlinGradleBuildDir)[0] + "/src/main/kotlin"
+            val file = File(srcDir)
+            if (file.exists()) {
+                return file to ViewComponentParser.BuildType.GRADLE
+            }
+        }
+        if(classPath.endsWith(javaGradleBuildDir)){
+            val srcDir = classPath.split(javaGradleBuildDir)[0] + "src/main/java"
             val file = File(srcDir)
             if (file.exists()) {
                 return file to ViewComponentParser.BuildType.GRADLE
