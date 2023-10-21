@@ -63,17 +63,12 @@ public class ActionViewComponent {
     }
 
     @PutViewAction
-    public ViewContext savePersonPut(HttpServletRequest request, Person person) {
+    public ViewContext savePersonPut(Person person) {
         this.person = person; // TODO: ParameterBinding doesn't work
         return render();
     }
 
-    public record Person(
-            String name,
-            Integer age,
-            String location
-    ) {
-    }
 
 
 }
+

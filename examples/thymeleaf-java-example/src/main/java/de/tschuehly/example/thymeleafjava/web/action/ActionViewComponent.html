@@ -1,5 +1,4 @@
-
-
+<!--/*@thymesVar id="actionView" type="de.tschuehly.example.thymeleafjava.web.action.ActionViewComponent.ActionView"*/-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -10,7 +9,6 @@
 <h2>ViewAction Get CountUp</h2>
 
 <button view:action="countUp">Default ViewAction [GET]</button>
-<!--/*@thymesVar id="actionView" type="de.tschuehly.example.thymeleafjava.web.action.ActionViewComponent.ActionView"*/-->
 <h3 th:text="${actionView.counter()}"></h3>
 
 <h2>ViewAction Post AddItem</h2>
@@ -35,15 +33,15 @@
 
 <h2>ViewAction Put/Patch Person Form</h2>
 
-<form th:object="${actionView.person}" style="display: inline-grid; gap: 0.5rem">
+<form style="display: inline-grid; gap: 0.5rem">
   <label>
-    Name <input type="text" th:field="*{name}">
+    Name <input type="text" id="name" name="name" th:value="${actionView.person().name}">
   </label>
   <label>
-    Age: <input type="number" th:field="*{age}">
+    Age: <input type="number"  id="age" name="age" th:value="${actionView.person().age}">
   </label>
   <label>
-    Location: <input type="text" th:field="*{location}">
+    Location: <input type="text" id="location" name="location" th:value="${actionView.person().location}">
   </label>
   <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
   <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
