@@ -41,6 +41,8 @@ class ViewComponentChangeListener(
             parser.parseFile(true)
             if(srcFile.extension == "kte" || srcFile.extension == "jte"){
                 applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, true))
+            }else{
+                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
             }
         }
     }

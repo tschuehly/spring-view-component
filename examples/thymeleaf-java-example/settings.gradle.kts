@@ -1,7 +1,7 @@
 rootProject.name = "thymeleaf-java-example"
 includeBuild("..\\..\\thymeleaf"){
     dependencySubstitution {
-        substitute(module("de.tschuehly:spring-view-component-jte")).using(project(":"))
+        substitute(module("de.tschuehly:spring-view-component-thymeleaf")).using(project(":"))
     }
 }
 includeBuild("..\\..\\core"){

@@ -1,9 +1,11 @@
 package de.tschuehly.spring.viewcomponent.core.processor
 
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.devtools.classpath.ClassPathFileSystemWatcher
 import org.springframework.boot.devtools.classpath.ClassPathRestartStrategy
 import org.springframework.boot.devtools.filewatch.FileSystemWatcherFactory
+import org.springframework.boot.devtools.livereload.LiveReloadServer
 import org.springframework.context.ApplicationContext
 import java.io.File
 import java.net.URL
@@ -18,6 +20,8 @@ class ViewComponentFileSystemWatcher(
     fileSystemWatcherFactory, restartStrategy, urls,
 ) {
 
+    val logger = LoggerFactory.getLogger(ViewComponentFileSystemWatcher::class.java)
+
     val kotlinGradleBuildDir = "build/classes/kotlin/main/"
     val javaGradleBuildDir = "build/classes/java/main/"
     val javaMavenBuildDir = "target/classes/"
@@ -28,6 +32,7 @@ class ViewComponentFileSystemWatcher(
             applicationContext.getBeansWithAnnotation(SpringBootApplication::class.java)
                 .values.first().javaClass.protectionDomain.codeSource.location.path
         val (srcDir, buildType) = getSrcDir(classPath)
+        logger.info("Watching for filechanges at: ${srcDir.absoluteFile.path}")
         fileSystemWatcher.addSourceDirectory(srcDir)
         fileSystemWatcher.addListener(
             ViewComponentChangeListener(
