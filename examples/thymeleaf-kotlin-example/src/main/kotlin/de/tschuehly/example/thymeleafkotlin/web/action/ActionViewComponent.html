@@ -34,13 +34,13 @@
 
 <form th:object="${actionView.person}" style="display: inline-grid; gap: 0.5rem">
   <label>
-    Name <input type="text" th:field="*{name}">
+    Name <input type="text" id="name" name="name" th:value="${actionView.person.name}">
   </label>
   <label>
-    Age: <input type="number" th:field="*{age}">
+    Age: <input type="number"  id="age" name="age" th:value="${actionView.person.age}">
   </label>
   <label>
-    Location: <input type="text" th:field="*{location}">
+    Location: <input type="text" id="location" name="location" th:value="${actionView.person.location}">
   </label>
   <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
   <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
