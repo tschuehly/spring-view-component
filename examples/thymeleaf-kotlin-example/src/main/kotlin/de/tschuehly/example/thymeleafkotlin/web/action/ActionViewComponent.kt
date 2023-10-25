@@ -52,8 +52,8 @@ class ActionViewComponent(
     }
 
     @PutViewAction
-    fun savePersonPut(personDTO: PersonDTO): IViewContext {
-        this.person = personDTO.person ?: throw RuntimeException() //TODO: Property Binding failing
+    fun savePersonPut(person: Person): IViewContext {
+        this.person = person
         return render()
     }
     class PersonDTO(
