@@ -32,7 +32,7 @@ class ViewComponentFileSystemWatcher(
             applicationContext.getBeansWithAnnotation(SpringBootApplication::class.java)
                 .values.first().javaClass.protectionDomain.codeSource.location.path
         val (srcDir, buildType) = getSrcDir(classPath)
-        logger.info("Watching for filechanges at: ${srcDir.absoluteFile.path}")
+        logger.info("Watching for template changes at: ${srcDir.absoluteFile.path}")
         fileSystemWatcher.addSourceDirectory(srcDir)
         fileSystemWatcher.addListener(
             ViewComponentChangeListener(
