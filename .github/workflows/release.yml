@@ -1,10 +1,6 @@
 name: Publish package to the Maven Central Repository
 on:
   push:
-    branches:
-      - '**-SNAPSHOT'
-    tags:
-      - v*
   pull_request:
     branches: [ main ]
 jobs:
