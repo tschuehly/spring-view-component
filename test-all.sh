@@ -1,16 +1,21 @@
 ./gradlew :core:publishToMavenLocal :thymeleaf:publishToMavenLocal :jte:publishToMavenLocal :jte-compiler:publishToMavenLocal
 
+echo "Testing thymeleaf-kotlin-example"
 cd ./examples/thymeleaf-kotlin-example
-./gradlew test
+./gradlew clean test
 
 
-../thymeleaf-java-example
-./mvnw test
-./gradlew test
-
+cd ../thymeleaf-java-example
+echo "Testing thymeleaf-java-example with mvnw"
+./mvnw clean test
+echo "Testing thymeleaf-java-example with gradlew"
+./gradlew clean test
 cd ../kte-example
-./gradlew test
+echo "Testing kte-example"
+./gradlew clean test
 
 cd ../jte-example
-./mvnw test
-./gradlew test
+echo "Testing jte-example with mvnw"
+./mvnw clean test
+echo "Testing jte-example with gradlew"
+./gradlew clean test
