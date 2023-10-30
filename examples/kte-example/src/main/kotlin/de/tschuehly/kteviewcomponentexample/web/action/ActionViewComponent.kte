@@ -47,6 +47,5 @@
     <button type="submit" view:action="savePersonPut">Save Changes using Put</button>
     <button type="submit" view:action="savePersonPatch">Save Changes using Patch</button>
 </form>
-Hello World!
 </body>
 </html>

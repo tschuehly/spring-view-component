@@ -31,6 +31,8 @@ jobs:
           cd ./examples/thymeleaf-java-example
           chmod +x ./mvnw
           ./mvnw test
+          chmod +x ./mvnw
+          ./mvnw test
       - name: run kte kotlin tests
         run: |
           cd ./examples/kte-example
@@ -39,10 +41,13 @@ jobs:
       - name: run jte java tests
         run: |
           cd ./examples/jte-example
+          chmod +x ./gradlew
+          ./gradlew test
           chmod +x ./mvnw
           ./mvnw test
   publish:
     needs: test
+    if: github.ref_name == 'master' || contains(github.ref_name, 'SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -137,7 +137,7 @@ class ViewComponentParser(
             .getPath(rootDir, "build", "generated", "sources", "annotationProcessor", "java", "main")
         }else {
             FileSystems.getDefault()
-                .getPath(rootDir, "target", "generated-sources", "jte")
+                .getPath(rootDir, "target", "generated-sources","annotations")
         }
     }
 

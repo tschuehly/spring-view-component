@@ -6,5 +6,4 @@ server:
   port: 8084
 spring:
   view-component:
-    view-action:
-      enabled: true
+    local-development: false
