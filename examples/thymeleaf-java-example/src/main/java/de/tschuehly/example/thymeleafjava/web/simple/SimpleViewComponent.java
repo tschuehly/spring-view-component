@@ -12,7 +12,7 @@ public class SimpleViewComponent {
         this.exampleService = exampleService;
     }
 
-    record SimpleView(String helloWorld) implements ViewContext {
+    public record SimpleView(String helloWorld) implements ViewContext {
     }
 
     public SimpleView render() {
