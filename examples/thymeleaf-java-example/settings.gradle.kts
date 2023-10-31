@@ -9,3 +9,8 @@ includeBuild("..\\..\\core"){
         substitute(module("de.tschuehly:spring-view-component-core")).using(project(":"))
     }
 }
+includeBuild("..\\..\\jte\\jte-compiler"){
+    dependencySubstitution {
+        substitute(module("de.tschuehly:spring-view-component-jte-compiler")).using(project(":"))
+    }
+}

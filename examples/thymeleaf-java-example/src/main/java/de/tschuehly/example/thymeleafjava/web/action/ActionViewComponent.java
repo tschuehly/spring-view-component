@@ -3,9 +3,9 @@ package de.tschuehly.example.thymeleafjava.web.action;
 import de.tschuehly.example.thymeleafjava.core.ExampleService;
 import de.tschuehly.spring.viewcomponent.core.action.*;
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent;
+import de.tschuehly.spring.viewcomponent.thymeleaf.ActionViewContext;
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public class ActionViewComponent {
         this.exampleService = exampleService;
     }
 
-    public record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements ViewContext {
+    public record ActionView(Integer counter, Map<Integer, String> itemList, Person person) implements ActionViewContext {
     }
 
     Integer counter = 0;

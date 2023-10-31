@@ -226,7 +226,7 @@ As you can see the attribute value of the `view:action="countUp"` correlates to 
 public class ActionViewComponent {
     Integer counter = 0;
 
-    public record ActionView(Integer counter) implements ViewContext {
+    public record ActionView(Integer counter) implements ActionViewContext {
     }
 
     public ViewContext render() {
@@ -246,17 +246,15 @@ public class ActionViewComponent {
 
 ```kotlin
 @ViewComponent
-class ActionViewComponent(
-    val exampleService: ExampleService
-) {
-    var counter = 0
-    
-    fun render() = ViewContext(
-        "counter" toProperty counter,
-    )
+class ActionViewComponent {
+    data class ActionView(val counter: Int) : ViewContext
 
-    @GetViewAction
-    fun countUp(): ViewContext {
+    fun render() = ActionView(counter)
+
+    var counter: Int = 0
+
+    @GetViewAction("/customPath/countUp")
+    fun countUp(): IViewContext {
         counter += 1
         return render()
     }
@@ -274,7 +272,7 @@ The `hx-target="#actionviewcomponent"` attribute will swap the returned HTML to 
 
 
 ```html
-<div id="actionviewcomponent">
+<div id="actionviewcomponent" style="display: contents;">
   <script defer src="https://unpkg.com/htmx.org@1.9.3"></script>
   <h2>ViewAction Get CountUp</h2>
   <button hx-get="/actionviewcomponent/countup" hx-target="#actionviewcomponent">
