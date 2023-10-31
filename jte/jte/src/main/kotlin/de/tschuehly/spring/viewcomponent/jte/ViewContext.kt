@@ -13,13 +13,9 @@ import gg.jte.TemplateOutput
 
 interface ViewContext : Content, IViewContext {
     override fun writeTo(output: TemplateOutput) {
-        output.writeContent("<div id=\"")
-        output.writeContent(ViewComponentUtils.getId(this::class.java))
-        output.writeContent("\" style=\"display: contents;\">")
         (jteTemplateEngine as TemplateEngine).render(
             getViewComponentTemplate(this), this,
             output
         )
-        output.writeContent("</div>")
     }
 }

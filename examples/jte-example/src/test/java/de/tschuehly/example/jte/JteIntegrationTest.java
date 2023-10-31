@@ -172,10 +172,10 @@ class JteIntegrationTest {
                         <nav>
                           This is the NavBar
                         </nav>
-                        <div id="simpleviewcomponent" style="display: contents;"><div>
+                        <div>
                           <h2>This is the SimpleViewComponent</h2>
                           <div>Hello World</div>
-                        </div></div>
+                        </div>
                         <footer>
                           This is a footer
                         </footer>
