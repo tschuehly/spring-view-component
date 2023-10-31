@@ -125,24 +125,11 @@ class ViewComponentProcessor : AbstractProcessor() {
     }
 
     private fun verifyRenderMethodExists(element: Element, messager: Messager) {
-        val renderReturnType = element.enclosedElements.filter { it.kind == ElementKind.METHOD }
-            .find { it.simpleName.toString() == "render" }
-            ?.asType()
-            ?: let {
-                messager.printMessage(
-                    Diagnostic.Kind.ERROR,
-                    "You need to define a render method in the $element that returns a ViewContext"
-                )
-                throw ViewComponentProcessingException(
-                    "You need to define a render method in the $element that returns a ViewContext",
-                    null
-                )
-            }
+        element.enclosedElements
+            .filter { it.kind == ElementKind.METHOD }
+//            .filter { (it.asType() as Type.MethodType).restype != null }
+            .map { it.asType().toString().replace("()","") }
 
-        val viewProperties = ((element.enclosedElements.filter { it.kind == ElementKind.METHOD }
-            .find { it.simpleName.toString() == "render" })?.asType().toString().substring(2)
-            .let { name -> element.enclosedElements.find { it.toString() == name } })
-            ?.enclosedElements?.filter { it.kind == ElementKind.FIELD }
     }
 
     private fun getSrcHtmlFile(srcDirPath: Path, viewComponentName: Name, messager: Messager): File {
