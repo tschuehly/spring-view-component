@@ -64,7 +64,7 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :thymeleaf:jreleaserDeploy -DaltDeploymentRepository=local::file:./thymeleaf/build/staging-deploy
+        run: ./gradlew :thymeleaf:jreleaserDeploy -DaltDeploymentRepository=local::file:./thymeleaf/build/staging-deploy --stacktrace
       - name: Publish jte package to staging
         run: ./gradlew :jte:publish
       - name: Publish jte package to maven central
@@ -75,7 +75,7 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :jte:jreleaserDeploy -DaltDeploymentRepository=local::file:./jte/build/staging-deploy
+        run: ./gradlew :jte:jreleaserDeploy -DaltDeploymentRepository=local::file:./jte/jte/build/staging-deploy --stacktrace
       - name: Publish jte-compiler package to staging
         run: ./gradlew :jte-compiler:publish
       - name: Publish jte package to maven central
@@ -86,7 +86,7 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :jte-compiler:jreleaserDeploy -DaltDeploymentRepository=local::file:./jte/build/staging-deploy
+        run: ./gradlew :jte-compiler:jreleaserDeploy -DaltDeploymentRepository=local::file:./jte/jte-compiler/build/staging-deploy --stacktrace
       - name: Publish core package to staging
         run: ./gradlew :core:publish
       - name: Publish core package to maven central
