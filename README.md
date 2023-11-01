@@ -1,6 +1,6 @@
 ![image](https://user-images.githubusercontent.com/33346637/235085980-eb16eaa3-ec89-4293-9609-cf651a44f60e.png)
 
-Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered view components.
+Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered ui components.
 
 ##### Table of Contents  
 - [What’s a ViewComponent?](#whats-a-viewcomponent)
@@ -54,7 +54,7 @@ class SimpleViewComponent{
 </details>
 
 A ViewComponent always need a corresponding HTML Template.
-We define the Template in the SimpleViewComponent.[html/jte/kte] in the same package as our ViewComponent Class.
+We define the Template in the SimpleViewComponent.[html/jte/kte] in the same package as our ViewComponent class.
 
 We can use [Thymeleaf](https://thymeleaf.org)
 
@@ -80,14 +80,10 @@ or [KTE](https://jte.gg/#5-minutes-example)
     <div>${simpleView.helloWorld}</div>
 </div>
 ```
-[Installation with Gradle](#gradle-installation)
-
-[Thymeleaf Example](https://github.com/tschuehly/spring-view-component/tree/master/examples/thymeleaf-demo)
-[JTE Example](https://github.com/tschuehly/spring-view-component/tree/master/examples/jte-demo)
 
 ## Render a ViewComponent
 
-We can then call the render method in our Controller
+We can then call the render method in our controller to render the template.
 <details open>
     <summary>Java</summary>
 
@@ -126,7 +122,7 @@ class SimpleController(
 
 ## Examples
 
-If you want to get started right away you can find examples for all possibilites here:
+If you want to get started right away you can find examples for all possible language combinations here:
 [Examples](/examples/)
 
 ## Nesting ViewComponents:
@@ -387,6 +383,8 @@ annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
 </details>
 
 
+
+# Experimental stuff:
 
 ## Composing pages from components
 
