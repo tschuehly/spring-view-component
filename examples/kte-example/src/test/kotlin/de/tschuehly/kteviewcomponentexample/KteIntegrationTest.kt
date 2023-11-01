@@ -108,7 +108,6 @@ class KteIntegrationTest(
                 <html>
                 <nav>This is a Navbar</nav>
                 <body id="layoutviewcomponent">
-                <div id="actionviewcomponent" style="display: contents;">
                 <html>
                 <head>
                     <script src="http://localhost:35729/livereload.js"></script>
@@ -146,7 +145,6 @@ class KteIntegrationTest(
                 </form>
                 </body>
                 </html>
-                </div>
                 </body>
                 <footer>This is a footer</footer>
                 </html>
@@ -162,9 +160,8 @@ class KteIntegrationTest(
                 <html>
                 <nav>This is a Navbar</nav>
                 <body id="layoutviewcomponent">
-                <div id="simpleviewcomponent" style="display: contents;">
                 <div><h2>This is the SimpleViewComponent</h2>
-                <div>Hello World</div></div></div></body>
+                <div>Hello World</div></div></body>
                 <footer>This is a footer</footer></html>
                             """.trimIndent()
         assertEndpointReturns("/layout", expectedHtml)
