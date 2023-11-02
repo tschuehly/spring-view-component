@@ -18,8 +18,8 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-jte:0.7.1")
-    kapt("de.tschuehly:spring-view-component-core:0.7.1")
+    implementation("de.tschuehly:spring-view-component-jte:0.7.2-SNAPSHOT")
+    kapt("de.tschuehly:spring-view-component-core:0.7.2-SNAPSHOT")
     implementation("io.github.wimdeblauwe:htmx-spring-boot:3.0.0")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
