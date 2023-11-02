@@ -43,7 +43,7 @@ jobs:
           ./mvnw test
   publish:
     needs: test
-    if: github.ref_name == 'master' || contains(github.ref_name, 'SNAPSHOT')
+    if: github.ref_type == 'tag' || contains(github.ref_name, 'SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
