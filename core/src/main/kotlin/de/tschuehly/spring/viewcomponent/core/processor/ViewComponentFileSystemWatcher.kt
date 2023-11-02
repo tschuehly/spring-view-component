@@ -1,5 +1,7 @@
 package de.tschuehly.spring.viewcomponent.core.processor
 
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
+import de.tschuehly.spring.viewcomponent.core.component.ViewComponentException
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.devtools.classpath.ClassPathFileSystemWatcher
@@ -26,18 +28,21 @@ class ViewComponentFileSystemWatcher(
     val javaGradleBuildDir = "build/classes/java/main/"
     val javaMavenBuildDir = "target/classes/"
     val fileSystemWatcher = fileSystemWatcherFactory.fileSystemWatcher
-    override fun afterPropertiesSet()  {
-
-        val classPath =
-            applicationContext.getBeansWithAnnotation(SpringBootApplication::class.java)
-                .values.first().javaClass.protectionDomain.codeSource.location.path
-        val (srcDir, buildType) = getSrcDir(classPath)
-        logger.info("Watching for template changes at: ${srcDir.absoluteFile.path}")
-        fileSystemWatcher.addSourceDirectory(srcDir)
+    override fun afterPropertiesSet() {
+        val classPathList = this.applicationContext.getBeansWithAnnotation(ViewComponent::class.java).values.map {
+            it.javaClass.protectionDomain.codeSource.location.path
+        }.toSet()
+        var buildType: ViewComponentParser.BuildType? = null
+         classPathList.forEach{ classPath ->
+            val (srcDir, classPathBuildType) = getSrcDir(classPath)
+            fileSystemWatcher.addSourceDirectory(srcDir)
+            logger.info("Watching for template changes at: ${srcDir.absoluteFile.path}")
+             buildType = classPathBuildType
+        }
         fileSystemWatcher.addListener(
             ViewComponentChangeListener(
                 applicationContext,
-                buildType,
+                buildType ?: throw ViewComponentException("BuildType could not be determined"),
                 applicationContext
 
             )
@@ -53,7 +58,7 @@ class ViewComponentFileSystemWatcher(
                 return file to ViewComponentParser.BuildType.GRADLE
             }
         }
-        if(classPath.endsWith(javaGradleBuildDir)){
+        if (classPath.endsWith(javaGradleBuildDir)) {
             val srcDir = classPath.split(javaGradleBuildDir)[0] + "src/main/java"
             val file = File(srcDir)
             if (file.exists()) {
