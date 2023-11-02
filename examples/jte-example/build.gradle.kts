@@ -19,8 +19,8 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("de.tschuehly:spring-view-component-jte:0.7.0")
-    annotationProcessor("de.tschuehly:spring-view-component-core:0.7.0")
+    implementation("de.tschuehly:spring-view-component-jte:0.7.1")
+    annotationProcessor("de.tschuehly:spring-view-component-core:0.7.1")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator-core:0.53")

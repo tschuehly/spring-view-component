@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.0")
-    kapt("de.tschuehly:spring-view-component-core:0.7.0")
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.1")
+    kapt("de.tschuehly:spring-view-component-core:0.7.1")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator:0.47")
