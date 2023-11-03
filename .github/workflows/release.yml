@@ -3,6 +3,8 @@ on:
   push:
   pull_request:
     branches: [ main ]
+env:
+  CACHE_KEY: maven-de-tschuehly-${{ github.event.repository.updated_at}}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,20 +24,22 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          key: ${{ env.CACHE_KEY }}
   test-thymeleaf-kotlin:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.CACHE_KEY }}
       - uses: actions/checkout@v3
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
       - name: run thymeleaf kotlin tests
         run: |
           cd ./examples/thymeleaf-kotlin-example
@@ -45,13 +49,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.CACHE_KEY }}
       - uses: actions/checkout@v3
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven'
       - name: run thymeleaf java tests
         run: |
           cd ./examples/thymeleaf-java-example
@@ -61,13 +69,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.CACHE_KEY }}
       - uses: actions/checkout@v3
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
       - name: run jte java tests
         run: |
           cd ./examples/jte-example
@@ -79,13 +91,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ env.CACHE_KEY }}
       - uses: actions/checkout@v3
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
       - name: run kte kotlin tests
         run: |
           cd ./examples/kte-example
@@ -102,7 +118,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
       - name: Publish thymeleaf package to staging
