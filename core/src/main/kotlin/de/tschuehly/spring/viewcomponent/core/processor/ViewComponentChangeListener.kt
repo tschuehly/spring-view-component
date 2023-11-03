@@ -10,6 +10,7 @@ import org.springframework.boot.devtools.filewatch.ChangedFiles
 import org.springframework.boot.devtools.filewatch.FileChangeListener
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.ContextRefreshedEvent
 
 
 class ViewComponentChangeListener(
@@ -39,11 +40,14 @@ class ViewComponentChangeListener(
                 viewComponentName = javaClass.simpleName.lowercase()
             )
             parser.parseFile(true)
-            if(srcFile.extension == "kte" || srcFile.extension == "jte"){
-                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, true))
-            }else{
-                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
-            }
+//            applicationEventPublisher.publishEvent(ContextRefreshedEvent(applicationContext))
+//            applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
+//            if(srcFile.extension == "kte" || srcFile.extension == "jte"){
+//                // TODO: if restart is set to false then update resources in intelliJ triggers livereload
+//                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
+//            }else{
+//                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
+//            }
         }
     }
 
