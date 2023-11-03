@@ -3,19 +3,20 @@ on:
   push:
   pull_request:
     branches: [ main ]
-env:
-  CACHE_KEY: maven-de-tschuehly-${{ github.event.repository.updated_at}}
 jobs:
   build:
+
     runs-on: ubuntu-latest
+    outputs:
+      cacheKey: ${{ steps.cacheKey.outputs.cacheKey }}
     steps:
+      - run: echo "CACHE_KEY=maven-de-tschuehly-$(date +%s)" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
       - name: make gradle executable
         run: chmod +x ./gradlew
       - name: publishToMavenLocal
@@ -25,16 +26,18 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ env.CACHE_KEY }}
+      - id: cacheKey
+        run: echo "cacheKey=${{ env.CACHE_KEY }}" >> $GITHUB_OUTPUT
   test-thymeleaf-kotlin:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY }}
-      - uses: actions/checkout@v3
+          key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -49,12 +52,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY }}
-      - uses: actions/checkout@v3
+          key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -69,11 +72,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY }}
+          key: ${{ needs.build.outputs.cacheKey }}
       - uses: actions/checkout@v3
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -91,12 +95,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ env.CACHE_KEY }}
-      - uses: actions/checkout@v3
+          key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -112,7 +116,12 @@ jobs:
     if: github.ref_type == 'tag' || contains(github.ref_name, 'SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
