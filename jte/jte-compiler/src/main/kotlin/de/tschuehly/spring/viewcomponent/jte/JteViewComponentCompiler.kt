@@ -12,7 +12,7 @@ class JteViewComponentCompiler() {
     fun generate(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
         val config = TemplateConfig(
             ContentType.Html,
-            Constants.PACKAGE_NAME_PRECOMPILED + packageName
+            packageName
         )
         config.classPath = null
         val compiler = TemplateCompiler(
@@ -27,7 +27,7 @@ class JteViewComponentCompiler() {
     fun compile(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
         val config = TemplateConfig(
             ContentType.Html,
-            Constants.PACKAGE_NAME_PRECOMPILED +packageName
+            packageName
         )
 
 

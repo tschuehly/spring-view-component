@@ -48,7 +48,7 @@ class ViewComponentParser(
         val compiler = JteViewComponentCompiler()
 
         val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
-            it.substring(0, it.length - 1)
+            it.substring(1, it.length - 1)
         }
 
         val language = getLanguage(resourceHtmlFile)
