@@ -3,4 +3,5 @@
 <div>
   <h2>This is the SimpleViewComponent</h2>
   <div>${simpleView.helloWorld()}</div>
+  Welt
 </div>

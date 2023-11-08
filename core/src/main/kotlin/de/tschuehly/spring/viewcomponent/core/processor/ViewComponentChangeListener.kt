@@ -40,7 +40,7 @@ class ViewComponentChangeListener(
                 viewComponentName = javaClass.simpleName.lowercase()
             )
             parser.parseFile(true)
-//            applicationEventPublisher.publishEvent(ContextRefreshedEvent(applicationContext))
+            applicationEventPublisher.publishEvent(ContextRefreshedEvent(applicationContext))
 //            applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
 //            if(srcFile.extension == "kte" || srcFile.extension == "jte"){
 //                // TODO: if restart is set to false then update resources in intelliJ triggers livereload
@@ -61,29 +61,32 @@ class ViewComponentChangeListener(
             }
         }
 
-    private fun getViewActionMethods(javaClass: Class<Any>) =
-        javaClass.declaredMethods.mapNotNull { method ->
-            if (method.getAnnotation(GetViewAction::class.java) != null) {
-                val get = (method.getAnnotation(GetViewAction::class.java) as GetViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, GetViewAction::class.java)
+    companion object{
+        fun getViewActionMethods(javaClass: Class<Any>) =
+            javaClass.declaredMethods.mapNotNull { method ->
+                if (method.getAnnotation(GetViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(GetViewAction::class.java) as GetViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, GetViewAction::class.java)
+                }
+                if (method.getAnnotation(PostViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(PostViewAction::class.java) as PostViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PostViewAction::class.java)
+                }
+                if (method.getAnnotation(PutViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(PutViewAction::class.java) as PutViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PutViewAction::class.java)
+                }
+                if (method.getAnnotation(PatchViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PatchViewAction::class.java)
+                }
+                if (method.getAnnotation(DeleteViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, DeleteViewAction::class.java)
+                }
+                return@mapNotNull null
             }
-            if (method.getAnnotation(PostViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PostViewAction::class.java) as PostViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PostViewAction::class.java)
-            }
-            if (method.getAnnotation(PutViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PutViewAction::class.java) as PutViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PutViewAction::class.java)
-            }
-            if (method.getAnnotation(PatchViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PatchViewAction::class.java)
-            }
-            if (method.getAnnotation(DeleteViewAction::class.java) != null) {
-                val get = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, DeleteViewAction::class.java)
-            }
-            return@mapNotNull null
-        }
+
+    }
 
 }

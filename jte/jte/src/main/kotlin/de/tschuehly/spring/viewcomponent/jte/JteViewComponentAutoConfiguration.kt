@@ -2,13 +2,15 @@ package de.tschuehly.spring.viewcomponent.jte
 
 import de.tschuehly.spring.viewcomponent.core.ViewComponentAutoConfiguration
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
+import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentParser
 import gg.jte.ContentType
 import gg.jte.TemplateEngine
-import gg.jte.runtime.TemplateMode
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.support.AbstractApplicationContext
 import java.nio.file.Paths
 
 @Configuration
@@ -23,13 +25,31 @@ class JteViewComponentAutoConfiguration(
     }
 
     @Bean
-    fun jteTemplateEngine(): TemplateEngine {
-        return TemplateEngine.create(
+    fun jteTemplateEngine(viewComponentCodeResolver: ViewComponentCodeResolver): TemplateEngine {
+        if (viewComponentProperties.localDevelopment) {
+            return TemplateEngine.create(
+                viewComponentCodeResolver,
+                Paths.get("jte-classes"),
+                ContentType.Html,
+                this::class.java.classLoader
+            )
+        }
+        return TemplateEngine.createPrecompiled(
             null,
-            Paths.get(""),
             ContentType.Html,
             null,
-            ""
+            "de"
+        );
+
+    }
+
+    @Bean
+    fun viewComponentCodeResolver(applicationContext: ApplicationContext): ViewComponentCodeResolver {
+        return ViewComponentCodeResolver(
+            applicationContext,
+            ViewComponentParser.BuildType.GRADLE,
+            Paths.get("src/main/java")
         )
     }
+
 }

@@ -32,9 +32,9 @@ class ViewComponentParser(
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
-        if (resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
-            return compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
-        }
+//        if (resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
+//            return compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
+//        }
         return null
     }
 
@@ -48,13 +48,13 @@ class ViewComponentParser(
         val compiler = JteViewComponentCompiler()
 
         val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
-            it.substring(1, it.length - 1)
+            "io.${it.substring(1, it.length - 1)}"
         }
 
         val language = getLanguage(resourceHtmlFile)
 
         if (!isLiveReload) {
-            val classDir = getGeneratedSourcesDir(rootDir,language)
+            val classDir = getGeneratedSourcesDir(rootDir, language)
             val file = compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
                 names = srcFile.name,
@@ -131,13 +131,13 @@ class ViewComponentParser(
     private fun getGeneratedSourcesDir(rootDir: String, language: Language): Path {
         return if (buildType == BuildType.GRADLE && language == Language.KOTLIN) {
             FileSystems.getDefault()
-                .getPath(rootDir, "build", "generated","source", "kapt","main")
-        } else if (buildType == BuildType.GRADLE && language == Language.JAVA){
+                .getPath(rootDir, "build", "generated", "source", "kapt", "main")
+        } else if (buildType == BuildType.GRADLE && language == Language.JAVA) {
             FileSystems.getDefault()
-            .getPath(rootDir, "build", "generated", "sources", "annotationProcessor", "java", "main")
-        }else {
+                .getPath(rootDir, "build", "generated", "sources", "annotationProcessor", "java", "main")
+        } else {
             FileSystems.getDefault()
-                .getPath(rootDir, "target", "generated-sources","annotations")
+                .getPath(rootDir, "target", "generated-sources", "annotations")
         }
     }
 
@@ -165,16 +165,16 @@ class ViewComponentParser(
         return list[0] to list[1].split(srcFile.name)[0]
     }
 
-    private fun parseSrcHtmlFile(): List<String> = srcFile.readLines().map { htmlLine ->
-        if (htmlLine.contains("<body")) {
-            return@map htmlLine.replace("<body", "<body id=\"$viewComponentName\"")
+    fun parseSrcHtmlFile(): List<String> = srcFile.readLines().map { htmlLine ->
+            if (htmlLine.contains("<body")) {
+                return@map htmlLine.replace("<body", "<body id=\"$viewComponentName\"")
+            }
+            if (htmlLine.contains("view:action")) {
+                val newLine = htmlLine.parseViewActionHtmlLine()
+                return@map newLine
+            }
+            htmlLine
         }
-        if (htmlLine.contains("view:action")) {
-            val newLine = htmlLine.parseViewActionHtmlLine()
-            return@map newLine
-        }
-        htmlLine
-    }
 
     private fun String.parseViewActionHtmlLine(): String {
 
