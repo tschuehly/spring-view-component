@@ -25,31 +25,24 @@ class JteViewComponentAutoConfiguration(
     }
 
     @Bean
-    fun jteTemplateEngine(viewComponentCodeResolver: ViewComponentCodeResolver): TemplateEngine {
+    fun jteTemplateEngine(applicationContext: ApplicationContext): TemplateEngine {
         if (viewComponentProperties.localDevelopment) {
             return TemplateEngine.create(
-                viewComponentCodeResolver,
+                ViewComponentCodeResolver(
+                    applicationContext,
+                    ViewComponentParser.BuildType.GRADLE,
+                    Paths.get("src/main/java")
+                ),
                 Paths.get("jte-classes"),
                 ContentType.Html,
                 this::class.java.classLoader
             )
         }
         return TemplateEngine.createPrecompiled(
-            null,
-            ContentType.Html,
-            null,
-            "de"
+            ContentType.Html
         );
 
     }
 
-    @Bean
-    fun viewComponentCodeResolver(applicationContext: ApplicationContext): ViewComponentCodeResolver {
-        return ViewComponentCodeResolver(
-            applicationContext,
-            ViewComponentParser.BuildType.GRADLE,
-            Paths.get("src/main/java")
-        )
-    }
 
 }

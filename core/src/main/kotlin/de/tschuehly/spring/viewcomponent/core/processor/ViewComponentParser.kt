@@ -32,9 +32,9 @@ class ViewComponentParser(
         val resourceDirPath = getResourceDirPath(rootDir, packagePath)
         val resourceHtmlFile = getResourceFile(resourceDirPath)
         resourceHtmlFile.writeAll(parsedHtml)
-//        if (resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
-//            return compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
-//        }
+        if (resourceHtmlFile.extension == "jte" || resourceHtmlFile.extension == "kte") {
+            return compileJte(rootDir, isLiveReload, resourceDirPath, resourceHtmlFile, packagePath)
+        }
         return null
     }
 
@@ -48,13 +48,13 @@ class ViewComponentParser(
         val compiler = JteViewComponentCompiler()
 
         val packageName = packagePath.replace(FileSystems.getDefault().separator, ".").let {
-            "io.${it.substring(1, it.length - 1)}"
+            it.substring(0, it.length - 1)
         }
 
         val language = getLanguage(resourceHtmlFile)
 
         if (!isLiveReload) {
-            val classDir = getGeneratedSourcesDir(rootDir, language)
+            val classDir = getGeneratedSourcesDir(rootDir,language)
             val file = compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
                 names = srcFile.name,
@@ -66,15 +66,6 @@ class ViewComponentParser(
             resourceHtmlFile.delete()
             return file
         }
-
-        compiler.compile(
-            rootDir = resourceDirPath.toAbsolutePath(),
-            names = srcFile.name,
-            classDirectory = listOf(
-                getCompileDirectory(resourceHtmlFile, rootDir)
-            ),
-            packageName
-        )
         resourceHtmlFile.delete()
         return null
     }

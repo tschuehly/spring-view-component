@@ -5,7 +5,6 @@ import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.Advised
 import org.springframework.aop.support.AopUtils
-import org.springframework.boot.devtools.classpath.ClassPathChangedEvent
 import org.springframework.boot.devtools.filewatch.ChangedFiles
 import org.springframework.boot.devtools.filewatch.FileChangeListener
 import org.springframework.context.ApplicationContext
@@ -41,13 +40,6 @@ class ViewComponentChangeListener(
             )
             parser.parseFile(true)
             applicationEventPublisher.publishEvent(ContextRefreshedEvent(applicationContext))
-//            applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
-//            if(srcFile.extension == "kte" || srcFile.extension == "jte"){
-//                // TODO: if restart is set to false then update resources in intelliJ triggers livereload
-//                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
-//            }else{
-//                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
-//            }
         }
     }
 
