@@ -26,7 +26,7 @@ class JteViewContextAspect(
     @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "viewContext")
     fun renderInject(viewContext: IViewContext): IViewContext {
         IViewContext.jteTemplateEngine = jteTemplateEngine
-        IViewContext.templateSuffx = viewComponentProperties.templateSuffix
+        IViewContext.templateSuffx = viewComponentProperties.jteTemplateSuffix
         return viewContext
     }
 }

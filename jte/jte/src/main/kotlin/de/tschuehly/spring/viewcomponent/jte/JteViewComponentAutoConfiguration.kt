@@ -2,7 +2,6 @@ package de.tschuehly.spring.viewcomponent.jte
 
 import de.tschuehly.spring.viewcomponent.core.ViewComponentAutoConfiguration
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
-import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentParser
 import gg.jte.ContentType
 import gg.jte.TemplateEngine
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -10,14 +9,14 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.context.support.AbstractApplicationContext
 import java.nio.file.Paths
 
 @Configuration
 @Import(ViewComponentAutoConfiguration::class)
 @EnableConfigurationProperties(ViewComponentProperties::class)
 class JteViewComponentAutoConfiguration(
-    private val viewComponentProperties: ViewComponentProperties
+    private val viewComponentProperties: ViewComponentProperties,
+    private val applicationContext: ApplicationContext
 ) {
     @Bean
     fun jteViewContextAspect(templateEngine: TemplateEngine): JteViewContextAspect {
@@ -30,12 +29,11 @@ class JteViewComponentAutoConfiguration(
             return TemplateEngine.create(
                 ViewComponentCodeResolver(
                     applicationContext,
-                    ViewComponentParser.BuildType.GRADLE,
-                    Paths.get("src/main/java")
+                    viewComponentProperties.jteTemplateDirectories
                 ),
                 Paths.get("jte-classes"),
                 ContentType.Html,
-                this::class.java.classLoader
+                applicationContext.classLoader
             )
         }
         return TemplateEngine.createPrecompiled(
