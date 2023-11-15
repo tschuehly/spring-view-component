@@ -66,15 +66,6 @@ class ViewComponentParser(
             resourceHtmlFile.delete()
             return file
         }
-
-        compiler.compile(
-            rootDir = resourceDirPath.toAbsolutePath(),
-            names = srcFile.name,
-            classDirectory = listOf(
-                getCompileDirectory(resourceHtmlFile, rootDir)
-            ),
-            packageName
-        )
         resourceHtmlFile.delete()
         return null
     }
@@ -131,13 +122,13 @@ class ViewComponentParser(
     private fun getGeneratedSourcesDir(rootDir: String, language: Language): Path {
         return if (buildType == BuildType.GRADLE && language == Language.KOTLIN) {
             FileSystems.getDefault()
-                .getPath(rootDir, "build", "generated","source", "kapt","main")
-        } else if (buildType == BuildType.GRADLE && language == Language.JAVA){
+                .getPath(rootDir, "build", "generated", "source", "kapt", "main")
+        } else if (buildType == BuildType.GRADLE && language == Language.JAVA) {
             FileSystems.getDefault()
-            .getPath(rootDir, "build", "generated", "sources", "annotationProcessor", "java", "main")
-        }else {
+                .getPath(rootDir, "build", "generated", "sources", "annotationProcessor", "java", "main")
+        } else {
             FileSystems.getDefault()
-                .getPath(rootDir, "target", "generated-sources","annotations")
+                .getPath(rootDir, "target", "generated-sources", "annotations")
         }
     }
 
@@ -165,16 +156,16 @@ class ViewComponentParser(
         return list[0] to list[1].split(srcFile.name)[0]
     }
 
-    private fun parseSrcHtmlFile(): List<String> = srcFile.readLines().map { htmlLine ->
-        if (htmlLine.contains("<body")) {
-            return@map htmlLine.replace("<body", "<body id=\"$viewComponentName\"")
+    fun parseSrcHtmlFile(): List<String> = srcFile.readLines().map { htmlLine ->
+            if (htmlLine.contains("<body")) {
+                return@map htmlLine.replace("<body", "<body id=\"$viewComponentName\"")
+            }
+            if (htmlLine.contains("view:action")) {
+                val newLine = htmlLine.parseViewActionHtmlLine()
+                return@map newLine
+            }
+            htmlLine
         }
-        if (htmlLine.contains("view:action")) {
-            val newLine = htmlLine.parseViewActionHtmlLine()
-            return@map newLine
-        }
-        htmlLine
-    }
 
     private fun String.parseViewActionHtmlLine(): String {
 

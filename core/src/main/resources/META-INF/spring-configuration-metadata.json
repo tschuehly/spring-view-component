@@ -18,6 +18,18 @@
       "type": "java.lang.Boolean",
       "description": "If set to true parses view:action properties to HTMX attributes",
       "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
+    },
+    {
+      "name": "spring.view-component.jte-template-directories",
+      "type": "java.lang.List",
+      "description": "Where are the jte templates located? Defaults to \"src/main/java\",\"src/main/kotlin\"",
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
+    },
+    {
+      "name": "spring.view-component.jte-template-suffix",
+      "type": "java.lang.String",
+      "description": "Defaults to \".jte\", if you want to use kte set it to \".kte\"",
+      "sourceType": "de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties"
     }
   ],
   "hints": []

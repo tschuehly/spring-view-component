@@ -5,11 +5,11 @@ import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import org.slf4j.LoggerFactory
 import org.springframework.aop.framework.Advised
 import org.springframework.aop.support.AopUtils
-import org.springframework.boot.devtools.classpath.ClassPathChangedEvent
 import org.springframework.boot.devtools.filewatch.ChangedFiles
 import org.springframework.boot.devtools.filewatch.FileChangeListener
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.ContextRefreshedEvent
 
 
 class ViewComponentChangeListener(
@@ -39,11 +39,7 @@ class ViewComponentChangeListener(
                 viewComponentName = javaClass.simpleName.lowercase()
             )
             parser.parseFile(true)
-            if(srcFile.extension == "kte" || srcFile.extension == "jte"){
-                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, true))
-            }else{
-                applicationEventPublisher.publishEvent(ClassPathChangedEvent(this, changeSet, false))
-            }
+            applicationEventPublisher.publishEvent(ContextRefreshedEvent(applicationContext))
         }
     }
 
@@ -57,29 +53,32 @@ class ViewComponentChangeListener(
             }
         }
 
-    private fun getViewActionMethods(javaClass: Class<Any>) =
-        javaClass.declaredMethods.mapNotNull { method ->
-            if (method.getAnnotation(GetViewAction::class.java) != null) {
-                val get = (method.getAnnotation(GetViewAction::class.java) as GetViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, GetViewAction::class.java)
+    companion object{
+        fun getViewActionMethods(javaClass: Class<Any>) =
+            javaClass.declaredMethods.mapNotNull { method ->
+                if (method.getAnnotation(GetViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(GetViewAction::class.java) as GetViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, GetViewAction::class.java)
+                }
+                if (method.getAnnotation(PostViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(PostViewAction::class.java) as PostViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PostViewAction::class.java)
+                }
+                if (method.getAnnotation(PutViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(PutViewAction::class.java) as PutViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PutViewAction::class.java)
+                }
+                if (method.getAnnotation(PatchViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PatchViewAction::class.java)
+                }
+                if (method.getAnnotation(DeleteViewAction::class.java) != null) {
+                    val get = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
+                    return@mapNotNull ViewActionMethod(method.name.toString(), get.path, DeleteViewAction::class.java)
+                }
+                return@mapNotNull null
             }
-            if (method.getAnnotation(PostViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PostViewAction::class.java) as PostViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PostViewAction::class.java)
-            }
-            if (method.getAnnotation(PutViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PutViewAction::class.java) as PutViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PutViewAction::class.java)
-            }
-            if (method.getAnnotation(PatchViewAction::class.java) != null) {
-                val get = (method.getAnnotation(PatchViewAction::class.java) as PatchViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, PatchViewAction::class.java)
-            }
-            if (method.getAnnotation(DeleteViewAction::class.java) != null) {
-                val get = (method.getAnnotation(DeleteViewAction::class.java) as DeleteViewAction)
-                return@mapNotNull ViewActionMethod(method.name.toString(), get.path, DeleteViewAction::class.java)
-            }
-            return@mapNotNull null
-        }
+
+    }
 
 }

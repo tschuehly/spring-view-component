@@ -22,7 +22,6 @@ import kotlin.io.path.exists
 class ViewComponentProcessor : AbstractProcessor() {
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
-
         for (annotation in annotations) {
             for (element in roundEnv.getElementsAnnotatedWith(annotation)) {
                 val messager = processingEnv.messager

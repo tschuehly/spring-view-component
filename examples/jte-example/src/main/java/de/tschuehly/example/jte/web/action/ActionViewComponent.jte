@@ -1,5 +1,4 @@
 @param de.tschuehly.example.jte.web.action.ActionViewComponent.ActionView actionView
-
 <html>
 <head>
     <script src="http://localhost:35729/livereload.js"></script>

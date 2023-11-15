@@ -23,21 +23,4 @@ class JteViewComponentCompiler() {
         )
         return compiler.generateAll().first()
     }
-
-    fun compile(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
-        val config = TemplateConfig(
-            ContentType.Html,
-            Constants.PACKAGE_NAME_PRECOMPILED +packageName
-        )
-
-
-        config.classPath = null
-        val compiler = TemplateCompiler(
-            /* config = */ config,
-            /* codeResolver = */ DirectoryCodeResolver(rootDir),
-            /* classDirectory = */ Path.of(classDirectory.first()),
-            /* parentClassLoader = */ this.javaClass.classLoader
-        )
-        return compiler.precompile(listOf(names)).first()
-    }
 }
