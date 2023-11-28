@@ -37,7 +37,7 @@ class ViewComponentAutoConfiguration {
             restartStrategy: ClassPathRestartStrategy,
              applicationEventPublisher: ApplicationEventPublisher
         ): ClassPathFileSystemWatcher{
-            val urls = Restarter.getInstance().initialUrls
+            val urls = Restarter.getInstance().initialUrls ?: arrayOf()
             val watcher = ViewComponentFileSystemWatcher(
                 applicationContext,
                 fileSystemWatcherFactory,
