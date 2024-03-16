@@ -1,7 +1,6 @@
 package de.tschuehly.kteviewcomponentexample
 
 
-import de.tschuehly.spring.viewcomponent.core.IntegrationTestBase
 import de.tschuehly.spring.viewcomponent.core.JteIntegrationTestBase
 import org.springframework.boot.test.context.SpringBootTest
 
