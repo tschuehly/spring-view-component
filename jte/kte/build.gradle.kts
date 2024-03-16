@@ -2,7 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
+    id("org.springframework.boot") version "3.1.2"
+    id("io.spring.dependency-management") version "1.1.2"
     kotlin("jvm") version "1.8.21"
+    kotlin("plugin.spring") version "1.8.21"
+
     id("maven-publish")
     id("org.jreleaser") version "1.5.1"
     id("signing")
@@ -16,14 +20,28 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    api("gg.jte:jte:3.1.9")
-    api("gg.jte:jte-kotlin:3.1.9")
+    api("de.tschuehly:spring-view-component-core:0.7.2")
+    implementation("de.tschuehly:spring-view-component-jte:0.7.2")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.webjars:webjars-locator:0.47")
+    testImplementation("org.webjars.npm:htmx.org:1.9.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf("-Xjsr305=strict","-Xjvm-default=all")
         jvmTarget = "17"
+    }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+tasks {
+    bootJar {
+        enabled = false
     }
 }
 java {
@@ -41,14 +59,14 @@ publishing{
         create<MavenPublication>("Maven") {
             from(components["java"])
             groupId = "de.tschuehly"
-            artifactId = "spring-view-component-jte-compiler"
-            description = "Spring ViewComponent JTE Compiler"
+            artifactId = "spring-view-component-kte"
+            description = "Create server rendered components with KTE"
         }
         withType<MavenPublication> {
             pom {
                 packaging = "jar"
-                name.set("spring-view-component-jte-compiler")
-                description.set("Spring ViewComponent JTE Compiler")
+                name.set("spring-view-component-kte")
+                description.set("Spring ViewComponent KTE")
                 url.set("https://github.com/tschuehly/spring-view-component/")
                 inceptionYear.set("2023")
                 licenses {
@@ -100,7 +118,6 @@ jreleaser {
                     releaseRepository.set(true)
                     stagingRepositories.add("build/staging-deploy")
                 }
-
             }
         }
     }
