@@ -5,6 +5,11 @@ includeBuild("..\\..\\jte\\kte"){
         substitute(module("de.tschuehly:spring-view-component-kte")).using(project(":"))
     }
 }
+includeBuild("..\\..\\jte\\jte"){
+    dependencySubstitution {
+        substitute(module("de.tschuehly:spring-view-component-jte")).using(project(":"))
+    }
+}
 includeBuild("..\\..\\jte\\jte-compiler"){
     dependencySubstitution {
         substitute(module("de.tschuehly:spring-view-component-jte-compiler")).using(project(":"))
