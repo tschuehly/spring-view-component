@@ -21,7 +21,8 @@ repositories {
 }
 dependencies {
     api("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT")
-    implementation("de.tschuehly:spring-view-component-jte:0.7.3-SNAPSHOT")
+    api("de.tschuehly:spring-view-component-jte:0.7.3-SNAPSHOT")
+    api("gg.jte:jte-kotlin:3.1.9")
 
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
