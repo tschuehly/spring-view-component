@@ -13,15 +13,15 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.7.2"
+version = "0.7.3-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.7.2")
-    implementation("de.tschuehly:spring-view-component-jte:0.7.2")
+    api("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-jte:0.7.3-SNAPSHOT")
 
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
