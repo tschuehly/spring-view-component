@@ -352,7 +352,9 @@ annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
 
 
 
-### JTE Dependency
+### JTE
+Both, Java DSL and Kotlin DSL are supported:
+#### JTE DSL
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-jte) on Maven Central
 
 
@@ -377,6 +379,36 @@ annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
 <dependency>
     <groupId>de.tschuehly</groupId>
     <artifactId>spring-view-component-jte</artifactId>
+    <version>LATEST_VERSION</version>
+</dependency>
+```
+</details>
+
+#### KTE DSL
+[LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-kte) on Maven Central
+
+
+<details open>
+    <summary>Gradle</summary>
+
+```kotlin
+implementation("de.tschuehly:spring-view-component-kte:LATEST_VERSION")
+annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
+```
+</details>
+
+<details>
+    <summary>Maven</summary>
+
+```xml
+<dependency>
+    <groupId>de.tschuehly</groupId>
+    <artifactId>spring-view-component-core</artifactId>
+    <version>LATEST_VERSION</version>
+</dependency>
+<dependency>
+    <groupId>de.tschuehly</groupId>
+    <artifactId>spring-view-component-kte</artifactId>
     <version>LATEST_VERSION</version>
 </dependency>
 ```

@@ -9,15 +9,15 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.7.2"
+version = "0.7.3-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
 }
 dependencies {
-    api("gg.jte:jte:3.1.0")
-    api("gg.jte:jte-kotlin:3.1.0")
+    api("gg.jte:jte:3.1.9")
+    compileOnly("gg.jte:jte-kotlin:3.1.9")
 }
 
 tasks.withType<KotlinCompile> {
