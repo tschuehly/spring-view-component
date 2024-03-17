@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="examples [:jte-example:test :kte-example:test :thymeleaf-java-example:test :thymeleaf-kotlin-example:test]" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Run all example tests" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
