@@ -68,7 +68,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         )
         var sp = SpringContextUtils.getRequestContext(webContext)
         val context2 = SpringContextUtils.getRequestContext(webContext)
-            context2.model[viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() }] = viewContext
+        context2.model[viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() }] = viewContext
 
         webContext.setVariable(viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() }, viewContext)
 
@@ -78,9 +78,14 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         val viewComponentBody = modelFactory.createText(
             engine.process(IViewContext.getViewComponentTemplate(viewContext), webContext)
         )
-        structureHandler.setAttribute("id", ViewComponentUtils.getId(viewContext.javaClass))
-        structureHandler.removeAttribute("view:component")
-        structureHandler.setBody(viewComponentBody, true)
+        if (ActionViewContext::class.java.isAssignableFrom(viewContext.javaClass)) {
+            structureHandler.setAttribute("id", ViewComponentUtils.getId(viewContext.javaClass))
+            structureHandler.removeAttribute("view:component")
+            structureHandler.setBody(viewComponentBody, true)
+        } else {
+            structureHandler.replaceWith(viewComponentBody, true)
+        }
+
     }
 
 }

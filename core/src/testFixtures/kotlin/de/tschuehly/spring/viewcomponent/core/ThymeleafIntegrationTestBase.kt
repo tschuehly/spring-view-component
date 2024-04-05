@@ -9,15 +9,13 @@ abstract class ThymeleafIntegrationTestBase: IntegrationTestBase() {
             //language=html
             """
                 <html>
+                <nav>This is a Navbar</nav>
                 <body id="layoutviewcomponent">
-                <nav>
-                  This is the NavBar
-                </nav>        
                 <div id="actionviewcomponent">
                     <html>
                     <head>
-                        <script src="http://localhost:35729/livereload.js"></script>
-                        <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>
+                    <script src="http://localhost:35729/livereload.js"></script>
+                    <script defer src="/webjars/htmx.org/dist/htmx.min.js"></script>                    
                     </head>
                     <body id="actionviewcomponent"><h2>ViewAction Get CountUp</h2>
                     <button hx-get="/custompath/countup" hx-target="#actionviewcomponent">Default ViewAction [GET]</button>
@@ -47,8 +45,8 @@ abstract class ThymeleafIntegrationTestBase: IntegrationTestBase() {
                     </body>
                     </html>
                 </div>
-                <footer>This is a footer</footer>
                 </body>
+                <footer>This is a footer</footer>
                 </html>
             """.trimIndent()
         assertEndpointReturns("/nested-action", expectedHtml)
