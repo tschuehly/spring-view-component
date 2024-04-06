@@ -130,7 +130,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew kte-example:test
   publish:
-    needs:  [test-jte, test-kte, test-thymeleaf-kotlin,test-thymeleaf-java]
+    needs:  [build, test-jte, test-kte, test-thymeleaf-kotlin, test-thymeleaf-java]
     if: github.ref_type == 'tag' || contains(github.ref_name, 'SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
@@ -145,6 +145,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          cache-dependency-path: |
+            thymeleaf/build.gradle.kts
+            core/build.gradle.kts
+            jte/jte/build.gradle.kts
+            jte/jte-compiler/build.gradle.kts
+            jte/kte/build.gradle.kts
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
       - name: Publish thymeleaf package to staging
