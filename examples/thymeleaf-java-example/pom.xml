@@ -34,6 +34,12 @@
 			<version>${view.component.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>de.tschuehly</groupId>
+			<artifactId>spring-view-component-core</artifactId>
+			<version>${view.component.version}</version>
+			<classifier>test-fixtures</classifier>
+		</dependency>
+		<dependency>
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>htmx.org</artifactId>
 			<version>1.6.1</version>

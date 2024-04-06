@@ -5,24 +5,30 @@ on:
     branches: [ master ]
 jobs:
   build:
-
     runs-on: ubuntu-latest
     outputs:
       cacheKey: ${{ steps.cacheKey.outputs.cacheKey }}
     steps:
       - run: echo "CACHE_KEY=maven-de-tschuehly-$(date +%s)" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          cache-dependency-path: | 
+            thymeleaf/build.gradle.kts
+            core/build.gradle.kts
+            jte/jte/build.gradle.kts
+            jte/jte-compiler/build.gradle.kts
+            jte/kte/build.gradle.kts
       - name: make gradle executable
         run: chmod +x ./gradlew
       - name: publishToMavenLocal
-        run: ./gradlew :core:publishToMavenLocal :thymeleaf:publishToMavenLocal :jte:publishToMavenLocal :jte-compiler:publishToMavenLocal
+        run: ./gradlew :thymeleaf:publishToMavenLocal :jte-compiler:publishToMavenLocal :jte:publishToMavenLocal :core:publishToMavenLocal :kte:publishToMavenLocal
       - name: Cache local Maven repository
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ env.CACHE_KEY }}
@@ -33,97 +39,109 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          cache-dependency-path: |
+            examples/thymeleaf-kotlin-example/build.gradle.kts
       - name: run thymeleaf kotlin tests
         run: |
-          cd ./examples/thymeleaf-kotlin-example
+          cd ./examples
           chmod +x ./gradlew
-          ./gradlew test
+          ./gradlew thymeleaf-kotlin-example:test
   test-thymeleaf-java:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          cache-dependency-path: |
+            examples/thymeleaf-java-example/build.gradle.kts
       - name: run thymeleaf java tests
         run: |
-          cd ./examples/thymeleaf-java-example
+          cd ./examples
           chmod +x ./mvnw
-          ./mvnw test
+          ./mvnw -f thymeleaf-java-example test
   test-jte:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ needs.build.outputs.cacheKey }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          cache-dependency-path: |
+            examples/jte-example/build.gradle.kts
       - name: run jte java tests
         run: |
-          cd ./examples/jte-example
+          cd ./examples/
           chmod +x ./gradlew
-          ./gradlew test
+          ./gradlew jte-example:test
           chmod +x ./mvnw
-          ./mvnw test
+          ./mvnw -f jte-example test
   test-kte:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
+          cache-dependency-path: |
+            examples/kte-example/build.gradle.kts
       - name: run kte kotlin tests
         run: |
-          cd ./examples/kte-example
+          cd ./examples
           chmod +x ./gradlew
-          ./gradlew test
+          ./gradlew kte-example:test
   publish:
-    needs:  [test-jte,test-kte, test-thymeleaf-kotlin,test-thymeleaf-java]
+    needs:  [test-jte, test-kte, test-thymeleaf-kotlin,test-thymeleaf-java]
     if: github.ref_type == 'tag' || contains(github.ref_name, 'SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ needs.build.outputs.cacheKey }}
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
