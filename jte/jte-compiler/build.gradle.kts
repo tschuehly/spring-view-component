@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.9.23"
     id("maven-publish")
-    id("org.jreleaser") version "1.5.1"
+    id("org.jreleaser") version "1.11.0"
     id("signing")
 }
 

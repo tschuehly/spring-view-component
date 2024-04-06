@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.21"
 
     id("maven-publish")
-    id("org.jreleaser") version "1.5.1"
+    id("org.jreleaser") version "1.11.0"
     id("signing")
     id("java-test-fixtures")
 }
@@ -23,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-jte-compiler:0.7.3-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-devtools")
@@ -34,6 +33,8 @@ dependencies {
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
     testFixturesImplementation("org.springframework.boot:spring-boot-devtools")
+
+    implementation("de.tschuehly:spring-view-component-jte-compiler:0.7.3-SNAPSHOT")
 
 }
 
