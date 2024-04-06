@@ -8,8 +8,9 @@ plugins {
     kotlin("plugin.spring") version "1.8.21"
 
     id("maven-publish")
-    id("org.jreleaser") version "1.5.1"
+    id("org.jreleaser") version "1.11.0"
     id("signing")
+    id("java-test-fixtures")
 }
 
 group = "de.tschuehly"
@@ -22,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-jte-compiler:0.7.3-SNAPSHOT")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-devtools")
@@ -30,7 +30,12 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
+    testFixturesImplementation("org.springframework.boot:spring-boot-devtools")
+
+    implementation("de.tschuehly:spring-view-component-jte-compiler:0.7.3-SNAPSHOT")
+
 }
 
 tasks.withType<KotlinCompile> {

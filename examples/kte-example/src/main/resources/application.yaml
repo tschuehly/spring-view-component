@@ -1,8 +1,10 @@
-spring.view-component.local-development: true
-#gg.jte.templateLocation: examples/jte-example/src/main/kotlin
 logging:
   level:
     org.springframework.web: TRACE
     de.tschuehly.spring.viewcomponent: DEBUG
 server:
   port: 8081
+spring:
+  view-component:
+    local-development: true
+    jte-template-directories: examples/kte-example/src/main/kotlin

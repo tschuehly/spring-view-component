@@ -243,7 +243,7 @@ public class ActionViewComponent {
 ```kotlin
 @ViewComponent
 class ActionViewComponent {
-    data class ActionView(val counter: Int) : ViewContext
+    data class ActionView(val counter: Int) : ActionViewContext
 
     fun render() = ActionView(counter)
 

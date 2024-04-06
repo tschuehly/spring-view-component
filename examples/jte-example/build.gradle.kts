@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.1.4"
-    id("io.spring.dependency-management") version "1.1.3"
+    id("org.springframework.boot") version "3.2.4"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 group = "de.tschuehly"
@@ -24,7 +24,10 @@ dependencies {
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator-core:0.53")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testRuntimeOnly("org.springframework.boot:spring-boot-devtools")
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT"))
 }
 
 tasks.withType<Test> {

@@ -4,13 +4,15 @@ import de.tschuehly.example.thymeleafkotlin.core.ExampleService
 import de.tschuehly.spring.viewcomponent.core.IViewContext
 import de.tschuehly.spring.viewcomponent.core.action.*
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
+import de.tschuehly.spring.viewcomponent.thymeleaf.ActionViewContext
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 
 @ViewComponent
 class ActionViewComponent(
     val exampleService: ExampleService
 ) {
-    data class ActionView(val itemList: MutableMap<Int, String>, val counter: Int, val person: Person) : ViewContext
+    data class ActionView(val itemList: MutableMap<Int, String>, val counter: Int, val person: Person) : ActionViewContext
+
 
     fun render() = ActionView(exampleService.itemList, counter, person)
 

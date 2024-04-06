@@ -14,6 +14,7 @@
           <option value=":jte-compiler:publishToMavenLocal" />
           <option value=":jte:publishToMavenLocal" />
           <option value=":core:publishToMavenLocal" />
+          <option value=":kte:publishToMavenLocal" />
         </list>
       </option>
       <option name="vmOptions" />

@@ -1,12 +1,10 @@
 @param de.tschuehly.example.jte.web.layout.LayoutViewComponent.LayoutView layoutView
 <html>
+<nav>This is a Navbar</nav>
 <body>
-<nav>
-  This is the NavBar
-</nav>
 ${layoutView.nestedViewComponent()}
+</body>
 <footer>
   This is a footer
 </footer>
-</body>
 </html>
