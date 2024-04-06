@@ -23,20 +23,15 @@ class ViewComponentAutoConfiguration {
     @Configuration
     @ConditionalOnProperty("spring.view-component.local-development")
     class LocalDevConfig(
-        private val classPathRestartStrategy: ClassPathRestartStrategy,
-        private val eventPublisher: ApplicationEventPublisher
+        private val classPathRestartStrategy: ClassPathRestartStrategy
     ) {
-        val gradleKotlinBuildDir = "build/classes/kotlin/main/"
-        val javaMavenBuildDir = "target/classes/"
-        private val logger = LoggerFactory.getLogger(LocalDevConfig::class.java)
-
         @Bean
         fun viewComponentFileSystemWatcher(
             applicationContext: ApplicationContext,
             fileSystemWatcherFactory: FileSystemWatcherFactory,
             restartStrategy: ClassPathRestartStrategy,
-             applicationEventPublisher: ApplicationEventPublisher
-        ): ClassPathFileSystemWatcher{
+            applicationEventPublisher: ApplicationEventPublisher
+        ): ClassPathFileSystemWatcher {
             val urls = Restarter.getInstance().initialUrls ?: arrayOf()
             val watcher = ViewComponentFileSystemWatcher(
                 applicationContext,
@@ -47,43 +42,5 @@ class ViewComponentAutoConfiguration {
             watcher.setStopWatcherOnRestart(true)
             return watcher
         }
-
-//        @Bean
-//        fun viewComponentFileSystemWatcher(applicationContext: ApplicationContext): FileSystemWatcher {
-//            val fileSystemWatcher = FileSystemWatcher(true, Duration.ofMillis(300), Duration.ofMillis(200))
-//            val classPath =
-//                applicationContext.getBeansWithAnnotation(SpringBootApplication::class.java)
-//                    .values.first().javaClass.protectionDomain.codeSource.location.path
-//            val (srcDir, buildType) = getSrcDir(classPath)
-//            logger.info("Registering fileSystemWatcher: ${srcDir.path}")
-//            fileSystemWatcher.addSourceDirectory(srcDir)
-//            fileSystemWatcher.addListener(
-//                ViewComponentChangeListener(
-//                    applicationContext,
-//                    buildType
-//                )
-//            )
-//            fileSystemWatcher.start()
-//            return fileSystemWatcher
-//        }
-
-        private fun getSrcDir(classPath: String): Pair<File, BuildType> {
-            if (classPath.endsWith(gradleKotlinBuildDir)) {
-                val srcDir = classPath.split(gradleKotlinBuildDir)[0] + "/src/main/kotlin"
-                val file = File(srcDir)
-                if (file.exists()) {
-                    return file to BuildType.GRADLE
-                }
-            }
-            if (classPath.endsWith(javaMavenBuildDir)) {
-                val srcDir = classPath.split(javaMavenBuildDir)[0] + "src/main/java"
-                val file = File(srcDir)
-                if (file.exists()) {
-                    return file to BuildType.MAVEN
-                }
-            }
-            throw ViewComponentProcessingException("No srcDir found", null)
-        }
     }
-
 }

@@ -57,7 +57,6 @@ class ViewComponentParser(
             val classDir = getGeneratedSourcesDir(rootDir,language)
             val file = compiler.generate(
                 rootDir = resourceDirPath.toAbsolutePath(),
-                names = srcFile.name,
                 classDirectory = listOf(
                     classDir.toAbsolutePath().toString()
                 ),

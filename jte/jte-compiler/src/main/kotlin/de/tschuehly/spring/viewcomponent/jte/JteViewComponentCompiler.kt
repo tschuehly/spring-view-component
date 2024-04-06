@@ -9,7 +9,7 @@ import java.nio.file.Path
 
 
 class JteViewComponentCompiler() {
-    fun generate(rootDir: Path, names: String, classDirectory: List<String>,packageName: String): String {
+    fun generate(rootDir: Path, classDirectory: List<String>,packageName: String): String {
         val config = TemplateConfig(
             ContentType.Html,
             Constants.PACKAGE_NAME_PRECOMPILED + packageName

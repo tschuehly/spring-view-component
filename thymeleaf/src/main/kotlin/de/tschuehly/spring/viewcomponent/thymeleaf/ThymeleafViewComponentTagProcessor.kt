@@ -61,15 +61,6 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         val appCtx = SpringContextUtils.getApplicationContext(webContext)
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
 
-        val context = Context()
-        context.setVariable(
-            viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() },
-            viewContext
-        )
-        var sp = SpringContextUtils.getRequestContext(webContext)
-        val context2 = SpringContextUtils.getRequestContext(webContext)
-        context2.model[viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() }] = viewContext
-
         webContext.setVariable(viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() }, viewContext)
 
         // TODO: Cannot process attribute '{th:field,data-th-field}': no associated BindStatus could be found for the intended form binding operations. This can be due to the lack of a proper management of the Spring RequestContext, which is usually done through the ThymeleafView or ThymeleafReactiveView (template:

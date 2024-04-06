@@ -20,27 +20,31 @@ import kotlin.io.path.exists
 @SupportedAnnotationTypes("de.tschuehly.spring.viewcomponent.core.component.ViewComponent")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 class ViewComponentProcessor : AbstractProcessor() {
-
+    private var rootDir: String? = null
+    private var buildType: BuildType? = null
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
+
         for (annotation in annotations) {
             for (element in roundEnv.getElementsAnnotatedWith(annotation)) {
                 val messager = processingEnv.messager
                 val filer = processingEnv.filer
-                val (rootDir, buildType) = processingEnv.getRootDirAndBuildType()
-
+                if(rootDir == null || buildType == null){
+                    val rootDirAndBuildType = processingEnv.getRootDirAndBuildType()
+                    rootDir = rootDirAndBuildType.first
+                    buildType = rootDirAndBuildType.second
+                    assert(rootDir != null || buildType != null)
+                }
                 val separator = FileSystems.getDefault().separator
                 val packagePath = "${element.enclosingElement}".replace(".", separator)
-                val srcDir = getSrcDir(rootDir, messager)
+                val srcDir = getSrcDir(rootDir!!, messager)
                 val viewComponentDir = FileSystems.getDefault().getPath(srcDir.toString(), packagePath)
                 val srcHtmlFile = getSrcHtmlFile(viewComponentDir, element.simpleName, messager)
                 val methodList = getViewActionMethods(element)
 
                 val viewComponentName = element.simpleName.toString().lowercase()
-                verifyRenderMethodExists(element, messager)
-
                 val viewComponentParser = ViewComponentParser(
                     srcHtmlFile,
-                    buildType = buildType,
+                    buildType = buildType!!,
                     methodList = methodList,
                     viewComponentName = viewComponentName,
                     messager = messager,
@@ -84,18 +88,12 @@ class ViewComponentProcessor : AbstractProcessor() {
 
     private fun ProcessingEnvironment.getJavaRootDir(): String {
         try {
-            val fileName = "gen_${Date().toInstant().toEpochMilli()}"
+            val fileName = "rootDirFind_${Date().toInstant().toEpochMilli()}"
             val sourceFile = this.filer.createSourceFile(fileName)
-
             sourceFile.openWriter().use {
                 it.close()
             }
-
-
-            return Paths.get(sourceFile.toUri()).let {
-//                it.deleteExisting() TODO: Cannot delete
-                it.toString()
-            }
+            return Paths.get(sourceFile.toUri()).toString()
         } catch (e: IOException) {
             processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "Unable to determine source file path!")
         }
@@ -120,14 +118,6 @@ class ViewComponentProcessor : AbstractProcessor() {
         }
         this.messager.printMessage(Diagnostic.Kind.ERROR, "No build or target folder found")
         throw ViewComponentProcessingException("No build or target folder found", null)
-
-    }
-
-    private fun verifyRenderMethodExists(element: Element, messager: Messager) {
-        element.enclosedElements
-            .filter { it.kind == ElementKind.METHOD }
-//            .filter { (it.asType() as Type.MethodType).restype != null }
-            .map { it.asType().toString().replace("()","") }
 
     }
 
