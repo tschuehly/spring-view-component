@@ -19,15 +19,15 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("de.tschuehly:spring-view-component-jte:0.7.3-SNAPSHOT")
-    annotationProcessor("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-jte:0.7.3")
+    annotationProcessor("de.tschuehly:spring-view-component-core:0.7.3")
 
-    implementation("org.webjars.npm:htmx.org:1.9.2")
-    implementation("org.webjars:webjars-locator-core:0.53")
+    implementation("org.webjars.npm:htmx.org:1.9.11")
+    implementation("org.webjars:webjars-locator-core:0.58")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.3"))
 }
 
 tasks.withType<Test> {

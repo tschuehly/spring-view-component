@@ -15,7 +15,7 @@
 	<description>JTE Example</description>
 	<properties>
 		<java.version>17</java.version>
-		<view.component.version>0.7.3-SNAPSHOT</view.component.version>
+		<view.component.version>0.7.3</view.component.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>htmx.org</artifactId>
-			<version>1.9.2</version>
+			<version>1.9.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>

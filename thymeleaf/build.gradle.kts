@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.7.3-SNAPSHOT"
+version = "0.7.3"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT")
+	api("de.tschuehly:spring-view-component-core:0.7.3")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-devtools")
@@ -29,8 +29,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-actuator")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-	testImplementation("org.webjars:webjars-locator:0.47")
-	testImplementation("org.webjars.npm:htmx.org:1.9.2")
+	testImplementation("org.webjars:webjars-locator:0.52")
+	testImplementation("org.webjars.npm:htmx.org:1.9.11")
 }
 
 tasks.withType<KotlinCompile> {

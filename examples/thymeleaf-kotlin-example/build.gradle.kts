@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.3-SNAPSHOT")
-    kapt("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.3")
+    kapt("de.tschuehly:spring-view-component-core:0.7.3")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator:0.47")
@@ -41,7 +41,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.3-SNAPSHOT"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.3"))
 }
 
 tasks.withType<KotlinCompile> {
