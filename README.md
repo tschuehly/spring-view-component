@@ -43,7 +43,7 @@ Next we add the @ViewComponent annotation to a class and define a method that re
     <summary>Kotlin</summary>
 
 ```kotlin
-// HomeViewComponent.kt
+// SimpleViewComponent.kt
 @ViewComponent
 class SimpleViewComponent{
     fun render() = SimpleView("Hello World")
@@ -67,7 +67,7 @@ We can use [Thymeleaf](https://thymeleaf.org)
 or [JTE](https://jte.gg/#5-minutes-example)
 
 ```html
-// HomeViewComponent.jte
+// SimpleViewComponent.jte
 @param de.tschuehly.example.jte.web.simple.SimpleViewComponent.SimpleView simpleView
 <div>${simpleView.helloWorld()}</div>
 ```
