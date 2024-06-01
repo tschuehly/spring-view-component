@@ -1,6 +1,6 @@
 rootProject.name = "jte-example"
 
-includeBuild("..\\..\\jte\\jte"){
+includeBuild("..\\..\\jte"){
     dependencySubstitution {
         substitute(module("de.tschuehly:spring-view-component-jte")).using(project(":"))
     }

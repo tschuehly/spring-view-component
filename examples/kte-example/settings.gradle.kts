@@ -1,12 +1,12 @@
 rootProject.name = "kte-example"
 
 
-includeBuild("..\\..\\jte\\kte"){
+includeBuild("..\\..\\kte"){
     dependencySubstitution {
         substitute(module("de.tschuehly:spring-view-component-kte")).using(project(":"))
     }
 }
-includeBuild("..\\..\\jte\\jte"){
+includeBuild("..\\..\\jte"){
     dependencySubstitution {
         substitute(module("de.tschuehly:spring-view-component-jte")).using(project(":"))
     }
