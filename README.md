@@ -218,18 +218,29 @@ spring.view-component.local-development=true
 
 ## Production Configuration
 
+### Gradle
 <details>
-    <summary>Gradle</summary>
+    <summary>Java</summary>
 
 ```kotlin
 // build.gradle.kts
 sourceSets {
-    test {
+    main {
         resources {
-            srcDir("src/test/kotlin")
-            exclude("**/*.kt")
+            srcDir("src/main/java")
+            exclude("**/*.java")
         }
     }
+
+}
+```
+</details>
+<details>
+    <summary>Kotlin</summary>
+
+```kotlin
+// build.gradle.kts
+sourceSets {
     main {
         resources {
             srcDir("src/main/kotlin")
@@ -239,10 +250,24 @@ sourceSets {
 
 }
 ```
+### Kotlin
+```kotlin
+// build.gradle.kts
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/kotlin")
+            exclude("**/*.kt")
+        }
+    }
 
+}
+```
 </details>
+
+### Maven
 <details>
-    <summary>Maven</summary>
+    <summary>Java</summary>
 
 Add this to your pom.xml:
 
