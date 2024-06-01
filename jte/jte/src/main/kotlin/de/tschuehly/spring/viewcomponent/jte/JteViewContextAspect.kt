@@ -1,8 +1,8 @@
 package de.tschuehly.spring.viewcomponent.jte
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
-import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
 import gg.jte.TemplateEngine
+import gg.jte.springframework.boot.autoconfigure.JteProperties
 import org.aspectj.lang.annotation.AfterReturning
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
@@ -11,22 +11,23 @@ import org.springframework.stereotype.Component
 @Aspect
 @Component
 class JteViewContextAspect(
-    private val jteTemplateEngine: TemplateEngine, private val viewComponentProperties: ViewComponentProperties
+    private val jteTemplateEngine: TemplateEngine,
+    private val jteProperties: JteProperties
 ) {
     @Pointcut("@within(de.tschuehly.spring.viewcomponent.core.component.ViewComponent)")
     fun isViewComponent() {
         //
     }
 
-    @Pointcut("execution(* render(..)) || execution(* get(..))")
+    @Pointcut("execution(public de.tschuehly.spring.viewcomponent.jte.ViewContext+ *(..))")
     fun isRenderOrGetMethod() {
         //
     }
 
     @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "viewContext")
-    fun renderInject(viewContext: IViewContext): IViewContext {
-        IViewContext.jteTemplateEngine = jteTemplateEngine
-        IViewContext.templateSuffx = viewComponentProperties.jteTemplateSuffix
+    fun renderInject(viewContext: ViewContext): ViewContext {
+        ViewContext.templateEngine = jteTemplateEngine
+        IViewContext.templateSuffx = jteProperties.templateSuffix
         return viewContext
     }
 }

@@ -1,10 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
-import de.tschuehly.spring.viewcomponent.core.component.ViewComponentUtils
-import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentProcessingException
 import org.slf4j.LoggerFactory
-import org.thymeleaf.context.Context
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
 import org.thymeleaf.engine.AttributeName
@@ -31,8 +28,8 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
     private val logger = LoggerFactory.getLogger(ThymeleafViewComponentTagProcessor::class.java)
 
     companion object {
-        val ATTR_NAME = "component"
-        val PRECEDENCE = 10000
+        const val ATTR_NAME = "component"
+        const val PRECEDENCE = 10000
 
     }
 
@@ -56,7 +53,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
             )
         } catch (e: Exception) {
             logger.error("Could not execute expression: \"${expression.stringRepresentation}\"")
-            throw ViewComponentProcessingException(e.message, e.cause)
+            throw ThymeleafViewComponentException(e.message, e.cause)
         }
         val appCtx = SpringContextUtils.getApplicationContext(webContext)
         val engine = appCtx.getBean(SpringTemplateEngine::class.java)
@@ -69,13 +66,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         val viewComponentBody = modelFactory.createText(
             engine.process(IViewContext.getViewComponentTemplate(viewContext), webContext)
         )
-        if (ActionViewContext::class.java.isAssignableFrom(viewContext.javaClass)) {
-            structureHandler.setAttribute("id", ViewComponentUtils.getId(viewContext.javaClass))
-            structureHandler.removeAttribute("view:component")
-            structureHandler.setBody(viewComponentBody, true)
-        } else {
-            structureHandler.replaceWith(viewComponentBody, true)
-        }
+        structureHandler.replaceWith(viewComponentBody, true)
 
     }
 

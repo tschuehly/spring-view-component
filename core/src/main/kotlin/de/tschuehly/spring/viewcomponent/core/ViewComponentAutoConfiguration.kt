@@ -1,9 +1,6 @@
 package de.tschuehly.spring.viewcomponent.core
 
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentFileSystemWatcher
-import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentParser.BuildType
-import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentProcessingException
-import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.devtools.classpath.ClassPathFileSystemWatcher
 import org.springframework.boot.devtools.classpath.ClassPathRestartStrategy
@@ -14,7 +11,6 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import java.io.File
 
 @Configuration
 @ComponentScan("de.tschuehly.spring.viewcomponent.core")
@@ -43,4 +39,5 @@ class ViewComponentAutoConfiguration {
             return watcher
         }
     }
+
 }

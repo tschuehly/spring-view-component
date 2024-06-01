@@ -1,7 +1,6 @@
 package de.tschuehly.kteviewcomponentexample
 
 import de.tschuehly.spring.viewcomponent.core.IntegrationTestBase
-import de.tschuehly.spring.viewcomponent.core.JteIntegrationTestBase
 import org.junit.jupiter.api.Disabled
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -10,5 +9,5 @@ import org.springframework.boot.test.context.SpringBootTest
     properties = ["spring.view-component.local-development=true"],
 )
 @Disabled // TODO: Fix localDev for kte
-class KteIntegrationLocalDevTest : JteIntegrationTestBase()
+class KteIntegrationLocalDevTest : IntegrationTestBase()
 
