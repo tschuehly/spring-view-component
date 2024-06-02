@@ -9,10 +9,11 @@ import gg.jte.TemplateConfig
 import gg.jte.TemplateEngine
 import gg.jte.compiler.TemplateCompiler
 import gg.jte.resolve.DirectoryCodeResolver
+import gg.jte.resolve.ResourceCodeResolver
 import gg.jte.runtime.Constants
-import gg.jte.runtime.TemplateMode
-import gg.jte.springframework.boot.autoconfigure.JteConfigurationException
 import gg.jte.springframework.boot.autoconfigure.JteProperties
+import org.springframework.aop.framework.Advised
+import org.springframework.aop.support.AopUtils
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.*
@@ -34,11 +35,11 @@ class JteViewComponentAutoConfiguration {
     @ConditionalOnMissingBean(TemplateEngine::class)
     fun jteTemplateEngine(viewComponentProperties: ViewComponentProperties,applicationContext: ApplicationContext): TemplateEngine {
         if (!viewComponentProperties.localDevelopment) {
-
-            val packageList = applicationContext.getBeansWithAnnotation(ViewComponent::class.java).values.map {
-                it.javaClass.packageName
+            val viewComponentTemplateList = applicationContext.getBeansWithAnnotation(ViewComponent::class.java).values.map {
+                getViewComponentReference(it)
+            }.map { reference ->
+                reference.replace(".", "/") + ".jte"
             }
-
             val config = TemplateConfig(
                 ContentType.Html,
                 Constants.PACKAGE_NAME_PRECOMPILED
@@ -46,17 +47,16 @@ class JteViewComponentAutoConfiguration {
             config.classPath = null
             val compiler = TemplateCompiler(
                 /* config = */ config,
-                /* codeResolver = */ DirectoryCodeResolver(Path.of("")),
-                /* classDirectory = */ Path.of("src/main/java"),
+                /* codeResolver = */ ResourceCodeResolver(""),
+                /* classDirectory = */ Path.of(this.javaClass.classLoader.getResource("").toURI()),
                 /* parentClassLoader = */ this.javaClass.classLoader
             )
-            compiler.generateAll()
+            val compiledTemplates = compiler.precompile(viewComponentTemplateList)
             // Templates will need to be compiled by the maven/gradle build task
             return TemplateEngine.createPrecompiled(
-                /* classDirectory = */ null,
+                /* classDirectory = */ Path.of(this.javaClass.classLoader.getResource("").toURI()),
                 /* contentType = */ ContentType.Html,
-                /* parentClassLoader = */ null,
-                /* packageName = */ ""
+                /* parentClassLoader = */ this.javaClass.classLoader
             )
         }
         val split = viewComponentProperties.viewComponentRoot.split("/").toTypedArray()
@@ -67,6 +67,14 @@ class JteViewComponentAutoConfiguration {
             ContentType.Html,
             javaClass.classLoader
         )
+    }
+
+    private fun getViewComponentReference(viewComponentClass: Any): String {
+        val javaClass = if (AopUtils.isAopProxy(viewComponentClass) && viewComponentClass is Advised) {
+            viewComponentClass.targetSource.target!!.javaClass
+        } else viewComponentClass.javaClass
+
+        return javaClass.packageName + "." +javaClass.simpleName
     }
 
 
