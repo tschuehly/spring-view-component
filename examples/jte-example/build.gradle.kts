@@ -32,3 +32,13 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+// build.gradle.kts
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/java")
+            exclude("**/*.java")
+        }
+    }
+
+}
