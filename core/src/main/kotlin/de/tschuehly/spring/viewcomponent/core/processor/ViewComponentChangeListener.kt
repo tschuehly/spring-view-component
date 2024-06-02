@@ -16,8 +16,10 @@ class ViewComponentChangeListener(
         if (
             isTemplate(changeSet)
         ) {
-            val srcFile = changeSet.first().files.first().file
-            logger.debug("Detected Change to {}", srcFile.absoluteFile)
+            changeSet.forEach { change ->
+                val fileNames = change.files.map { it.file.absoluteFile }
+                logger.debug("Detected Changes to {}", fileNames)
+            }
             applicationContext.publishEvent(ContextRefreshedEvent(applicationContext))
         }
     }
