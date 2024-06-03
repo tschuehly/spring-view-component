@@ -23,7 +23,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver
 class ThymeleafViewComponentAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(SpringTemplateEngine::class)
     fun templateEngine(
         properties: ThymeleafProperties,
         templateResolvers: ObjectProvider<ITemplateResolver>,
@@ -49,20 +48,22 @@ class ThymeleafViewComponentAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty("spring.view-component.local-development", havingValue = "true")
-    fun fileViewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties) =
-        FileTemplateResolver().also {
+    fun fileViewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties): FileTemplateResolver {
+        return FileTemplateResolver().also {
             configureResolver(it)
             it.prefix = viewComponentProperties.viewComponentRoot + "/"
         }
+    }
 
 
     @Bean
     @ConditionalOnProperty("spring.view-component.local-development", havingValue = "false")
-    fun viewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties) =
-        ClassLoaderTemplateResolver().also {
-                configureResolver(it)
-                it.prefix = ""
-            }
+    fun viewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties): ClassLoaderTemplateResolver {
+        return ClassLoaderTemplateResolver().also {
+            configureResolver(it)
+            it.prefix = ""
+        }
+    }
 
     private fun configureResolver(templateResolver: AbstractConfigurableTemplateResolver) {
         templateResolver.suffix = ".html"

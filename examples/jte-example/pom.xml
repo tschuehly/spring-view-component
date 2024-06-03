@@ -15,7 +15,7 @@
 	<description>JTE Example</description>
 	<properties>
 		<java.version>17</java.version>
-		<view.component.version>0.7.5-SNAPSHOT</view.component.version>
+		<view.component.version>0.8.0-SNAPSHOT</view.component.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -62,32 +62,21 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>gg.jte</groupId>
+				<artifactId>jte-maven-plugin</artifactId>
+				<version>3.1.12</version>
+				<configuration>
+					<sourceDirectory>src/main/java</sourceDirectory>
+					<contentType>Html</contentType>
+				</configuration>
 				<executions>
 					<execution>
-						<id>run-annotation-processors-only</id>
 						<phase>generate-sources</phase>
-						<configuration>
-							<compilerArgument>-proc:only</compilerArgument>
-						</configuration>
 						<goals>
-							<goal>compile</goal>
+							<goal>generate</goal>
 						</goals>
 					</execution>
 				</executions>
-				<version>3.8.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>de.tschuehly</groupId>
-							<artifactId>spring-view-component-core</artifactId>
-							<version>${view.component.version}</version>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

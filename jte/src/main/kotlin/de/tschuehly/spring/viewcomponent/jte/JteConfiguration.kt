@@ -68,13 +68,6 @@ class JteConfiguration {
         )
     }
 
-    private fun getViewComponentReference(viewComponentClass: Any): String {
-        val javaClass = if (AopUtils.isAopProxy(viewComponentClass) && viewComponentClass is Advised) {
-            viewComponentClass.targetSource.target!!.javaClass
-        } else viewComponentClass.javaClass
-
-        return javaClass.packageName + "." +javaClass.simpleName
-    }
     @Bean
     @Primary
     fun jteProperties(viewComponentProperties: ViewComponentProperties) = JteProperties().also {

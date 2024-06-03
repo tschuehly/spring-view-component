@@ -210,13 +210,11 @@ ${layoutView.nestedViewComponent}
 
 ## Local Development Configuration
 
-You can enable hot-reloading of the templates in development:
+You can enable hot-reloading of the templates in development, you need to have Spring Boot DevTools as a dependency.
 
 ```properties
 spring.view-component.local-development=true
 ```
-
-
 
 ## Installation
 
@@ -228,7 +226,7 @@ spring.view-component.local-development=true
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-thymeleaf:LATEST_VERSION")
+implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.0")
 sourceSets {
     main {
         resources {
@@ -249,17 +247,15 @@ sourceSets {
 <dependency>
   <groupId>de.tschuehly</groupId>
   <artifactId>spring-view-component-thymeleaf</artifactId>
-  <version>LATEST_VERSION</version>
+  <version>0.8.0</version>
 </dependency>
 
-<project>
 <build>
   <resources>
     <resource>
       <directory>src/main/java</directory>
       <includes>
         <include>**/*.html</include>
-        <include>**/*.jte</include>
       </includes>
     </resource>
   </resources>
@@ -288,7 +284,7 @@ plugins {
     id("gg.jte.gradle") version("3.1.12")
 }
 
-implementation("de.tschuehly:spring-view-component-jte:LATEST_VERSION")
+implementation("de.tschuehly:spring-view-component-jte:0.8.0")
 
 jte{
     generate()
@@ -302,11 +298,36 @@ jte{
     <summary>Maven</summary>
 
 ```xml
-<dependency>
-  <groupId>de.tschuehly</groupId>
-  <artifactId>spring-view-component-jte</artifactId>
-  <version>LATEST_VERSION</version>
-</dependency>
+<project >
+  <dependencies>
+    <dependency>
+      <groupId>de.tschuehly</groupId>
+      <artifactId>spring-view-component-jte</artifactId>
+      <version>${view.component.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>gg.jte</groupId>
+        <artifactId>jte-maven-plugin</artifactId>
+        <version>3.1.12</version>
+        <configuration>
+          <sourceDirectory>src/main/java</sourceDirectory>
+          <contentType>Html</contentType>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
 ```
 
 </details>
@@ -320,21 +341,16 @@ jte{
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-kte:LATEST_VERSION")
-```
+implementation("de.tschuehly:spring-view-component-kte:0.8.0")
+jte{
+    generate()
+    sourceDirectory = Path("src/main/kotlin")
+}
 
-</details>
+tasks.withType<KaptGenerateStubs>(){
+    dependsOn("generateJte")
+}
 
-<details>
-    <summary>Maven</summary>
-
-```xml
-
-<dependency>
-  <groupId>de.tschuehly</groupId>
-  <artifactId>spring-view-component-kte</artifactId>
-  <version>LATEST_VERSION</version>
-</dependency>
 ```
 
 </details>
