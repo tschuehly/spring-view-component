@@ -313,7 +313,7 @@ jte{
         <artifactId>jte-maven-plugin</artifactId>
         <version>3.1.12</version>
         <configuration>
-          <sourceDirectory>src/main/java</sourceDirectory>
+          <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
           <contentType>Html</contentType>
         </configuration>
         <executions>
