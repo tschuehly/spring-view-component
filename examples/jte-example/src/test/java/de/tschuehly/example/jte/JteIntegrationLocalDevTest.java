@@ -1,7 +1,6 @@
 package de.tschuehly.example.jte;
 
-import de.tschuehly.spring.viewcomponent.core.JteIntegrationTestBase;
-import org.junit.jupiter.api.Disabled;
+import de.tschuehly.spring.viewcomponent.core.IntegrationTestBase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(
@@ -10,8 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "spring.view-component.local-development=true"
     }
 )
-@Disabled
 // TODO: how to test local dev. org.springframework.boot.devtools.restart.OnInitializedRestarterCondition is false
-public class JteIntegrationLocalDevTest extends JteIntegrationTestBase {
+public class JteIntegrationLocalDevTest extends IntegrationTestBase {
 
 }

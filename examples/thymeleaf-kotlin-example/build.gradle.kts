@@ -15,17 +15,11 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 repositories {
     mavenCentral()
     mavenLocal()
-//    maven {
-//        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-//        mavenContent {
-//            snapshotsOnly()
-//        }
-//    }
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.4")
-    kapt("de.tschuehly:spring-view-component-core:0.7.4")
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.0")
+    implementation("de.tschuehly:spring-view-component-core:0.8.0")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator:0.47")
@@ -41,7 +35,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.4"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.0"))
 }
 
 tasks.withType<KotlinCompile> {
@@ -56,4 +50,20 @@ tasks.withType<Test> {
     testLogging {
         events("passed", "skipped", "failed")
     }
+}
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/java","src/main/kotlin")
+            exclude("**/*.java","**/*.kt")
+        }
+    }
+
+    test {
+        resources {
+            srcDirs("src/main/java","src/main/kotlin")
+            exclude("**/*.java","**/*.kt")
+        }
+    }
+
 }

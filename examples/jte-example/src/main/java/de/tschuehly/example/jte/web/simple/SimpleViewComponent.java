@@ -1,6 +1,5 @@
 package de.tschuehly.example.jte.web.simple;
 
-import de.tschuehly.spring.viewcomponent.core.IViewContext;
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent;
 import de.tschuehly.example.jte.core.ExampleService;
 import de.tschuehly.spring.viewcomponent.jte.ViewContext;

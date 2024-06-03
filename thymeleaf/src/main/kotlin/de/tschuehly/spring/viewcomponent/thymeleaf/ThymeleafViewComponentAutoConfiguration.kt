@@ -6,26 +6,23 @@ import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.thymeleaf.dialect.IDialect
 import org.thymeleaf.spring6.SpringTemplateEngine
 import org.thymeleaf.templatemode.TemplateMode
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.FileTemplateResolver
 import org.thymeleaf.templateresolver.ITemplateResolver
-import java.io.File
 
 
 @Configuration
 @Import(ViewComponentAutoConfiguration::class)
-@EnableConfigurationProperties(ViewComponentProperties::class)
 class ThymeleafViewComponentAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(SpringTemplateEngine::class)
     fun templateEngine(
         properties: ThymeleafProperties,
         templateResolvers: ObjectProvider<ITemplateResolver>,
@@ -48,35 +45,33 @@ class ThymeleafViewComponentAutoConfiguration {
         return engine
     }
 
-    @Bean
-    @ConditionalOnProperty("spring.view-component.local-development")
-    fun fileViewComponentTemplateResolver(): FileTemplateResolver {
-        val fileViewComponentTemplateResolver = FileTemplateResolver()
-        if (File("src/main/kotlin").isDirectory) {
-            fileViewComponentTemplateResolver.prefix = "src/main/kotlin/"
-        }
-        if (File("src/main/java").isDirectory) {
-            fileViewComponentTemplateResolver.prefix = "src/main/java/"
-        }
-        fileViewComponentTemplateResolver.suffix = ".html"
-        fileViewComponentTemplateResolver.templateMode = TemplateMode.HTML
-        fileViewComponentTemplateResolver.isCacheable = false
-        fileViewComponentTemplateResolver.characterEncoding = "UTF-8"
-        fileViewComponentTemplateResolver.order = 1
-        fileViewComponentTemplateResolver.checkExistence = true
-        return fileViewComponentTemplateResolver
-    }
 
     @Bean
-    fun viewComponentTemplateResolver(): ClassLoaderTemplateResolver {
-        val templateResolver = ClassLoaderTemplateResolver()
-        templateResolver.prefix = ""
+    @ConditionalOnProperty("spring.view-component.local-development", havingValue = "true")
+    fun fileViewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties): FileTemplateResolver {
+        return FileTemplateResolver().also {
+            configureResolver(it)
+            it.prefix = viewComponentProperties.viewComponentRoot + "/"
+        }
+    }
+
+
+    @Bean
+    @ConditionalOnProperty("spring.view-component.local-development", havingValue = "false")
+    fun viewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties): ClassLoaderTemplateResolver {
+        return ClassLoaderTemplateResolver().also {
+            configureResolver(it)
+            it.prefix = ""
+        }
+    }
+
+    private fun configureResolver(templateResolver: AbstractConfigurableTemplateResolver) {
         templateResolver.suffix = ".html"
         templateResolver.templateMode = TemplateMode.HTML
+        templateResolver.isCacheable = false
         templateResolver.characterEncoding = "UTF-8"
         templateResolver.order = 1
         templateResolver.checkExistence = true
-        return templateResolver
     }
 
 

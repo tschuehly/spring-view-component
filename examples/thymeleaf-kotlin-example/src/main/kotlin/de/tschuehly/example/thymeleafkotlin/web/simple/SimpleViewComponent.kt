@@ -1,8 +1,6 @@
 package de.tschuehly.example.thymeleafkotlin.web.simple
 
 import de.tschuehly.example.thymeleafkotlin.core.ExampleService
-import de.tschuehly.spring.viewcomponent.core.IViewContext
-import de.tschuehly.spring.viewcomponent.core.action.PostViewAction
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import de.tschuehly.spring.viewcomponent.thymeleaf.ViewContext
 
@@ -14,8 +12,4 @@ class SimpleViewComponent(
 
     data class SimpleView(val helloWorld: String) : ViewContext
 
-    @PostViewAction
-    fun testAction(): ViewContext {
-        return render()
-    }
 }

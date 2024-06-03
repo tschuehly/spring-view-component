@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.7.4"
+version = "0.8.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -33,8 +33,6 @@ dependencies {
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
     testFixturesImplementation("org.springframework.boot:spring-boot-devtools")
-
-    implementation("de.tschuehly:spring-view-component-jte-compiler:0.7.4")
 
 }
 

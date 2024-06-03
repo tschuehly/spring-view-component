@@ -11,6 +11,17 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
+// build.gradle.kts
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/java","src/main/kotlin")
+            exclude("**/*.java","**/*.kt")
+        }
+    }
+
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -18,16 +29,14 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.4")
-    annotationProcessor("de.tschuehly:spring-view-component-core:0.7.4")
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.0")
 
     implementation("org.webjars.npm:htmx.org:1.9.11")
     implementation("org.webjars:webjars-locator-core:0.58")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.7.4"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.0"))
 }
 
 tasks.withType<Test> {

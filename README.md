@@ -1,43 +1,47 @@
 ![image](https://user-images.githubusercontent.com/33346637/235085980-eb16eaa3-ec89-4293-9609-cf651a44f60e.png)
 
-Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered ui components.
+Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered UI components.
 
-##### Table of Contents  
+##### Table of Contents
+
 - [What’s a ViewComponent?](#whats-a-viewcomponent)
 - [Render a ViewComponent](#render-a-viewcomponent)
 - [Nesting ViewComponents:](#nesting-viewcomponents)
-- [Local Development](#local-development)
-- [ViewAction: Interactivity with HTMX](#viewaction-interactivity-with-htmx)
+- [Local Development Configuration](#local-development)
+- [Production Configuration](#production-configuration)
 - [Installation](#installation)
-- [Composing pages from components](#composing-pages-from-components)
-- [Serverless components - Spring Cloud Function support](#serverless-components---spring-cloud-function-support)
-
 
 ## What’s a ViewComponent?
 
-Think of ViewComponents as an evolution of the presenter pattern, inspired by [React](https://reactjs.org/docs/react-component.html). 
+ViewComponents consolidate the logic needed for a template into a single class,
+resulting in a cohesive object that is easy to understand. 
+([Source: ViewComponent for Rails](https://viewcomponent.org/))
 
-A ViewComponent is a Spring Bean that defines the context for our Template:
+A Spring ViewComponent is a Spring Bean that defines the context for our Template:
 
 <details open>
     <summary>Java</summary>
 
 ```java
+
 @ViewComponent
 public class SimpleViewComponent {
-    public record SimpleView(String helloWorld) implements ViewContext {
-    }
 
-    public SimpleView render() {
-        return new SimpleView("Hello World");
-    }
+  public record SimpleView(String helloWorld) implements ViewContext {
+
+  }
+
+  public SimpleView render() {
+    return new SimpleView("Hello World");
+  }
 }
 ```
+
 </details>
 
 We define the context by creating a record that implements the ViewContext interface
 
-Next we add the @ViewComponent annotation to a class and define a method that returns the SimpleView record.
+Next, we add the `@ViewComponent` annotation to a class and define a method that returns the `SimpleView` record.
 
 <details>
     <summary>Kotlin</summary>
@@ -45,16 +49,17 @@ Next we add the @ViewComponent annotation to a class and define a method that re
 ```kotlin
 // SimpleViewComponent.kt
 @ViewComponent
-class SimpleViewComponent{
+class SimpleViewComponent {
     fun render() = SimpleView("Hello World")
 
     data class SimpleView(val helloWorld: String) : ViewContext
 }
 ```
+
 </details>
 
-A ViewComponent always need a corresponding HTML Template.
-We define the Template in the SimpleViewComponent.[html/jte/kte] in the same package as our ViewComponent class.
+A ViewComponent always needs a corresponding HTML Template.
+We define the Template in the SimpleViewComponent.[html/jte/kte] In the same package as our ViewComponent class.
 
 We can use [Thymeleaf](https://thymeleaf.org)
 
@@ -73,11 +78,12 @@ or [JTE](https://jte.gg/#5-minutes-example)
 ```
 
 or [KTE](https://jte.gg/#5-minutes-example)
+
 ```html
 @param simpleView: de.tschuehly.kteviewcomponentexample.web.simple.SimpleViewComponent.SimpleView
 <div>
-    <h2>This is the SimpleViewComponent</h2>
-    <div>${simpleView.helloWorld}</div>
+  <h2>This is the SimpleViewComponent</h2>
+  <div>${simpleView.helloWorld}</div>
 </div>
 ```
 
@@ -88,20 +94,23 @@ We can then call the render method in our controller to render the template.
     <summary>Java</summary>
 
 ```java
+
 @Controller
 public class SimpleController {
-    private final SimpleViewComponent simpleViewComponent;
 
-    public TestController(SimpleViewComponent simpleViewComponent) {
-        this.simpleViewComponent = simpleViewComponent;
-    }
+  private final SimpleViewComponent simpleViewComponent;
 
-    @GetMapping("/")
-    ViewContext simple() {
-        return simpleViewComponent.render();
-    }
+  public TestController(SimpleViewComponent simpleViewComponent) {
+    this.simpleViewComponent = simpleViewComponent;
+  }
+
+  @GetMapping("/")
+  ViewContext simple() {
+    return simpleViewComponent.render();
+  }
 }
 ```
+
 </details>
 
 <details>
@@ -118,6 +127,7 @@ class SimpleController(
     fun simpleComponent() = simpleViewComponent.render()
 }
 ```
+
 </details>
 
 ## Examples
@@ -127,25 +137,28 @@ If you want to get started right away you can find examples for all possible lan
 
 ## Nesting ViewComponents:
 
-We can nest components by passing a ViewContext as property of our record, 
+We can nest components by passing a ViewContext as property of our record,
 if we also have it as parameter of our render method we can easily create layouts:
 
 <details open>
     <summary>Java</summary>
 
 ```java
+
 @ViewComponent
 public
 class LayoutViewComponent {
 
-    private record LayoutView(ViewContext nestedViewComponent) implements ViewContext {
-    }
+  private record LayoutView(ViewContext nestedViewComponent) implements ViewContext {
 
-    public ViewContext render(ViewContext nestedViewComponent) {
-        return new LayoutView(nestedViewComponent);
-    }
+  }
+
+  public ViewContext render(ViewContext nestedViewComponent) {
+    return new LayoutView(nestedViewComponent);
+  }
 }
 ```
+
 </details>
 <details >
     <summary>Kotlin</summary>
@@ -154,182 +167,75 @@ class LayoutViewComponent {
 @ViewComponent
 class LayoutViewComponent {
     data class LayoutView(val nestedViewComponent: ViewContext) : ViewContext
+
     fun render(nestedViewComponent: ViewContext) = LayoutView(nestedViewComponent)
 
 }
 ```
+
 </details>
 
-
 ### Thymeleaf
+
 In Thymeleaf we render the passed ViewComponent with the `view:component="${viewContext}"` attribute.
 
 ```html
+
 <nav>
-    This is a navbar
+  This is a navbar
 </nav>
 <!--/*@thymesVar id="layoutView" type="de.tschuehly.example.thymeleafjava.web.layout.LayoutViewComponent.LayoutView"*/-->
 <div view:component="${layoutView.nestedViewComponent()}"></div>
 <footer>
-    This is a footer
+  This is a footer
 </footer>
 ```
 
-### JTE
+### JTE / KTE
 
 In JTE/KTE we can just call the LayoutView record directly in an expression:
+
 ```html
 @param layoutView: de.tschuehly.kteviewcomponentexample.web.layout.LayoutViewComponent.LayoutView
 <nav>
-    This is a Navbar
+  This is a Navbar
 </nav>
 <body>
 ${layoutView.nestedViewComponent}
 </body>
 <footer>
-    This is a footer
+  This is a footer
 </footer>
 ```
 
-## Local Development
+## Local Development Configuration
 
-You can enable hot-reloading of the templates in development:
+You can enable hot-reloading of the templates in development, you need to have Spring Boot DevTools as a dependency.
+
 ```properties
 spring.view-component.local-development=true
 ```
 
-## ViewAction: Interactivity with HTMX
-
-With ViewActions you can create interactive ViewComponents based on [htmx](https://htmx.org/) without having to reload the page.
-
-You define a ViewAction inside your Thymeleaf/JTE template with the `view:action` attribute.
-```html
-// ActionViewComponent.html
-<!--/*@thymesVar id="actionView" type="de.tschuehly.example.thymeleafjava.web.action.ActionViewComponent.ActionView"*/-->
-<script defer src="https://unpkg.com/htmx.org@1.9.3"></script>
-<button view:action="countUp">Default ViewAction [GET]</button>
-<h3 th:text="${actionView.counter()}"></h3>
-```
-Here is the corresponding ViewComponent class that has a `@GetViewAction` annotation on the countUp method.
-
-As you can see the attribute value of the `view:action="countUp"` correlates to the countUp method in our ViewComponent class.
-
-<details open>
-    <summary>Java</summary>
-
-```java
-@ViewComponent
-public class ActionViewComponent {
-    Integer counter = 0;
-
-    public record ActionView(Integer counter) implements ActionViewContext {
-    }
-
-    public ViewContext render() {
-        return new ActionView(counter);
-    }
-
-    @GetViewAction(path = "/customPath/countUp")
-    public ViewContext countUp() {
-        counter += 1;
-        return render();
-    }
-}
-```
-</details>
-<details >
-    <summary>Kotlin</summary>
-
-```kotlin
-@ViewComponent
-class ActionViewComponent {
-    data class ActionView(val counter: Int) : ActionViewContext
-
-    fun render() = ActionView(counter)
-
-    var counter: Int = 0
-
-    @GetViewAction("/customPath/countUp")
-    fun countUp(): IViewContext {
-        counter += 1
-        return render()
-    }
-}
-```
-</details>
-
-Behind the scenes at build time Spring ViewComponent parses the template to htmx attributes using an annotation processor.
-
-The hx-get attribute will create a http get request to the `/actionviewcomponent/countup` endpoint that is automatically generated.
-
-The `/actionviewcomponent/countup` endpoint will return the re-rendered ActionViewComponent template. 
-
-The `hx-target="#actionviewcomponent"` attribute will swap the returned HTML to the div with the `id="actionviewcomponent"` that will wrap the view component.
-
-
-```html
-<div id="actionviewcomponent" style="display: contents;">
-  <script defer src="https://unpkg.com/htmx.org@1.9.3"></script>
-  <h2>ViewAction Get CountUp</h2>
-  <button hx-get="/actionviewcomponent/countup" hx-target="#actionviewcomponent">
-    Default ViewAction [GET]
-  </button>
-</div>
-```
-
-You can also pass a custom path as annotation parameter: `@PostViewAction("/customPath/addItemAction")`
-
-You can use different ViewAction Annotations that map to the corresponding [htmx ajax methods](https://htmx.org/docs/#ajax): 
-
-- `@GetViewAction`
-- `@PostViewAction`
-- `@PutViewAction`
-- `@PatchViewAction`
-- `@DeleteViewAction`
-
 ## Installation
 
-If you are using Maven you need to configure the annotation processor like this:
-
-<details>
-    <summary>Annotation Processor Configuration</summary>
-
-```xml
-<project>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>de.tschuehly</groupId>
-                            <artifactId>spring-view-component-core</artifactId>
-                            <version>${de.tschuehly.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>
-```
-</details>
-
-
 ### Thymeleaf:
+
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-thymeleaf) on Maven Central
 
 <details open>
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-thymeleaf:LATEST_VERSION")
-annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
+implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.0")
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/java")
+            exclude("**/*.java")
+        }
+    }
+
+}
 ```
 </details>
 
@@ -337,24 +243,37 @@ annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
     <summary>Maven</summary>
 
 ```xml
-<dependency>
-    <groupId>de.tschuehly</groupId>
-    <artifactId>spring-view-component-core</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
-<dependency>
-    <groupId>de.tschuehly</groupId>
-    <artifactId>spring-view-component-thymeleaf</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
+<project>
+  <dependencies>
+    <dependency>
+      <groupId>de.tschuehly</groupId>
+      <artifactId>spring-view-component-thymeleaf</artifactId>
+      <version>0.8.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>5
+        <version>3.3.0</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
 ```
+
 </details>
 
-
-
 ### JTE
-Both, Java DSL and Kotlin DSL are supported:
-#### JTE DSL
+
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-jte) on Maven Central
 
 
@@ -362,29 +281,60 @@ Both, Java DSL and Kotlin DSL are supported:
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-jte:LATEST_VERSION")
-annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
+plugins {
+    id("gg.jte.gradle") version("3.1.12")
+}
+
+implementation("de.tschuehly:spring-view-component-jte:0.8.0")
+
+jte{
+    generate()
+    sourceDirectory = Path("src/main/java")
+}
 ```
+
 </details>
 
 <details>
     <summary>Maven</summary>
 
 ```xml
-<dependency>
-    <groupId>de.tschuehly</groupId>
-    <artifactId>spring-view-component-core</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
-<dependency>
-    <groupId>de.tschuehly</groupId>
-    <artifactId>spring-view-component-jte</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
+<project >
+  <dependencies>
+    <dependency>
+      <groupId>de.tschuehly</groupId>
+      <artifactId>spring-view-component-jte</artifactId>
+      <version>0.8.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>gg.jte</groupId>
+        <artifactId>jte-maven-plugin</artifactId>
+        <version>3.1.12</version>
+        <configuration>
+          <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+          <contentType>Html</contentType>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
 ```
+
 </details>
 
-#### KTE DSL
+### KTE
+
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-kte) on Maven Central
 
 
@@ -392,78 +342,16 @@ annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-kte:LATEST_VERSION")
-annotationProcessor("de.tschuehly:spring-view-component-core:LATEST_VERSION")
-```
-</details>
-
-<details>
-    <summary>Maven</summary>
-
-```xml
-<dependency>
-    <groupId>de.tschuehly</groupId>
-    <artifactId>spring-view-component-core</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
-<dependency>
-    <groupId>de.tschuehly</groupId>
-    <artifactId>spring-view-component-kte</artifactId>
-    <version>LATEST_VERSION</version>
-</dependency>
-```
-</details>
-
-
-
-# Experimental stuff:
-
-## Composing pages from components
-
-**!!! Currently only supported in Thymeleaf !!!**
-
-If you want to compose a page/response from multiple components you can use the `ViewContextContainer` as response in
-your controller, this can be used for [htmx out of band responses](https://htmx.org/examples/update-other-content/#oob).
-
-```kotlin
-@Controller
-class Router(
-    private val homeViewComponent: HomeViewComponent,
-    private val navigationViewComponent: NavigationViewComponent,
-) {
-
-    @GetMapping("/multi-component")
-    fun multipleComponent() = ViewContextContainer(
-        navigationViewComponent.render(),
-        homeViewComponent.render()
-    )
+implementation("de.tschuehly:spring-view-component-kte:0.8.0")
+jte{
+    generate()
+    sourceDirectory = Path("src/main/kotlin")
 }
-```
 
-
-## Serverless components - Spring Cloud Function support
-
-**Currently only supported in Thymeleaf !!!**
-
-If you want to deploy your application on a serverless platform such as AWS Lambda or Azure Functions you can easily do
-that with the Spring Cloud Function support.
-
-Just add the dependency `implementation("org.springframework.cloud:spring-cloud-function-context")` to your
-build.gradle.kts.
-
-Create a @ViewComponent that implements the functional interface `Supplier<ViewContext>`. Instead of the render()
-function we will now override the get method of the Supplier interface.
-
-If you start your application the component should be automatically rendered on http://localhost:8080
-
-```kotlin
-@ViewComponent
-class HomeViewComponent(
-    private val exampleService: ExampleService,
-) : Supplier<ViewContext> {
-    override fun get() = ViewContext(
-        "helloWorld" toProperty exampleService.getHelloWorld(),
-        "coffee" toProperty exampleService.getCoffee()
-    )
+tasks.withType<KaptGenerateStubs>(){
+    dependsOn("generateJte")
 }
+
 ```
+
+</details>

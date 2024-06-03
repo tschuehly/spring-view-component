@@ -1,4 +1,7 @@
 <html>
+<head>
+    <script src="http://localhost:35729/livereload.js"></script>
+</head>
 <div>
     <h1>This is the IndexViewComponent</h1>
 
@@ -6,7 +9,4 @@
 <a href="/">IndexViewComponent</a><br>
 <a href="/simple">SimpleViewComponent</a><br>
 <a href="/layout">LayoutViewComponent</a><br>
-<a href="/action">ActionViewComponent</a><br>
-<a href="/nested-action">NestedActionViewComponent</a><br>
-
 </html>

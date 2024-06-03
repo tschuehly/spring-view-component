@@ -1,13 +1,8 @@
 rootProject.name = "jte-example"
-/*
-includeBuild("..\\..\\jte\\jte"){
+
+includeBuild("..\\..\\jte"){
     dependencySubstitution {
         substitute(module("de.tschuehly:spring-view-component-jte")).using(project(":"))
-    }
-}
-includeBuild("..\\..\\jte\\jte-compiler"){
-    dependencySubstitution {
-        substitute(module("de.tschuehly:spring-view-component-jte-compiler")).using(project(":"))
     }
 }
 includeBuild("..\\..\\core"){
@@ -15,4 +10,3 @@ includeBuild("..\\..\\core"){
         substitute(module("de.tschuehly:spring-view-component-core")).using(project(":"))
     }
 }
-*/
