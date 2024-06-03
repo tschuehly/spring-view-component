@@ -243,29 +243,30 @@ sourceSets {
     <summary>Maven</summary>
 
 ```xml
-
-<dependency>
-  <groupId>de.tschuehly</groupId>
-  <artifactId>spring-view-component-thymeleaf</artifactId>
-  <version>0.8.0</version>
-</dependency>
-
-<build>
-  <resources>
-    <resource>
-      <directory>src/main/java</directory>
-      <includes>
-        <include>**/*.html</include>
-      </includes>
-    </resource>
-  </resources>
-  <plugins>
-    <plugin>
-      <artifactId>maven-resources-plugin</artifactId>5
-      <version>3.3.0</version>
-    </plugin>
-  </plugins>
-</build>
+<project>
+  <dependencies>
+    <dependency>
+      <groupId>de.tschuehly</groupId>
+      <artifactId>spring-view-component-thymeleaf</artifactId>
+      <version>0.8.0</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>5
+        <version>3.3.0</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>
 ```
 
@@ -303,7 +304,7 @@ jte{
     <dependency>
       <groupId>de.tschuehly</groupId>
       <artifactId>spring-view-component-jte</artifactId>
-      <version>${view.component.version}</version>
+      <version>0.8.0</version>
     </dependency>
   </dependencies>
   <build>
