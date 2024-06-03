@@ -39,6 +39,7 @@ class ViewComponentAutoConfiguration {
             fileSystemWatcher.addSourceDirectory(viewComponentDirectory)
             fileSystemWatcher.addSourceDirectory(templateRoot)
             logger.info("Watching for template changes at: ${viewComponentDirectory.absoluteFile.path}")
+            logger.info("Watching for template changes at: ${templateRoot.absoluteFile.path}")
             fileSystemWatcher.addListener(
                 ViewComponentChangeListener(
                     applicationContext

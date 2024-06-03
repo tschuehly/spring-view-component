@@ -1,4 +1,4 @@
-package de.tschuehly.spring.viewcomponent.jte
+package de.tschuehly.spring.viewcomponent.kte
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
 import gg.jte.TemplateEngine
@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
 
 @Aspect
-class JteViewContextAspect(
+class KteViewContextAspect(
     private val jteTemplateEngine: TemplateEngine,
     private val jteProperties: JteProperties
 ) {
@@ -17,7 +17,7 @@ class JteViewContextAspect(
         //
     }
 
-    @Pointcut("execution(public de.tschuehly.spring.viewcomponent.jte.ViewContext+ *(..))")
+    @Pointcut("execution(public de.tschuehly.spring.viewcomponent.kte.ViewContext+ *(..))")
     fun isRenderOrGetMethod() {
         //
     }

@@ -20,9 +20,14 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.8.0-SNAPSHOT")
-    api("de.tschuehly:spring-view-component-jte:0.8.0-SNAPSHOT")
     api("gg.jte:jte-kotlin:3.1.12")
+    api("de.tschuehly:spring-view-component-core:0.8.0-SNAPSHOT")
+
+    implementation("gg.jte:jte-spring-boot-starter-3:3.1.12")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

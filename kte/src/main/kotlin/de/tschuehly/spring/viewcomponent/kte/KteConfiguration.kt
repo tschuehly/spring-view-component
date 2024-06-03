@@ -1,4 +1,4 @@
-package de.tschuehly.spring.viewcomponent.jte
+package de.tschuehly.spring.viewcomponent.kte
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
 import gg.jte.CodeResolver
 import gg.jte.ContentType
@@ -7,19 +7,17 @@ import gg.jte.resolve.DirectoryCodeResolver
 import gg.jte.springframework.boot.autoconfigure.JteProperties
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.*
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 
 @Configuration
-class JteConfiguration {
+class KteConfiguration {
 
     @Bean
-    fun jteViewContextAspect(templateEngine: TemplateEngine, jteProperties: JteProperties): JteViewContextAspect {
-        return JteViewContextAspect(templateEngine, jteProperties)
+    fun kteViewContextAspect(templateEngine: TemplateEngine, jteProperties: JteProperties): KteViewContextAspect {
+        return KteViewContextAspect(templateEngine, jteProperties)
     }
 
     @Bean
@@ -32,7 +30,7 @@ class JteConfiguration {
                 /* parentClassLoader = */ this.javaClass.classLoader
             )
         }
-        val split = viewComponentProperties.viewComponentRoot.split("/").toTypedArray()
+        val split = getViewComponentRootPath(viewComponentProperties).split("/").toTypedArray()
         val codeResolver: CodeResolver = DirectoryCodeResolver(FileSystems.getDefault().getPath("", *split))
         return TemplateEngine.create(
             codeResolver,
@@ -45,8 +43,13 @@ class JteConfiguration {
     @Bean
     @Primary
     fun jteProperties(viewComponentProperties: ViewComponentProperties) = JteProperties().also {
-        it.templateSuffix = ".jte"
-        it.templateLocation = viewComponentProperties.viewComponentRoot
+        it.templateSuffix = ".kte"
+        it.templateLocation = getViewComponentRootPath(viewComponentProperties)
         it.isDevelopmentMode = viewComponentProperties.localDevelopment
     }
+
+    private fun getViewComponentRootPath(viewComponentProperties: ViewComponentProperties): String =
+        if (viewComponentProperties.viewComponentRoot == "src/main/java") "src/main/kotlin" else viewComponentProperties.viewComponentRoot
+
+
 }

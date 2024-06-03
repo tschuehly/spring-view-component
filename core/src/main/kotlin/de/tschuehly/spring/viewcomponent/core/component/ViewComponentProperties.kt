@@ -6,6 +6,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class ViewComponentProperties(
     val localDevelopment: Boolean = false,
     val viewComponentRoot: String = "src/main/java",
-    val standaloneTemplateRoot: String = "src/main/resources",
-    val templateSuffix: String = ".html"
+    val standaloneTemplateRoot: String = "src/main/resources"
 )
