@@ -216,85 +216,7 @@ You can enable hot-reloading of the templates in development:
 spring.view-component.local-development=true
 ```
 
-## Production Configuration
 
-### Gradle
-<details>
-    <summary>Java</summary>
-
-```kotlin
-// build.gradle.kts
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/java")
-            exclude("**/*.java")
-        }
-    }
-
-}
-```
-</details>
-<details>
-    <summary>Kotlin</summary>
-
-```kotlin
-// build.gradle.kts
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-
-}
-```
-### Kotlin
-```kotlin
-// build.gradle.kts
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/kotlin")
-            exclude("**/*.kt")
-        }
-    }
-
-}
-```
-</details>
-
-### Maven
-<details>
-    <summary>Java</summary>
-
-Add this to your pom.xml:
-
-```xml
-
-<project>
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.jte</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>5
-        <version>3.3.0</version>
-      </plugin>
-    </plugins>
-  </build>
-</project>
-```
-
-</details>
 
 ## Installation
 
@@ -307,8 +229,16 @@ Add this to your pom.xml:
 
 ```kotlin
 implementation("de.tschuehly:spring-view-component-thymeleaf:LATEST_VERSION")
-```
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/java")
+            exclude("**/*.java")
+        }
+    }
 
+}
+```
 </details>
 
 <details>
@@ -318,23 +248,34 @@ implementation("de.tschuehly:spring-view-component-thymeleaf:LATEST_VERSION")
 
 <dependency>
   <groupId>de.tschuehly</groupId>
-  <artifactId>spring-view-component-core</artifactId>
+  <artifactId>spring-view-component-thymeleaf</artifactId>
   <version>LATEST_VERSION</version>
 </dependency>
-<dependency>
-<groupId>de.tschuehly</groupId>
-<artifactId>spring-view-component-thymeleaf</artifactId>
-<version>LATEST_VERSION</version>
-</dependency>
+
+<project>
+<build>
+  <resources>
+    <resource>
+      <directory>src/main/java</directory>
+      <includes>
+        <include>**/*.html</include>
+        <include>**/*.jte</include>
+      </includes>
+    </resource>
+  </resources>
+  <plugins>
+    <plugin>
+      <artifactId>maven-resources-plugin</artifactId>5
+      <version>3.3.0</version>
+    </plugin>
+  </plugins>
+</build>
+</project>
 ```
 
 </details>
 
 ### JTE
-
-Both, Java DSL and Kotlin DSL are supported:
-
-#### JTE DSL
 
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-jte) on Maven Central
 
@@ -343,7 +284,16 @@ Both, Java DSL and Kotlin DSL are supported:
     <summary>Gradle</summary>
 
 ```kotlin
+plugins {
+    id("gg.jte.gradle") version("3.1.12")
+}
+
 implementation("de.tschuehly:spring-view-component-jte:LATEST_VERSION")
+
+jte{
+    generate()
+    sourceDirectory = Path("src/main/java")
+}
 ```
 
 </details>
@@ -352,7 +302,6 @@ implementation("de.tschuehly:spring-view-component-jte:LATEST_VERSION")
     <summary>Maven</summary>
 
 ```xml
-
 <dependency>
   <groupId>de.tschuehly</groupId>
   <artifactId>spring-view-component-jte</artifactId>
@@ -362,7 +311,7 @@ implementation("de.tschuehly:spring-view-component-jte:LATEST_VERSION")
 
 </details>
 
-#### KTE DSL
+### KTE
 
 [LATEST_VERSION](https://central.sonatype.com/artifact/de.tschuehly/spring-view-component-kte) on Maven Central
 

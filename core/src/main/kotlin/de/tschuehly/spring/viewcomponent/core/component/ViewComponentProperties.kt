@@ -7,5 +7,5 @@ data class ViewComponentProperties(
     val localDevelopment: Boolean = false,
     val viewComponentRoot: String = "src/main/java",
     val standaloneTemplateRoot: String = "src/main/resources",
-    val templateSuffix: String
+    val templateSuffix: String = ".html"
 )

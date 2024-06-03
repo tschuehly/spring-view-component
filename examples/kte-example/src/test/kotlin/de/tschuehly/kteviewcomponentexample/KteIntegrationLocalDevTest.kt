@@ -6,8 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["spring.view-component.local-development=true"],
+    properties = ["spring.view-component.local-development=true"]
 )
-@Disabled // TODO: Fix localDev for kte
 class KteIntegrationLocalDevTest : IntegrationTestBase()
 

@@ -1,11 +1,18 @@
+import kotlin.io.path.Path
+
 plugins {
     java
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("gg.jte.gradle") version("3.1.12")
 }
 
 group = "de.tschuehly"
 version = "0.0.1-SNAPSHOT"
+jte{
+    generate()
+    sourceDirectory = Path("src/main/java")
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -31,14 +38,4 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-// build.gradle.kts
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/java")
-            exclude("**/*.java")
-        }
-    }
-
 }

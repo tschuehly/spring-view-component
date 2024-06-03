@@ -22,15 +22,9 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>de.tschuehly</groupId>
 			<artifactId>spring-view-component-thymeleaf</artifactId>
-			<version>${view.component.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.tschuehly</groupId>
-			<artifactId>spring-view-component-core</artifactId>
 			<version>${view.component.version}</version>
 		</dependency>
 		<dependency>
@@ -42,11 +36,13 @@
 		<dependency>
 			<groupId>org.webjars.npm</groupId>
 			<artifactId>htmx.org</artifactId>
-			<version>1.6.1</version>
+			<version>1.9.12</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>webjars-locator-core</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -56,15 +52,28 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.html</include>
+					<include>**/*.jte</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.0</version>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>

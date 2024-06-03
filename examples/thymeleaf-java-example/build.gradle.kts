@@ -11,6 +11,17 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
+// build.gradle.kts
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/java","src/main/kotlin")
+            exclude("**/*.java","**/*.kt")
+        }
+    }
+
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -20,7 +31,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("de.tschuehly:spring-view-component-thymeleaf:0.7.5-SNAPSHOT")
-    implementation("de.tschuehly:spring-view-component-core:0.7.5-SNAPSHOT")
 
     implementation("org.webjars.npm:htmx.org:1.9.11")
     implementation("org.webjars:webjars-locator-core:0.58")

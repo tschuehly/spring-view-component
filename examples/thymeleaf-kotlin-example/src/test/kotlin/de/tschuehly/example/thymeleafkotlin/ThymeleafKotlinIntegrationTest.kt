@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 
 @SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = ["spring.view-component.local-development=false"]
 )
 class ThymeleafKotlinIntegrationTest : IntegrationTestBase()

@@ -1,4 +1,6 @@
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlin.io.path.Path
 
 plugins {
     id("org.springframework.boot") version "3.2.4"
@@ -6,9 +8,18 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("kapt") version "1.9.23"
+    id("gg.jte.gradle") version("3.1.12")
 }
 
 
+jte{
+    generate()
+    sourceDirectory = Path("src/main/kotlin")
+}
+
+tasks.withType<KaptGenerateStubs>(){
+    dependsOn("generateJte")
+}
 
 group = "de.tschuehly"
 version = "0.0.1-SNAPSHOT"
@@ -52,4 +63,3 @@ tasks.withType<Test> {
         events("passed", "skipped", "failed")
     }
 }
-sourceSets.main.get().java.srcDir("build/generated-sources/jte")

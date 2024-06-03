@@ -15,12 +15,6 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 repositories {
     mavenCentral()
     mavenLocal()
-//    maven {
-//        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-//        mavenContent {
-//            snapshotsOnly()
-//        }
-//    }
 }
 
 dependencies {
@@ -56,4 +50,20 @@ tasks.withType<Test> {
     testLogging {
         events("passed", "skipped", "failed")
     }
+}
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/java","src/main/kotlin")
+            exclude("**/*.java","**/*.kt")
+        }
+    }
+
+    test {
+        resources {
+            srcDirs("src/main/java","src/main/kotlin")
+            exclude("**/*.java","**/*.kt")
+        }
+    }
+
 }

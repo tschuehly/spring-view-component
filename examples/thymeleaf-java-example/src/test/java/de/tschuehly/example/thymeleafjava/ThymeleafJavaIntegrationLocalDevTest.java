@@ -7,8 +7,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"spring.view-component.local-development=false"}
+    properties = {"spring.view-component.local-development=true"}
 )
-class ThymeleafJavaIntegrationTest extends IntegrationTestBase {
-
+class ThymeleafJavaIntegrationLocalDevTest extends IntegrationTestBase {
 }
