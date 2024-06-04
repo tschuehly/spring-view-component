@@ -1,6 +1,6 @@
 ![image](https://user-images.githubusercontent.com/33346637/235085980-eb16eaa3-ec89-4293-9609-cf651a44f60e.png)
 
-Spring ViewComponent allows you to create typesafe, reusable & encapsulated server rendered UI components.
+Spring ViewComponent allows you to create typesafe, reusable & encapsulated server-rendered UI components.
 
 ##### Table of Contents
 
@@ -10,6 +10,7 @@ Spring ViewComponent allows you to create typesafe, reusable & encapsulated serv
 - [Local Development Configuration](#local-development)
 - [Production Configuration](#production-configuration)
 - [Installation](#installation)
+- [Technical Implementation](#technical-implementation)
 
 ## What’s a ViewComponent?
 
@@ -355,3 +356,9 @@ tasks.withType<KaptGenerateStubs>(){
 ```
 
 </details>
+
+## Technical Implementation
+
+Spring ViewComponent wraps the Spring MVC container using an AspectJ Aspect and automatically resolves the template and puts the ViewContext in the ModelAndViewContainer
+
+![image](https://github.com/tschuehly/spring-view-component/assets/33346637/ad2f2517-7eab-4b07-9249-59aeaae1e778)
