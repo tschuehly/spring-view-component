@@ -64,7 +64,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         val modelFactory = webContext.modelFactory
         engine.enableSpringELCompiler = true
         val viewComponentBody = modelFactory.createText(
-            engine.process(IViewContext.getViewComponentTemplate(viewContext), webContext)
+            engine.process(IViewContext.getViewComponentTemplateWithoutSuffix(viewContext), webContext)
         )
         structureHandler.replaceWith(viewComponentBody, true)
 

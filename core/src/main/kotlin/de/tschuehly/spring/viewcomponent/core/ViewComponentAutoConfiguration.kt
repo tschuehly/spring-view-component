@@ -30,10 +30,6 @@ class ViewComponentAutoConfiguration {
             viewComponentProperties: ViewComponentProperties
         ): FileSystemWatcher {
             val fileSystemWatcher = FileSystemWatcher()
-            val buildDir = applicationContext.getBeansWithAnnotation(ViewComponent::class.java).values.map {
-                it.javaClass.protectionDomain.codeSource.location.path
-            }.first()
-
             val viewComponentDirectory = File(viewComponentProperties.viewComponentRoot)
             val templateRoot = File(viewComponentProperties.standaloneTemplateRoot)
             fileSystemWatcher.addSourceDirectory(viewComponentDirectory)

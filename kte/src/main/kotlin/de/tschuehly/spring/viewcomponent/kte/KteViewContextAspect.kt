@@ -25,7 +25,7 @@ class KteViewContextAspect(
     @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "viewContext")
     fun renderInject(viewContext: ViewContext): ViewContext {
         ViewContext.templateEngine = jteTemplateEngine
-        IViewContext.templateSuffx = jteProperties.templateSuffix
+        ViewContext.templateSuffx = jteProperties.templateSuffix
         return viewContext
     }
 }

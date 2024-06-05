@@ -27,7 +27,6 @@ class ViewComponentAspect(val applicationContext: ApplicationContext) {
             throw ViewComponentException("${returnValue.javaClass} needs to implement ViewContext abstract class")
         }
         IViewContext.applicationContext = applicationContext
-        IViewContext.componentTemplate = IViewContext.getViewComponentTemplateWithoutSuffix(viewContext)
         return viewContext
     }
 }

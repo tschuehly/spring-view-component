@@ -23,7 +23,7 @@ class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
         val viewContext = returnValue?.takeIf {
             (IViewContext::class.java.isAssignableFrom(it.javaClass))
         } as IViewContext
-        mavContainer.view = IViewContext.componentTemplate
+        mavContainer.view = IViewContext.getViewComponentTemplateWithoutSuffix(context = viewContext)
         mavContainer.addAttribute(viewContext)
     }
 

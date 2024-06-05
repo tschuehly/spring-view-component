@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.8.0"
+version = "0.8.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core:0.8.0")
+	api("de.tschuehly:spring-view-component-core:0.8.1-SNAPSHOT")
 	api("org.springframework.boot:spring-boot-devtools")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
