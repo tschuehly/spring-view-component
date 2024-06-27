@@ -2,6 +2,10 @@ package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationContext
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.util.ContentCachingResponseWrapper
 import org.thymeleaf.context.ITemplateContext
 import org.thymeleaf.context.WebEngineContext
 import org.thymeleaf.engine.AttributeName
@@ -9,12 +13,12 @@ import org.thymeleaf.engine.EngineEventUtils
 import org.thymeleaf.model.IProcessableElementTag
 import org.thymeleaf.processor.element.AbstractAttributeTagProcessor
 import org.thymeleaf.processor.element.IElementTagStructureHandler
-import org.thymeleaf.spring6.SpringTemplateEngine
-import org.thymeleaf.spring6.context.SpringContextUtils
+import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import org.thymeleaf.templatemode.TemplateMode
+import java.nio.charset.StandardCharsets
 
 
-class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
+class ThymeleafViewComponentTagProcessor(dialectPrefix: String, private val applicationContext: ApplicationContext) :
     AbstractAttributeTagProcessor(
         /* templateMode = */ TemplateMode.HTML,
         /* dialectPrefix = */ dialectPrefix,
@@ -40,9 +44,7 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
         attributeValue: String,
         structureHandler: IElementTagStructureHandler
     ) {
-
         val expression = EngineEventUtils.computeAttributeExpression(context, tag, attributeName, attributeValue)
-
         val webContext = context as WebEngineContext
         val viewContext = try {
             expression.execute(webContext) as IViewContext
@@ -55,16 +57,20 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String) :
             logger.error("Could not execute expression: \"${expression.stringRepresentation}\"")
             throw ThymeleafViewComponentException(e.message, e.cause)
         }
-        val appCtx = SpringContextUtils.getApplicationContext(webContext)
-        val engine = appCtx.getBean(SpringTemplateEngine::class.java)
-
-        webContext.setVariable(viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() }, viewContext)
-
-        // TODO: Cannot process attribute '{th:field,data-th-field}': no associated BindStatus could be found for the intended form binding operations. This can be due to the lack of a proper management of the Spring RequestContext, which is usually done through the ThymeleafView or ThymeleafReactiveView (template:
-        val modelFactory = webContext.modelFactory
-        engine.enableSpringELCompiler = true
-        val viewComponentBody = modelFactory.createText(
-            engine.process(IViewContext.getViewComponentTemplateWithoutSuffix(viewContext), webContext)
+        val response = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)?.response!!
+        val wrapper = ContentCachingResponseWrapper(response)
+        val thymeleafViewResolver = applicationContext.getBean(ThymeleafViewResolver::class.java)
+        val viewName = thymeleafViewResolver.resolveViewName(
+            IViewContext.getViewComponentTemplateWithoutSuffix(viewContext),
+            webContext.locale
+        )  ?: throw ThymeleafViewComponentException("No ViewName", null)
+        viewName.render(
+            mapOf(viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() } to viewContext),
+            (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)?.request!!,
+            wrapper
+        )
+        val viewComponentBody = webContext.modelFactory.createText(
+            String(wrapper.contentAsByteArray, StandardCharsets.UTF_8)
         )
         structureHandler.replaceWith(viewComponentBody, true)
 
