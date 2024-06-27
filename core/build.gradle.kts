@@ -8,13 +8,13 @@ plugins {
     kotlin("plugin.spring") version "1.9.23"
 
     id("maven-publish")
-    id("org.jreleaser") version "1.11.0"
+    id("org.jreleaser") version "1.13.0"
     id("signing")
     id("java-test-fixtures")
 }
 
 group = "de.tschuehly"
-version = "0.8.1"
+version = "0.8.2"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {

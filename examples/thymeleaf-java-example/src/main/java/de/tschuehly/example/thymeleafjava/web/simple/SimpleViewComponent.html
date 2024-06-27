@@ -2,4 +2,8 @@
   <h2>This is the SimpleViewComponent</h2>
   <!--/*@thymesVar id="simpleView" type="de.tschuehly.example.thymeleafjava.web.simple.SimpleViewComponent.SimpleView"*/-->
   <div th:text="${simpleView.helloWorld()}"></div>
+
+  <div th:object="${simpleView}">
+    <input th:field="*{helloWorld}">
+  </div>
 </div>

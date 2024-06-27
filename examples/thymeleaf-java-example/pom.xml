@@ -15,7 +15,7 @@
 	<description>Thymeleaf Java Example</description>
 	<properties>
 		<java.version>17</java.version>
-		<view.component.version>0.8.1</view.component.version>
+		<view.component.version>0.8.2</view.component.version>
 	</properties>
 	<dependencies>
 		<dependency>

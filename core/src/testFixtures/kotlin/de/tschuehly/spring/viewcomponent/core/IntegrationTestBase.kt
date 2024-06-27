@@ -8,9 +8,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+
 abstract class IntegrationTestBase {
     @Autowired
     lateinit var testRestTemplate: TestRestTemplate
+
     @Test
     fun testIndexComponent() {
         val expectedHtml =
@@ -37,6 +39,9 @@ abstract class IntegrationTestBase {
             <div>
                 <h2>This is the SimpleViewComponent</h2>
                 <div>Hello World</div>
+                <div>
+                  <input id="helloWorld" name="helloWorld" value="Hello World">
+                </div>
             </div>
         """.trimIndent()
         assertEndpointReturns("/simple", expectedHtml)
@@ -45,23 +50,27 @@ abstract class IntegrationTestBase {
     @Test
     fun testLayoutComponent() {
         //language=html
-        val expectedHtml =
-            """
+        val expectedHtml = """
                 <html>
                 <nav>This is a Navbar</nav>
                 <body>
                 <div><h2>This is the SimpleViewComponent</h2>
-                <div>Hello World</div></div></body>
-                <footer>This is a footer</footer></html>
+                  <div>Hello World</div>
+                  <div>
+                    <input id="helloWorld" name="helloWorld" value="Hello World">
+                  </div>
+                </div>
+                </body>
+                <footer>This is a footer</footer>
+                </html>
                             """.trimIndent()
         assertEndpointReturns("/layout", expectedHtml)
     }
 
     fun assertEndpointReturns(url: String, expectedHtml: String) {
-        val response: ResponseEntity<String> = this.testRestTemplate
-            .exchange(url, HttpMethod.GET, null, String::class.java)
-        assertThat(response.statusCode)
-            .isEqualTo(HttpStatus.OK)
+        val response: ResponseEntity<String> =
+            this.testRestTemplate.exchange(url, HttpMethod.GET, null, String::class.java)
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         Assertions.assertEquals(
             expectedHtml.rmWhitespaceBetweenHtmlTags(), response.body?.rmWhitespaceBetweenHtmlTags()
         )
@@ -69,10 +78,7 @@ abstract class IntegrationTestBase {
 
     fun String.rmWhitespaceBetweenHtmlTags(): String {
         // Replace whitespace between > and word
-        return this.replace("(?<=>)(\\s*)(?=\\w)".toRegex(), "")
-            .replace("(?<=\\w)(\\s*)(?=<)".toRegex(), "")
-            .replace("(?<=>)(\\s*)(?=<)".toRegex(), "")
-            .replace("\r\n","\n")
-            .trim()
+        return this.replace("(?<=>)(\\s*)(?=\\w)".toRegex(), "").replace("(?<=\\w)(\\s*)(?=<)".toRegex(), "")
+            .replace("(?<=>)(\\s*)(?=<)".toRegex(), "").replace("\r\n", "\n").trim()
     }
 }

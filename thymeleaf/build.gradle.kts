@@ -8,12 +8,12 @@ plugins {
 	kotlin("plugin.spring") version "1.9.23"
 
 	id("maven-publish")
-	id("org.jreleaser") version "1.5.1"
+	id("org.jreleaser") version "1.13.0"
 	id("signing")
 }
 
 group = "de.tschuehly"
-version = "0.8.1"
+version = "0.8.2"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	api("de.tschuehly:spring-view-component-core:0.8.1")
+	api("de.tschuehly:spring-view-component-core:0.8.2")
 	api("org.springframework.boot:spring-boot-devtools")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

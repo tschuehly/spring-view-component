@@ -3,9 +3,9 @@ package de.tschuehly.spring.viewcomponent.thymeleaf
 import de.tschuehly.spring.viewcomponent.core.ViewComponentAutoConfiguration
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
 import org.springframework.beans.factory.ObjectProvider
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
@@ -26,7 +26,8 @@ class ThymeleafViewComponentAutoConfiguration {
     fun templateEngine(
         properties: ThymeleafProperties,
         templateResolvers: ObjectProvider<ITemplateResolver>,
-        dialects: ObjectProvider<IDialect>
+        dialects: ObjectProvider<IDialect>,
+        applicationContext: ApplicationContext
     ): SpringTemplateEngine {
         val engine = SpringTemplateEngine()
         engine.enableSpringELCompiler = properties.isEnableSpringElCompiler
@@ -41,7 +42,7 @@ class ThymeleafViewComponentAutoConfiguration {
                 dialect
             )
         }
-        engine.addDialect(ThymeleafViewComponentDialect())
+        engine.addDialect(ThymeleafViewComponentDialect(applicationContext))
         return engine
     }
 
