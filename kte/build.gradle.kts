@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.23"
 
     id("maven-publish")
-    id("org.jreleaser") version "1.11.0"
+    id("org.jreleaser") version "1.12.0"
     id("signing")
 }
 
