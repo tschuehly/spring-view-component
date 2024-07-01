@@ -130,7 +130,7 @@ jobs:
           ./gradlew kte-example:test
   publish:
     needs:  [build, test-jte, test-kte, test-thymeleaf-kotlin, test-thymeleaf-java]
-    if: github.ref_type == 'tag' || contains(github.ref_name, 'SNAPSHOT')
+    if: github.ref_type == 'tag' || github.ref_name == 'dev'
     runs-on: ubuntu-latest
     steps:
       - name: checkout

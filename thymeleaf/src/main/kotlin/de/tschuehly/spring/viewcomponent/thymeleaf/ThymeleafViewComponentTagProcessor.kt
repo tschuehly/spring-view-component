@@ -3,6 +3,7 @@ package de.tschuehly.spring.viewcomponent.thymeleaf
 import de.tschuehly.spring.viewcomponent.core.IViewContext
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
+import org.springframework.validation.support.BindingAwareModelMap
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.util.ContentCachingResponseWrapper
@@ -16,6 +17,7 @@ import org.thymeleaf.processor.element.IElementTagStructureHandler
 import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import org.thymeleaf.templatemode.TemplateMode
 import java.nio.charset.StandardCharsets
+import javax.swing.UIManager.put
 
 
 class ThymeleafViewComponentTagProcessor(dialectPrefix: String, private val applicationContext: ApplicationContext) :
