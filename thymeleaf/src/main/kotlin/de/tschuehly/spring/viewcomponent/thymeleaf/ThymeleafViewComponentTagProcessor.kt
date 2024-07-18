@@ -1,6 +1,7 @@
 package de.tschuehly.spring.viewcomponent.thymeleaf
 
 import de.tschuehly.spring.viewcomponent.core.IViewContext
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
 import org.springframework.web.context.request.RequestContextHolder
@@ -16,6 +17,7 @@ import org.thymeleaf.processor.element.IElementTagStructureHandler
 import org.thymeleaf.spring6.view.ThymeleafViewResolver
 import org.thymeleaf.templatemode.TemplateMode
 import java.nio.charset.StandardCharsets
+import java.util.*
 
 
 class ThymeleafViewComponentTagProcessor(dialectPrefix: String, private val applicationContext: ApplicationContext) :
@@ -58,22 +60,31 @@ class ThymeleafViewComponentTagProcessor(dialectPrefix: String, private val appl
             throw ThymeleafViewComponentException(e.message, e.cause)
         }
         val response = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)?.response!!
+        val wrapper = renderViewComponent(response, viewContext, webContext.locale)
+        val viewComponentBody = webContext.modelFactory.createText(
+            wrapper
+        )
+        structureHandler.replaceWith(viewComponentBody, true)
+
+    }
+
+    private fun renderViewComponent(
+        response: HttpServletResponse,
+        viewContext: IViewContext,
+        locale: Locale
+    ): String {
         val wrapper = ContentCachingResponseWrapper(response)
         val thymeleafViewResolver = applicationContext.getBean(ThymeleafViewResolver::class.java)
         val viewName = thymeleafViewResolver.resolveViewName(
             IViewContext.getViewComponentTemplateWithoutSuffix(viewContext),
-            webContext.locale
-        )  ?: throw ThymeleafViewComponentException("No ViewName", null)
+            locale
+        ) ?: throw ThymeleafViewComponentException("No ViewName", null)
         viewName.render(
             mapOf(viewContext.javaClass.simpleName.replaceFirstChar { it.lowercase() } to viewContext),
             (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?)?.request!!,
             wrapper
         )
-        val viewComponentBody = webContext.modelFactory.createText(
-            String(wrapper.contentAsByteArray, StandardCharsets.UTF_8)
-        )
-        structureHandler.replaceWith(viewComponentBody, true)
-
+        return String(wrapper.contentAsByteArray, StandardCharsets.UTF_8)
     }
 
 }
