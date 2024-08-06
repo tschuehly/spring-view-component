@@ -58,7 +58,7 @@ class ThymeleafViewComponentAutoConfiguration {
 
 
     @Bean
-    @ConditionalOnProperty("spring.view-component.local-development", havingValue = "false")
+    @ConditionalOnProperty("spring.view-component.local-development", havingValue = "false", matchIfMissing = true)
     fun viewComponentTemplateResolver(viewComponentProperties: ViewComponentProperties): ClassLoaderTemplateResolver {
         return ClassLoaderTemplateResolver().also {
             configureResolver(it)
