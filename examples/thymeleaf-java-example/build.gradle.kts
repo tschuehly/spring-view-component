@@ -29,14 +29,14 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.3")
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.4")
 
     implementation("org.webjars.npm:htmx.org:1.9.11")
     implementation("org.webjars:webjars-locator-core:0.58")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.3"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.4"))
 }
 
 tasks.withType<Test> {
