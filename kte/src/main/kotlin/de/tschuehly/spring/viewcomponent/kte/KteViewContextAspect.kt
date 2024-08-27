@@ -17,7 +17,7 @@ class KteViewContextAspect(
         //
     }
 
-    @Pointcut("execution(public de.tschuehly.spring.viewcomponent.kte.ViewContext+ *(..))")
+    @Pointcut("execution(de.tschuehly.spring.viewcomponent.kte.ViewContext+ *(..))")
     fun isRenderOrGetMethod() {
         //
     }
@@ -25,7 +25,7 @@ class KteViewContextAspect(
     @AfterReturning(pointcut = "isViewComponent() && isRenderOrGetMethod()", returning = "viewContext")
     fun renderInject(viewContext: ViewContext): ViewContext {
         ViewContext.templateEngine = jteTemplateEngine
-        ViewContext.templateSuffx = jteProperties.templateSuffix
+        ViewContext.templateSuffix = jteProperties.templateSuffix
         return viewContext
     }
 }
