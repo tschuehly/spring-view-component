@@ -31,8 +31,8 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-kte:0.8.4")
-    implementation("de.tschuehly:spring-view-component-core:0.8.4")
+    implementation("de.tschuehly:spring-view-component-kte:0.8.4-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-core:0.8.4-SNAPSHOT")
     implementation("io.github.wimdeblauwe:htmx-spring-boot:3.1.1")
 
     implementation("org.webjars.npm:htmx.org:1.9.11")
@@ -47,7 +47,7 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.4"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.4-SNAPSHOT"))
 }
 
 tasks.withType<KotlinCompile> {
