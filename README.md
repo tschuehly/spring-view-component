@@ -227,7 +227,7 @@ spring.view-component.local-development=true
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.4-SNAPSHOT")
+implementation("de.tschuehly:spring-view-component-thymeleaf:0.8.3")
 sourceSets {
     main {
         resources {
@@ -249,7 +249,7 @@ sourceSets {
     <dependency>
       <groupId>de.tschuehly</groupId>
       <artifactId>spring-view-component-thymeleaf</artifactId>
-      <version>0.8.4-SNAPSHOT</version>
+      <version>0.8.3</version>
     </dependency>
   </dependencies>
   <build>
@@ -286,11 +286,11 @@ plugins {
     id("gg.jte.gradle") version("3.1.12")
 }
 
-implementation("de.tschuehly:spring-view-component-jte:0.8.4-SNAPSHOT")
+implementation("de.tschuehly:spring-view-component-jte:0.8.3")
 
 jte{
     generate()
-    sourceDirectory = Path("src/main/java")
+    sourceDirectory.set(Path("src/main/java"))
 }
 ```
 
@@ -305,7 +305,7 @@ jte{
     <dependency>
       <groupId>de.tschuehly</groupId>
       <artifactId>spring-view-component-jte</artifactId>
-      <version>0.8.4-SNAPSHOT</version>
+      <version>0.8.3</version>
     </dependency>
   </dependencies>
   <build>
@@ -343,16 +343,19 @@ jte{
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-kte:0.8.4-SNAPSHOT")
-jte{
+
+plugins {
+    id("gg.jte.gradle") version ("3.1.12")
+}
+
+dependencies {
+    implementation("de.tschuehly:spring-view-component-kte:0.8.3")
+}
+
+jte {
     generate()
-    sourceDirectory = Path("src/main/kotlin")
+    sourceDirectory.set(Path("src/main/kotlin"))
 }
-
-tasks.withType<KaptGenerateStubs>(){
-    dependsOn("generateJte")
-}
-
 ```
 
 </details>
