@@ -260,6 +260,9 @@ sourceSets {
           <include>**/*.html</include>
         </includes>
       </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
     </resources>
     <plugins>
       <plugin>
