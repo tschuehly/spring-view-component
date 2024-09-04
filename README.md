@@ -293,7 +293,7 @@ implementation("de.tschuehly:spring-view-component-jte:0.8.3")
 
 jte{
     generate()
-    sourceDirectory.set(Path("src/main/java"))
+    sourceDirectory.set(kotlin.io.path.Path("src/main/java"))
 }
 ```
 
@@ -357,7 +357,7 @@ dependencies {
 
 jte {
     generate()
-    sourceDirectory.set(Path("src/main/kotlin"))
+    sourceDirectory.set(kotlin.io.path.Path("src/main/kotlin"))
 }
 ```
 
