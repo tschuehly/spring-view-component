@@ -266,7 +266,7 @@ sourceSets {
     </resources>
     <plugins>
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>5
+        <artifactId>maven-resources-plugin</artifactId>
         <version>3.3.0</version>
       </plugin>
     </plugins>
