@@ -1,6 +1,5 @@
 package de.tschuehly.spring.viewcomponent.core
 
-import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentChangeListener
 import org.slf4j.Logger
@@ -36,11 +35,17 @@ class ViewComponentAutoConfiguration {
             fileSystemWatcher.addSourceDirectory(templateRoot)
             logger.info("Watching for template changes at: ${viewComponentDirectory.absoluteFile.path}")
             logger.info("Watching for template changes at: ${templateRoot.absoluteFile.path}")
-            fileSystemWatcher.addListener(
-                ViewComponentChangeListener(
-                    applicationContext
+            try {
+                fileSystemWatcher.addListener(
+                    ViewComponentChangeListener(
+                        applicationContext
+                    )
                 )
-            )
+            } catch (ex: ClassNotFoundException) {
+                logger.error("In order to use hot-reload function, spring dev tools needed", ex)
+            } catch (ex: NoClassDefFoundError) {
+                logger.error("In order to use hot-reload function, spring dev tools needed", ex)
+            }
             fileSystemWatcher.start()
             return fileSystemWatcher
         }
