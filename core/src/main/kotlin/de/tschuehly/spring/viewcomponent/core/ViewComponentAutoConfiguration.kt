@@ -1,16 +1,16 @@
 package de.tschuehly.spring.viewcomponent.core
 
-import de.tschuehly.spring.viewcomponent.core.component.ViewComponent
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
+import de.tschuehly.spring.viewcomponent.core.condition.DevToolsExistsCondition
 import de.tschuehly.spring.viewcomponent.core.processor.ViewComponentChangeListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Conditional
 import org.springframework.context.annotation.Configuration
 import java.io.File
 
@@ -20,7 +20,7 @@ import java.io.File
 class ViewComponentAutoConfiguration {
 
     @Configuration
-    @ConditionalOnProperty("spring.view-component.local-development")
+    @Conditional(DevToolsExistsCondition::class)
     class LocalDevConfig {
         val logger: Logger = LoggerFactory.getLogger(LocalDevConfig::class.java)
 
