@@ -10,7 +10,8 @@ class ThymeleafViewComponentDialect(private val applicationContext: ApplicationC
 ) {
     override fun getProcessors(dialectPrefix: String): MutableSet<IProcessor> {
         return mutableSetOf(
-            ThymeleafViewComponentTagProcessor(dialectPrefix,applicationContext)
+            ThymeleafViewComponentTagProcessor(dialectPrefix, applicationContext),
+            ThymeleafViewComponentSrcAttributeProcessor(dialectPrefix)
         )
 
     }

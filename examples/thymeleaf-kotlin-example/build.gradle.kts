@@ -55,14 +55,14 @@ sourceSets {
     main {
         resources {
             srcDirs("src/main/java", "src/main/kotlin")
-            exclude("**/*.java", "**/*.kt")
+            include("**/*.html", "**/*.jpg")
         }
     }
 
     test {
         resources {
             srcDirs("src/main/java", "src/main/kotlin")
-            exclude("**/*.java", "**/*.kt")
+            include("**/*.html", "**/*.jpg")
         }
     }
 
