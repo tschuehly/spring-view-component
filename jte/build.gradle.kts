@@ -85,7 +85,7 @@ publishing{
                 developers {
                     developer {
                         id.set("tschuehly")
-                        name.set("Thomas Schuehly")
+                        name.set("Thomas Schilling")
                         email.set("thomas.schuehly@outlook.com")
                     }
                 }
@@ -107,7 +107,7 @@ publishing{
 
 jreleaser {
     project {
-        copyright.set("Thomas Schuehly")
+        copyright.set("Thomas Schilling")
     }
     gitRootSearch.set(true)
     signing {
@@ -116,18 +116,29 @@ jreleaser {
     }
     deploy {
         maven {
-            nexus2 {
-                create("maven-central") {
+            mavenCentral {
+
+                create("release-deploy") {
                     active.set(Active.ALWAYS)
-                    url.set("https://s01.oss.sonatype.org/service/local")
-                    snapshotUrl.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepositories.add("build/staging-deploy")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active.set(Active.SNAPSHOT)
+                    snapshotSupported.set(true)
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
+
                     closeRepository.set(true)
                     releaseRepository.set(true)
                     stagingRepositories.add("build/staging-deploy")
+                    applyMavenCentralRules = true
                 }
-
             }
         }
     }
+
 
 }
