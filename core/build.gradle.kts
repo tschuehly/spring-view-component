@@ -1,20 +1,19 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "3.2.4"
-    id("io.spring.dependency-management") version "1.1.4"
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.spring") version "1.9.23"
+    id("org.springframework.boot") version "3.5.6"
+    id("io.spring.dependency-management") version "1.1.7"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.spring") version "2.2.20"
 
     id("maven-publish")
-    id("org.jreleaser") version "1.13.0"
+    id("org.jreleaser") version "1.20.0"
     id("signing")
     id("java-test-fixtures")
 }
 
 group = "de.tschuehly"
-version = "0.8.4"
+version = "0.9.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -36,13 +35,12 @@ dependencies {
 
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
+    jvmToolchain(17)
 }
-
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -59,12 +57,12 @@ java {
 }
 
 
-tasks.jar{
+tasks.jar {
     enabled = true
     // Remove `plain` postfix from jar file name
     archiveClassifier.set("")
 }
-publishing{
+publishing {
     publications {
 
         create<MavenPublication>("Maven") {
@@ -89,7 +87,7 @@ publishing{
                 developers {
                     developer {
                         id.set("tschuehly")
-                        name.set("Thomas Schuehly")
+                        name.set("Thomas Schilling")
                         email.set("thomas.schuehly@outlook.com")
                     }
                 }
@@ -110,7 +108,7 @@ publishing{
 
 jreleaser {
     project {
-        copyright.set("Thomas Schuehly")
+        copyright.set("Thomas Schilling")
     }
     gitRootSearch.set(true)
     signing {
@@ -119,18 +117,29 @@ jreleaser {
     }
     deploy {
         maven {
-            nexus2 {
-                create("maven-central") {
+            mavenCentral {
+
+                create("release-deploy") {
                     active.set(Active.ALWAYS)
-                    url.set("https://s01.oss.sonatype.org/service/local")
-                    snapshotUrl.set("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepositories.add("build/staging-deploy")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active.set(Active.SNAPSHOT)
+                    snapshotSupported.set(true)
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots")
+
                     closeRepository.set(true)
                     releaseRepository.set(true)
                     stagingRepositories.add("build/staging-deploy")
+                    applyMavenCentralRules = true
                 }
-
             }
         }
     }
+
 
 }

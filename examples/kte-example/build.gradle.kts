@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import kotlin.io.path.Path
 
 plugins {
-    id("org.springframework.boot") version "3.2.4"
-    id("io.spring.dependency-management") version "1.1.4"
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.spring") version "1.9.23"
-    kotlin("kapt") version "1.9.23"
-    id("gg.jte.gradle") version("3.1.12")
+    id("org.springframework.boot") version "3.5.6"
+    id("io.spring.dependency-management") version "1.1.7"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.spring") version "2.2.20"
+    kotlin("kapt") version "2.2.20"
+    id("gg.jte.gradle") version("3.2.1")
 }
 
 
@@ -31,12 +31,12 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-kte:0.8.4")
-    implementation("de.tschuehly:spring-view-component-core:0.8.4")
-    implementation("io.github.wimdeblauwe:htmx-spring-boot:3.1.1")
+    implementation("de.tschuehly:spring-view-component-kte:0.9.0-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-core:0.9.0-SNAPSHOT")
+    implementation("io.github.wimdeblauwe:htmx-spring-boot:4.0.1")
 
     implementation("org.webjars.npm:htmx.org:1.9.11")
-    implementation("org.webjars:webjars-locator:0.52")
+    implementation("org.webjars:webjars-locator-lite:1.1.0")
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -47,14 +47,14 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.8.4"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.9.0-SNAPSHOT"))
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
+    jvmToolchain(17)
 }
 
 tasks.withType<Test> {
