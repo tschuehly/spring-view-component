@@ -54,8 +54,8 @@ class KteConfiguration : BeanClassLoaderAware {
     }
 
     @Bean
-    fun kteViewResolver(templateEngine: TemplateEngine?): JteViewResolver {
-        return JteViewResolver(templateEngine, ".kte")
+    fun kteViewResolver(templateEngine: TemplateEngine?, jteProperties: JteProperties): JteViewResolver {
+        return JteViewResolver(templateEngine, jteProperties)
     }
 
     @Bean

@@ -2,18 +2,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "3.2.4"
-    id("io.spring.dependency-management") version "1.1.4"
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.spring") version "1.9.23"
+    id("org.springframework.boot") version "3.5.6"
+    id("io.spring.dependency-management") version "1.1.7"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.spring") version "2.2.20"
 
     id("maven-publish")
-    id("org.jreleaser") version "1.13.0"
+    id("org.jreleaser") version "1.20.0"
     id("signing")
 }
 
 group = "de.tschuehly"
-version = "0.8.4"
+version = "0.9.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -21,26 +21,27 @@ repositories {
     mavenLocal()
 }
 dependencies {
-    api("gg.jte:jte:3.2.0")
-    api("de.tschuehly:spring-view-component-core:0.8.4")
+    api("gg.jte:jte:3.2.1")
+    api("de.tschuehly:spring-view-component-core:0.9.0-SNAPSHOT")
 
-    implementation("gg.jte:jte-spring-boot-starter-3:3.2.0")
+    implementation("gg.jte:jte-spring-boot-starter-3:3.2.1")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.webjars:webjars-locator:0.52")
+    testImplementation("org.webjars:webjars-locator-lite:1.1.0")
     testImplementation("org.webjars.npm:htmx.org:1.9.11")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict","-Xjvm-default=all")
-        jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
+    jvmToolchain(17)
 }
+
 
 tasks.withType<Test> {
     useJUnitPlatform()
