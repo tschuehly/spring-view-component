@@ -21,10 +21,10 @@ repositories {
     mavenLocal()
 }
 dependencies {
-    api("gg.jte:jte:3.1.12")
+    api("gg.jte:jte:3.2.0")
     api("de.tschuehly:spring-view-component-core:0.8.4")
 
-    implementation("gg.jte:jte-spring-boot-starter-3:3.1.12")
+    implementation("gg.jte:jte-spring-boot-starter-3:3.2.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
