@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.9.0-SNAPSHOT"
+version = "0.9.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -22,7 +22,7 @@ repositories {
 }
 dependencies {
     api("gg.jte:jte-kotlin:3.2.1")
-    api("de.tschuehly:spring-view-component-core:0.9.0-SNAPSHOT")
+    api("de.tschuehly:spring-view-component-core:0.9.0")
 
     implementation("gg.jte:jte-spring-boot-starter-3:3.2.1")
     implementation("org.springframework.boot:spring-boot-starter-web")
