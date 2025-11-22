@@ -227,7 +227,7 @@ spring.view-component.local-development=true
     <summary>Gradle</summary>
 
 ```kotlin
-implementation("de.tschuehly:spring-view-component-thymeleaf:0.9.0")
+implementation("de.tschuehly:spring-view-component-thymeleaf:0.9.1-SNAPSHOT")
 sourceSets {
     main {
         resources {
@@ -249,7 +249,7 @@ sourceSets {
     <dependency>
       <groupId>de.tschuehly</groupId>
       <artifactId>spring-view-component-thymeleaf</artifactId>
-      <version>0.9.0</version>
+      <version>0.9.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
@@ -289,7 +289,7 @@ plugins {
     id("gg.jte.gradle") version("3.2.1")
 }
 
-implementation("de.tschuehly:spring-view-component-jte:0.9.0")
+implementation("de.tschuehly:spring-view-component-jte:0.9.1-SNAPSHOT")
 
 jte{
     generate()
@@ -308,7 +308,7 @@ jte{
     <dependency>
       <groupId>de.tschuehly</groupId>
       <artifactId>spring-view-component-jte</artifactId>
-      <version>0.9.0</version>
+      <version>0.9.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
@@ -352,7 +352,7 @@ plugins {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-kte:0.9.0")
+    implementation("de.tschuehly:spring-view-component-kte:0.9.1-SNAPSHOT")
 }
 
 jte {

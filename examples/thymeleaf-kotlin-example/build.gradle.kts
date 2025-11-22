@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.5.6"
+    id("org.springframework.boot") version "4.0.0"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.spring") version "2.2.20"
-    kotlin("kapt") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.spring") version "2.2.21"
+    kotlin("kapt") version "2.2.21"
 }
 
 group = "de.tschuehly.example"
@@ -18,8 +18,8 @@ repositories {
 }
 
 dependencies {
-    implementation("de.tschuehly:spring-view-component-thymeleaf:0.9.0")
-    implementation("de.tschuehly:spring-view-component-core:0.9.0")
+    implementation("de.tschuehly:spring-view-component-thymeleaf:0.9.1-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-core:0.9.1-SNAPSHOT")
 
     implementation("org.webjars.npm:htmx.org:1.9.2")
     implementation("org.webjars:webjars-locator-lite:1.1.0")
@@ -35,7 +35,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     testImplementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.9.0"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.9.1-SNAPSHOT"))
 }
 
 kotlin {
