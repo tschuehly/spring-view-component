@@ -25,11 +25,11 @@ dependencies {
     api("de.tschuehly:spring-view-component-core:0.9.1-SNAPSHOT")
 
     implementation("gg.jte:jte-spring-boot-starter-3:3.2.1")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-aspectj")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.webjars:webjars-locator-lite:1.1.0")

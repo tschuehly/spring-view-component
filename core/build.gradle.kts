@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-aspectj")
     compileOnly("org.springframework.boot:spring-boot-devtools")
     implementation("io.projectreactor:reactor-core")
@@ -31,7 +31,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
     testFixturesImplementation("org.springframework.boot:spring-boot-resttestclient")
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-webmvc")
     testFixturesImplementation("org.springframework.boot:spring-boot-devtools")
 
 }
