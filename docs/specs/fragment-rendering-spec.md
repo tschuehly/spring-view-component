@@ -1,6 +1,6 @@
 # Fragment Rendering Specification
 
-**Version:** 1.0-DRAFT
+**Version:** 2.0-DRAFT
 **Date:** 2026-01-01
 **Author:** Spring View Component Team
 
@@ -10,25 +10,29 @@
 2. [Problem Statement](#problem-statement)
 3. [Goals](#goals)
 4. [Non-Goals](#non-goals)
-5. [Current State](#current-state)
-6. [Proposed Solution](#proposed-solution)
-7. [Technical Design](#technical-design)
-8. [Examples](#examples)
-9. [Implementation Considerations](#implementation-considerations)
-10. [Migration Path](#migration-path)
-11. [Alternatives Considered](#alternatives-considered)
-12. [Open Questions](#open-questions)
+5. [Proposed Solution](#proposed-solution)
+6. [Technical Design](#technical-design)
+7. [Examples](#examples)
+8. [Implementation Considerations](#implementation-considerations)
+9. [Migration Path](#migration-path)
+10. [Alternatives Considered](#alternatives-considered)
+11. [Open Questions](#open-questions)
 
 ---
 
 ## Overview
 
-This specification proposes adding **fragment rendering** capabilities to Spring View Component, inspired by Thymeleaf's fragment system. The goal is to enable:
+This specification proposes adding **fragment rendering** capabilities to Spring View Component. The goal is to enable:
 
 - **Multiple ViewContext implementations** for a single ViewComponent
-- **Type-based conditional rendering** within templates
-- **Fragment scoping** based on ViewContext type
+- **Presence-based conditional rendering** within templates
+- **Flexible composition** with `MultiViewContext`
 - **Reduced code duplication** for components with variations
+
+Two complementary patterns are introduced:
+
+1. **Type-Based Variants** - One ViewContext selected, one fragment renders (e.g., button variants)
+2. **Composition with MultiViewContext** - Multiple ViewContexts, multiple fragments render (e.g., page layouts)
 
 ---
 
@@ -41,25 +45,28 @@ This specification proposes adding **fragment rendering** capabilities to Spring
    - Proliferation of ViewComponent classes for related functionality
    - Difficulty managing component families (e.g., buttons: primary, secondary, danger)
 
-2. **No Template-Level Conditional Rendering**: Conditional logic must be:
-   - Implemented in template engine syntax (`th:if`, JTE conditionals)
-   - Spread across multiple template files
-   - Difficult to type-check at compile time
-
-3. **Verbose Nesting**: Complex layouts require many nested ViewComponent calls:
+2. **Optional Sections Require Optional<>**: Conditional sections need verbose Optional handling:
    ```java
-   layoutComponent.render(
-     headerComponent.render(),
-     contentComponent.render(),
-     footerComponent.render()
-   )
+   record Page(ViewContext header, Optional<ViewContext> footer) implements ViewContext {}
    ```
+
+   Template:
+   ```html
+   <footer th:if="${page.footer.isPresent()}">
+       <div view:component="${page.footer.get()}"></div>
+   </footer>
+   ```
+
+3. **No Template-Level Conditional Rendering**: Conditional logic must be:
+   - Implemented in template engine syntax (`th:if`, JTE conditionals)
+   - Difficult to type-check at compile time
 
 ### Real-World Use Cases
 
 #### Use Case 1: Button Component with Variants
+
+**Current approach:**
 ```java
-// Current approach: Separate components or complex conditionals
 @ViewComponent
 public class PrimaryButtonComponent { ... }
 
@@ -70,166 +77,397 @@ public class SecondaryButtonComponent { ... }
 public class DangerButtonComponent { ... }
 ```
 
-**Desired:** One `ButtonComponent` with multiple contexts for variants.
+**Desired:** One `ButtonComponent` with multiple ViewContext types for variants.
 
-#### Use Case 2: Layout with Different Headers
+#### Use Case 2: Page Layout with Optional Sections
+
+**Current approach:**
 ```java
-// Current: Multiple layout components or conditional logic in templates
-@ViewComponent
-public class AdminLayoutComponent { ... }
-
-@ViewComponent
-public class UserLayoutComponent { ... }
-
-@ViewComponent
-public class GuestLayoutComponent { ... }
+record Page(
+    ViewContext header,
+    ViewContext content,
+    Optional<ViewContext> footer  // Verbose!
+) implements ViewContext {}
 ```
 
-**Desired:** One `LayoutComponent` with context-based header selection.
-
-#### Use Case 3: Form Fields with Validation States
-```java
-// Current: Complex template logic
-<div th:if="${fieldContext.hasError}" class="field-error">
-  <input th:field="*{value}" class="error">
-  <span th:text="${fieldContext.errorMessage}"></span>
-</div>
-<div th:unless="${fieldContext.hasError}" class="field-normal">
-  <input th:field="*{value}">
-</div>
-```
-
-**Desired:** Type-safe fragments for error/normal states.
+**Desired:** Clean composition without `Optional<>`.
 
 ---
 
 ## Goals
 
-1. **Enable Multiple ViewContext Implementations**: Allow a single ViewComponent to return different ViewContext types
-2. **Type-Based Fragment Selection**: Render template fragments based on the ViewContext type
-3. **Compile-Time Safety**: Leverage Java/Kotlin type system for fragment selection
-4. **Template Engine Agnostic**: Support JTE, KTE, and Thymeleaf
-5. **Backward Compatibility**: Existing ViewComponents continue to work unchanged
-6. **Natural Templates**: Maintain Thymeleaf's "natural templating" philosophy where possible
+1. **Enable Multiple ViewContext Implementations** - Allow a single ViewComponent to return different ViewContext types
+2. **Presence-Based Fragment Selection** - Render fragments based on which ViewContexts are present in the model
+3. **Clean Composition API** - `MultiViewContext` for combining multiple sections
+4. **Type Safety** - Leverage Java/Kotlin type system
+5. **Template Engine Agnostic** - Support JTE, KTE, and Thymeleaf
+6. **Backward Compatibility** - Existing ViewComponents continue to work unchanged
+7. **Runtime Validation** - Clear error messages when constraints are violated
 
 ---
 
 ## Non-Goals
 
-1. **Dynamic Fragment Selection**: Runtime string-based fragment selection (use template engine features)
-2. **Cross-Component Fragments**: Sharing fragments across different ViewComponents (separate feature)
-3. **Fragment Composition**: Nesting fragments within fragments (can be added later)
-4. **Fragment Parameters**: Passing parameters to fragments (can be added later)
-
----
-
-## Current State
-
-### ViewContext Architecture
-
-```kotlin
-// Core interface
-interface IViewContext {
-    companion object {
-        fun getViewComponentTemplateWithoutSuffix(context: IViewContext): String
-        fun getViewComponentName(viewContext: Class<out IViewContext>): String
-    }
-}
-
-// Template-specific interfaces
-interface ViewContext : IViewContext { } // Thymeleaf
-interface ViewContext : Content, IViewContext { } // JTE/KTE
-```
-
-### Current Template Resolution
-
-Template path is resolved from the ViewContext's enclosing class:
-```kotlin
-val componentName = context.javaClass.enclosingClass.simpleName
-val componentPackage = context.javaClass.enclosingClass.`package`.name.replace(".", "/")
-return "$componentPackage/$componentName"
-```
-
-Example: `de.example.ButtonComponent.PrimaryButton` → `de/example/ButtonComponent.html`
-
-### Template Rendering Flow
-
-1. Controller returns `ViewContext` from ViewComponent render method
-2. `ViewComponentAspect` intercepts call, sets `ApplicationContext`
-3. `ViewContextMethodReturnValueHandler` resolves template path
-4. Template engine renders with ViewContext as model attribute
+1. **Cross-Component Fragments** - ViewContexts from different components in one MultiViewContext (use nested components)
+2. **Template Scanning/Startup Validation** - Runtime validation is sufficient
+3. **Compile-Time Validation** - Annotation processor complexity not justified
+4. **Fragment Inheritance** - Can be added in future if needed
+5. **Fragment Parameters** - Use ViewContext properties instead
 
 ---
 
 ## Proposed Solution
 
-### Core Concept
+### Pattern 1: Type-Based Variants
 
-**One ViewComponent → Multiple ViewContext Implementations → Fragment-Based Template**
+**One ViewContext in model → One fragment renders**
 
 ```java
 @ViewComponent
 public class ButtonComponent {
 
-    // Multiple ViewContext implementations
-    public record PrimaryButton(String label, String action)
-        implements ViewContext {}
+    public record PrimaryButton(String label, String action) implements ViewContext {}
+    public record SecondaryButton(String label, String action) implements ViewContext {}
+    public record DangerButton(String label, String action, String confirmMsg) implements ViewContext {}
 
-    public record SecondaryButton(String label, String action)
-        implements ViewContext {}
-
-    public record DangerButton(String label, String action, String confirmMessage)
-        implements ViewContext {}
-
-    // Render methods return different context types
-    public PrimaryButton renderPrimary(String label, String action) {
+    public PrimaryButton primary(String label, String action) {
         return new PrimaryButton(label, action);
     }
 
-    public SecondaryButton renderSecondary(String label, String action) {
+    public SecondaryButton secondary(String label, String action) {
         return new SecondaryButton(label, action);
     }
 
-    public DangerButton renderDanger(String label, String action, String confirmMessage) {
-        return new DangerButton(label, action, confirmMessage);
+    public DangerButton danger(String label, String action, String confirmMsg) {
+        return new DangerButton(label, action, confirmMsg);
     }
 }
 ```
 
-### Template with Fragments
-
-#### Thymeleaf Syntax
-
+**Thymeleaf Template:**
 ```html
 <!-- ButtonComponent.html -->
 
-<!-- Fragment for PrimaryButton context -->
-<button view:fragment="PrimaryButton"
-        view:context-type="de.example.ButtonComponent.PrimaryButton"
-        class="btn btn-primary"
+<button view:context="PrimaryButton" class="btn btn-primary"
         th:attr="data-action=${primaryButton.action}">
-    <span th:text="${primaryButton.label}">Primary Action</span>
+    <span th:text="${primaryButton.label}">Primary</span>
 </button>
 
-<!-- Fragment for SecondaryButton context -->
-<button view:fragment="SecondaryButton"
-        view:context-type="de.example.ButtonComponent.SecondaryButton"
-        class="btn btn-secondary"
+<button view:context="SecondaryButton" class="btn btn-secondary"
         th:attr="data-action=${secondaryButton.action}">
-    <span th:text="${secondaryButton.label}">Secondary Action</span>
+    <span th:text="${secondaryButton.label}">Secondary</span>
 </button>
 
-<!-- Fragment for DangerButton context -->
-<button view:fragment="DangerButton"
-        view:context-type="de.example.ButtonComponent.DangerButton"
-        class="btn btn-danger"
+<button view:context="DangerButton" class="btn btn-danger"
         th:attr="data-action=${dangerButton.action}"
-        onclick="return confirm('${dangerButton.confirmMessage}')">
-    <span th:text="${dangerButton.label}">Danger Action</span>
+        th:onclick="|confirm('${dangerButton.confirmMsg}')|">
+    <span th:text="${dangerButton.label}">Danger</span>
 </button>
 ```
 
-#### JTE Syntax
+**Rendering:**
+- If controller returns `PrimaryButton` → only first fragment renders
+- If controller returns `DangerButton` → only third fragment renders
+
+### Pattern 2: Composition with MultiViewContext
+
+**Multiple ViewContexts in model → Multiple fragments render**
+
+```java
+@ViewComponent
+public class PageComponent {
+
+    public record Header(String title) implements ViewContext {}
+    public record Content(String body) implements ViewContext {}
+    public record Footer(String text) implements ViewContext {}
+
+    public ViewContext withFooter(String title, String body, String footer) {
+        return MultiViewContext.of(
+            new Header(title),
+            new Content(body),
+            new Footer(footer)
+        );
+    }
+
+    public ViewContext withoutFooter(String title, String body) {
+        return MultiViewContext.of(
+            new Header(title),
+            new Content(body)
+            // No Footer - won't render!
+        );
+    }
+}
+```
+
+**Template:**
+```html
+<!-- PageComponent.html -->
+
+<header view:context="Header">
+    <h1 th:text="${header.title}">Title</h1>
+</header>
+
+<main view:context="Content">
+    <p th:text="${content.body}">Content</p>
+</main>
+
+<footer view:context="Footer">
+    <small th:text="${footer.text}">Footer</small>
+</footer>
+```
+
+**Rendering:**
+- `withFooter()` → all three fragments render
+- `withoutFooter()` → only header and content render (footer removed)
+
+### Pattern 3: Shared Properties with Sealed Interfaces
+
+**Best practice for fragments with common properties:**
+
+```java
+@ViewComponent
+public class AlertComponent {
+
+    // Base interface for shared properties
+    sealed interface Alert extends ViewContext {
+        String message();
+    }
+
+    public record InfoAlert(String message) implements Alert {}
+    public record WarningAlert(String message, String details) implements Alert {}
+    public record ErrorAlert(String message, String stackTrace) implements Alert {}
+
+    public InfoAlert info(String message) {
+        return new InfoAlert(message);
+    }
+
+    public WarningAlert warning(String message, String details) {
+        return new WarningAlert(message, details);
+    }
+
+    public ErrorAlert error(String message, String stackTrace) {
+        return new ErrorAlert(message, stackTrace);
+    }
+}
+```
+
+**Template:**
+```html
+<!--/*@thymesVar id="alert" type="de.example.AlertComponent.Alert"*/-->
+<!--/*@thymesVar id="warningAlert" type="de.example.AlertComponent.WarningAlert"*/-->
+<!--/*@thymesVar id="errorAlert" type="de.example.AlertComponent.ErrorAlert"*/-->
+
+<div view:context="InfoAlert" class="alert alert-info">
+    <span th:text="${alert.message}">Info</span>
+</div>
+
+<div view:context="WarningAlert" class="alert alert-warning">
+    <span th:text="${alert.message}">Warning</span>
+    <pre th:text="${warningAlert.details}">Details</pre>
+</div>
+
+<div view:context="ErrorAlert" class="alert alert-error">
+    <span th:text="${alert.message}">Error</span>
+    <pre th:text="${errorAlert.stackTrace}">Stack</pre>
+</div>
+```
+
+**Benefits:**
+- Shared properties accessible via `${alert.message}` (works in all fragments)
+- Specific properties via `${errorAlert.stackTrace}` (type-safe)
+- Sealed interface enables exhaustiveness checking (Java 17+)
+
+---
+
+## Technical Design
+
+### 1. Core: MultiViewContext
+
+Framework-provided class for composition:
+
+```java
+package de.tschuehly.spring.viewcomponent.core;
+
+public final class MultiViewContext implements IViewContext {
+    private final List<IViewContext> contexts;
+
+    private MultiViewContext(IViewContext... contexts) {
+        this.contexts = List.of(contexts);
+    }
+
+    /**
+     * Creates a MultiViewContext from multiple ViewContext instances.
+     *
+     * @param contexts ViewContext instances (nulls are filtered out)
+     * @return MultiViewContext containing all non-null contexts
+     * @throws ViewComponentException if contexts are from different components
+     */
+    public static MultiViewContext of(IViewContext... contexts) {
+        // Filter out nulls for easier conditional composition
+        IViewContext[] filtered = Arrays.stream(contexts)
+            .filter(Objects::nonNull)
+            .toArray(IViewContext[]::new);
+
+        validateSameComponent(filtered);
+        return new MultiViewContext(filtered);
+    }
+
+    public List<IViewContext> getContexts() {
+        return contexts;
+    }
+
+    private static void validateSameComponent(IViewContext... contexts) {
+        if (contexts.length == 0) {
+            throw new ViewComponentException(
+                "MultiViewContext requires at least one non-null ViewContext"
+            );
+        }
+
+        Class<?> expectedComponent = contexts[0].getClass().getEnclosingClass();
+
+        if (expectedComponent == null) {
+            throw new ViewComponentException(
+                "ViewContext " + contexts[0].getClass().getSimpleName() +
+                " must be an inner class of a @ViewComponent. " +
+                "Did you forget to define it as a nested record/class?"
+            );
+        }
+
+        // Validate all contexts are from the same component
+        for (IViewContext ctx : contexts) {
+            Class<?> actualComponent = ctx.getClass().getEnclosingClass();
+
+            if (actualComponent != expectedComponent) {
+                throw new ViewComponentException(
+                    "All ViewContexts in MultiViewContext must be from the same ViewComponent. " +
+                    "Expected: " + expectedComponent.getSimpleName() + ", " +
+                    "found: " + actualComponent.getSimpleName() + " " +
+                    "for ViewContext: " + ctx.getClass().getSimpleName() + ". " +
+                    "To compose ViewContexts from different components, use nested components instead."
+                );
+            }
+        }
+    }
+}
+```
+
+**Why same component requirement:**
+- Simple template resolution (one template)
+- Clear ownership and organization
+- Cross-component composition uses existing `view:component` directive
+
+### 2. Template Resolution
+
+**Updated ViewContextMethodReturnValueHandler:**
+
+```kotlin
+@Component
+class ViewContextMethodReturnValueHandler : HandlerMethodReturnValueHandler {
+
+    override fun supportsReturnType(returnType: MethodParameter): Boolean {
+        return IViewContext::class.java.isAssignableFrom(returnType.parameterType)
+    }
+
+    override fun handleReturnValue(
+        returnValue: Any?,
+        returnType: MethodParameter,
+        mavContainer: ModelAndViewContainer,
+        webRequest: NativeWebRequest
+    ) {
+        val viewContext = returnValue as IViewContext
+
+        if (viewContext is MultiViewContext) {
+            // Use first context to resolve template (all from same component)
+            val firstContext = viewContext.getContexts().first()
+            mavContainer.view = IViewContext.getViewComponentTemplateWithoutSuffix(firstContext)
+
+            // Add each context to model with lowercase simple name
+            viewContext.getContexts().forEach { ctx ->
+                val variableName = ctx.javaClass.simpleName
+                    .replaceFirstChar { it.lowercase() }
+                mavContainer.addAttribute(variableName, ctx)
+            }
+        } else {
+            // Single context - existing behavior
+            mavContainer.view = IViewContext.getViewComponentTemplateWithoutSuffix(viewContext)
+            val variableName = viewContext.javaClass.simpleName
+                .replaceFirstChar { it.lowercase() }
+            mavContainer.addAttribute(variableName, viewContext)
+        }
+    }
+}
+```
+
+**Model attributes:**
+- `PrimaryButton` → added to model as `primaryButton`
+- `Header`, `Content`, `Footer` → added as `header`, `content`, `footer`
+
+### 3. Thymeleaf Integration
+
+**ThymeleafViewContextFragmentProcessor:**
+
+```kotlin
+class ThymeleafViewContextFragmentProcessor(
+    dialectPrefix: String,
+    private val applicationContext: ApplicationContext
+) : AbstractAttributeTagProcessor(
+    TemplateMode.HTML,
+    dialectPrefix,
+    null, // Any element
+    false,
+    "context", // Attribute name: view:context
+    true,
+    PRECEDENCE,
+    true // Remove attribute
+) {
+
+    override fun doProcess(
+        context: ITemplateContext,
+        tag: IProcessableElementTag,
+        attributeName: AttributeName,
+        attributeValue: String, // e.g., "Header"
+        structureHandler: IElementTagStructureHandler
+    ) {
+        val webContext = context as WebEngineContext
+
+        // Check if a ViewContext of this type exists in the model
+        val variableName = attributeValue.replaceFirstChar { it.lowercase() }
+        val hasContext = webContext.getVariable(variableName) != null
+
+        if (!hasContext) {
+            // No matching context in model, remove this fragment
+            structureHandler.removeElement()
+        }
+        // Otherwise render normally (attribute is removed automatically)
+    }
+}
+```
+
+**Register in dialect:**
+
+```kotlin
+class ThymeleafViewComponentDialect(
+    private val applicationContext: ApplicationContext
+) : AbstractProcessorDialect(NAME, PREFIX, PRECEDENCE) {
+
+    override fun getProcessors(dialectPrefix: String): Set<IProcessor> {
+        return setOf(
+            ThymeleafViewComponentTagProcessor(dialectPrefix, applicationContext),
+            ThymeleafViewContextFragmentProcessor(dialectPrefix, applicationContext) // NEW
+        )
+    }
+
+    companion object {
+        const val NAME = "ViewComponent Dialect"
+        const val PREFIX = "view"
+        const val PRECEDENCE = 1000
+    }
+}
+```
+
+### 4. JTE/KTE Integration
+
+JTE already supports type-based conditionals via `instanceof`:
 
 ```java
 @import de.example.ButtonComponent.*
@@ -245,246 +483,189 @@ public class ButtonComponent {
 @elseif(model instanceof DangerButton dangerButton)
     <button class="btn btn-danger"
             data-action="${dangerButton.action()}"
-            onclick="return confirm('${dangerButton.confirmMessage()}')">
+            onclick="return confirm('${dangerButton.confirmMsg()}')">
         ${dangerButton.label()}
     </button>
 @endif
 ```
 
-#### Alternative Thymeleaf Syntax (Simpler)
-
-```html
-<!-- ButtonComponent.html -->
-<div view:context-root>
-
-    <!-- Rendered when ViewContext is PrimaryButton -->
-    <button view:context="PrimaryButton"
-            class="btn btn-primary"
-            th:attr="data-action=${primaryButton.action}">
-        <span th:text="${primaryButton.label}">Primary Action</span>
-    </button>
-
-    <!-- Rendered when ViewContext is SecondaryButton -->
-    <button view:context="SecondaryButton"
-            class="btn btn-secondary"
-            th:attr="data-action=${secondaryButton.action}">
-        <span th:text="${secondaryButton.label}">Secondary Action</span>
-    </button>
-
-    <!-- Rendered when ViewContext is DangerButton -->
-    <button view:context="DangerButton"
-            class="btn btn-danger"
-            th:attr="data-action=${dangerButton.action}"
-            onclick="return confirm('${dangerButton.confirmMessage}')">
-        <span th:text="${dangerButton.label}">Danger Action</span>
-    </button>
-
-</div>
-```
-
----
-
-## Technical Design
-
-### 1. ViewContext Type Resolution
-
-Extend `IViewContext` to support fragment/context type resolution:
-
-```kotlin
-interface IViewContext {
-    companion object {
-        // Existing methods
-        fun getViewComponentTemplateWithoutSuffix(context: IViewContext): String
-        fun getViewComponentName(viewContext: Class<out IViewContext>): String
-
-        // NEW: Get ViewContext simple name for fragment matching
-        fun getViewContextSimpleName(context: IViewContext): String {
-            return context.javaClass.simpleName
-        }
-
-        // NEW: Get fully qualified ViewContext name
-        fun getViewContextTypeName(context: IViewContext): String {
-            return context.javaClass.canonicalName
-        }
-    }
-}
-```
-
-### 2. Thymeleaf Integration
-
-#### Option A: Custom Attribute Processor (`view:context`)
-
-```kotlin
-class ThymeleafViewContextFragmentProcessor(
-    dialectPrefix: String,
-    private val applicationContext: ApplicationContext
-) : AbstractAttributeTagProcessor(
-    TemplateMode.HTML,
-    dialectPrefix,
-    null, // Any element
-    false,
-    "context", // Attribute name
-    true,
-    PRECEDENCE,
-    true // Remove attribute
-) {
-
-    override fun doProcess(
-        context: ITemplateContext,
-        tag: IProcessableElementTag,
-        attributeName: AttributeName,
-        attributeValue: String, // e.g., "PrimaryButton"
-        structureHandler: IElementTagStructureHandler
-    ) {
-        val webContext = context as WebEngineContext
-
-        // Find the ViewContext in the model
-        val viewContext = findViewContextInModel(webContext)
-            ?: throw ViewComponentException("No ViewContext found in model")
-
-        // Get the ViewContext simple name
-        val contextTypeName = IViewContext.getViewContextSimpleName(viewContext)
-
-        // Match fragment
-        if (contextTypeName != attributeValue) {
-            // Don't render this fragment
-            structureHandler.removeElement()
-        }
-        // Otherwise, render normally (just remove the view:context attribute)
-    }
-
-    private fun findViewContextInModel(context: WebEngineContext): IViewContext? {
-        // Search model for IViewContext implementation
-        for (variableName in context.variableNames) {
-            val value = context.getVariable(variableName)
-            if (value is IViewContext) {
-                return value
-            }
-        }
-        return null
-    }
-}
-```
-
-#### Option B: Custom Dialect with `view:context-root`
-
-```kotlin
-class ThymeleafViewContextRootProcessor(
-    dialectPrefix: String,
-    private val applicationContext: ApplicationContext
-) : AbstractAttributeTagProcessor(
-    TemplateMode.HTML,
-    dialectPrefix,
-    null,
-    false,
-    "context-root",
-    true,
-    PRECEDENCE,
-    true
-) {
-
-    override fun doProcess(
-        context: ITemplateContext,
-        tag: IProcessableElementTag,
-        attributeName: AttributeName,
-        attributeValue: String,
-        structureHandler: IElementTagStructureHandler
-    ) {
-        val webContext = context as WebEngineContext
-        val viewContext = findViewContextInModel(webContext)
-            ?: throw ViewComponentException("No ViewContext found in model")
-
-        val contextTypeName = IViewContext.getViewContextSimpleName(viewContext)
-
-        // Process children and remove non-matching fragments
-        // This requires more complex processing of child elements
-        structureHandler.setLocalVariable("_viewContextType", contextTypeName)
-    }
-}
-```
-
-### 3. JTE/KTE Integration
-
-JTE/KTE already support type-based conditionals via `instanceof`:
+**For MultiViewContext with JTE:**
 
 ```java
-@import de.example.ButtonComponent.*
+@import de.example.PageComponent.*
 
-@if(model instanceof PrimaryButton primaryButton)
-    <button class="btn btn-primary">
-        ${primaryButton.label()}
-    </button>
-@elseif(model instanceof SecondaryButton secondaryButton)
-    <button class="btn btn-secondary">
-        ${secondaryButton.label()}
-    </button>
+<%-- Access each context if present --%>
+@if(header != null)
+    <header>
+        <h1>${header.title()}</h1>
+    </header>
+@endif
+
+@if(content != null)
+    <main>
+        <p>${content.body()}</p>
+    </main>
+@endif
+
+@if(footer != null)
+    <footer>
+        <small>${footer.text()}</small>
+    </footer>
 @endif
 ```
 
-**Enhancement:** Provide utility templates or macros for fragment selection:
+**No changes needed to JTE/KTE integrations** - existing features support both patterns.
 
-```java
-@import static de.example.utils.ViewContextFragments.*
+### 5. Fragment Rendering Rules
 
-${fragment(model,
-    PrimaryButton.class, () -> renderPrimary(model),
-    SecondaryButton.class, () -> renderSecondary(model),
-    DangerButton.class, () -> renderDanger(model)
-)}
+**Rule 1: No `view:context` attribute → Always render**
+
+```html
+<header>
+    <h1>Always visible</h1>
+</header>
 ```
 
-### 4. Template Resolution Changes
+**Rule 2: Has `view:context` attribute → Render only if matching ViewContext in model**
 
-**Current:** Template path based on enclosing class name
-**Proposed:** Same behavior (backward compatible)
-
-Template fragments are selected **within** the resolved template, not via different template files.
-
-### 5. Model Attribute Naming
-
-**Current:** ViewContext added to model with auto-generated variable name
-**Proposed:** Support both:
-- Auto-generated name (backward compatible)
-- Simple name based on ViewContext type (e.g., `PrimaryButton` → `primaryButton`)
-
-```kotlin
-override fun handleReturnValue(
-    returnValue: Any?,
-    returnType: MethodParameter,
-    mavContainer: ModelAndViewContainer,
-    webRequest: NativeWebRequest
-) {
-    val viewContext = returnValue as IViewContext
-
-    // Resolve template path (unchanged)
-    mavContainer.view = IViewContext.getViewComponentTemplateWithoutSuffix(viewContext)
-
-    // Add with auto-generated name (backward compatible)
-    mavContainer.addAttribute(viewContext)
-
-    // NEW: Also add with ViewContext simple name
-    val contextSimpleName = IViewContext.getViewContextSimpleName(viewContext)
-    val variableName = contextSimpleName.replaceFirstChar { it.lowercase() }
-    mavContainer.addAttribute(variableName, viewContext)
-}
+```html
+<div view:context="ErrorAlert">
+    Only renders if errorAlert is in model
+</div>
 ```
+
+**Rule 3: Multiple fragments can render**
+
+```html
+<div view:context="Header">Header</div>
+<div view:context="Content">Content</div>
+<div view:context="Footer">Footer</div>
+```
+
+With `MultiViewContext.of(new Header(...), new Content(...))`:
+- Header fragment renders
+- Content fragment renders
+- Footer fragment removed (not in model)
 
 ---
 
 ## Examples
 
-### Example 1: Alert Component
+### Example 1: Button Variants
 
-#### ViewComponent
+```java
+@ViewComponent
+public class ButtonComponent {
+
+    public record PrimaryButton(String label, String action) implements ViewContext {}
+    public record SecondaryButton(String label, String action) implements ViewContext {}
+    public record DangerButton(String label, String action, String confirmMsg) implements ViewContext {}
+
+    public PrimaryButton primary(String label, String action) {
+        return new PrimaryButton(label, action);
+    }
+
+    public SecondaryButton secondary(String label, String action) {
+        return new SecondaryButton(label, action);
+    }
+
+    public DangerButton danger(String label, String action, String confirmMsg) {
+        return new DangerButton(label, action, confirmMsg);
+    }
+}
+```
+
+**Template (Thymeleaf):**
+```html
+<!-- ButtonComponent.html -->
+
+<button view:context="PrimaryButton" class="btn btn-primary"
+        th:attr="data-action=${primaryButton.action}">
+    <span th:text="${primaryButton.label}">Primary</span>
+</button>
+
+<button view:context="SecondaryButton" class="btn btn-secondary"
+        th:attr="data-action=${secondaryButton.action}">
+    <span th:text="${secondaryButton.label}">Secondary</span>
+</button>
+
+<button view:context="DangerButton" class="btn btn-danger"
+        th:attr="data-action=${dangerButton.action}"
+        th:onclick="|confirm('${dangerButton.confirmMsg}')|">
+    <span th:text="${dangerButton.label}">Danger</span>
+</button>
+```
+
+**Controller:**
+```java
+@Controller
+public class ButtonController {
+
+    @Autowired
+    private ButtonComponent buttonComponent;
+
+    @GetMapping("/button/submit")
+    ViewContext submitButton() {
+        return buttonComponent.primary("Submit", "/submit");
+    }
+
+    @GetMapping("/button/delete")
+    ViewContext deleteButton() {
+        return buttonComponent.danger("Delete", "/delete", "Are you sure?");
+    }
+}
+```
+
+### Example 2: Page Layout with Optional Footer
+
+```java
+@ViewComponent
+public class PageComponent {
+
+    public record Header(String title) implements ViewContext {}
+    public record Content(String body) implements ViewContext {}
+    public record Footer(String text) implements ViewContext {}
+
+    public ViewContext render(String title, String body, boolean includeFooter) {
+        return MultiViewContext.of(
+            new Header(title),
+            new Content(body),
+            includeFooter ? new Footer("© 2026") : null
+        );
+    }
+}
+```
+
+**Template:**
+```html
+<!-- PageComponent.html -->
+
+<header view:context="Header">
+    <h1 th:text="${header.title}">Title</h1>
+</header>
+
+<main view:context="Content">
+    <p th:text="${content.body}">Content</p>
+</main>
+
+<footer view:context="Footer">
+    <small th:text="${footer.text}">Footer</small>
+</footer>
+```
+
+### Example 3: Alert with Sealed Interface
 
 ```java
 @ViewComponent
 public class AlertComponent {
 
-    public record InfoAlert(String message) implements ViewContext {}
-    public record WarningAlert(String message, String details) implements ViewContext {}
-    public record ErrorAlert(String message, String stackTrace) implements ViewContext {}
-    public record SuccessAlert(String message) implements ViewContext {}
+    sealed interface Alert extends ViewContext {
+        String message();
+    }
+
+    public record InfoAlert(String message) implements Alert {}
+    public record WarningAlert(String message, String details) implements Alert {}
+    public record ErrorAlert(String message, String stackTrace) implements Alert {}
 
     public InfoAlert info(String message) {
         return new InfoAlert(message);
@@ -497,275 +678,170 @@ public class AlertComponent {
     public ErrorAlert error(String message, String stackTrace) {
         return new ErrorAlert(message, stackTrace);
     }
-
-    public SuccessAlert success(String message) {
-        return new SuccessAlert(message);
-    }
 }
 ```
 
-#### Thymeleaf Template (`AlertComponent.html`)
-
+**Template:**
 ```html
-<div view:context-root>
+<!--/*@thymesVar id="alert" type="de.example.AlertComponent.Alert"*/-->
+<!--/*@thymesVar id="warningAlert" type="de.example.AlertComponent.WarningAlert"*/-->
+<!--/*@thymesVar id="errorAlert" type="de.example.AlertComponent.ErrorAlert"*/-->
 
-    <div view:context="InfoAlert" class="alert alert-info">
-        <i class="icon-info"></i>
-        <span th:text="${infoAlert.message}">Info message</span>
-    </div>
+<div view:context="InfoAlert" class="alert alert-info">
+    <i class="icon-info"></i>
+    <span th:text="${alert.message}">Info</span>
+</div>
 
-    <div view:context="WarningAlert" class="alert alert-warning">
-        <i class="icon-warning"></i>
-        <span th:text="${warningAlert.message}">Warning message</span>
-        <details>
-            <summary>Details</summary>
-            <pre th:text="${warningAlert.details}">Warning details</pre>
-        </details>
-    </div>
+<div view:context="WarningAlert" class="alert alert-warning">
+    <i class="icon-warning"></i>
+    <span th:text="${alert.message}">Warning</span>
+    <details>
+        <summary>Details</summary>
+        <pre th:text="${warningAlert.details}">Details</pre>
+    </details>
+</div>
 
-    <div view:context="ErrorAlert" class="alert alert-error">
-        <i class="icon-error"></i>
-        <span th:text="${errorAlert.message}">Error message</span>
-        <details>
-            <summary>Stack Trace</summary>
-            <pre th:text="${errorAlert.stackTrace}">Stack trace</pre>
-        </details>
-    </div>
-
-    <div view:context="SuccessAlert" class="alert alert-success">
-        <i class="icon-success"></i>
-        <span th:text="${successAlert.message}">Success message</span>
-    </div>
-
+<div view:context="ErrorAlert" class="alert alert-error">
+    <i class="icon-error"></i>
+    <span th:text="${alert.message}">Error</span>
+    <details>
+        <summary>Stack Trace</summary>
+        <pre th:text="${errorAlert.stackTrace}">Stack trace</pre>
+    </details>
 </div>
 ```
 
-#### JTE Template (`AlertComponent.jte`)
-
-```java
-@import de.example.AlertComponent.*
-
-@if(model instanceof InfoAlert infoAlert)
-    <div class="alert alert-info">
-        <i class="icon-info"></i>
-        <span>${infoAlert.message()}</span>
-    </div>
-@elseif(model instanceof WarningAlert warningAlert)
-    <div class="alert alert-warning">
-        <i class="icon-warning"></i>
-        <span>${warningAlert.message()}</span>
-        <details>
-            <summary>Details</summary>
-            <pre>${warningAlert.details()}</pre>
-        </details>
-    </div>
-@elseif(model instanceof ErrorAlert errorAlert)
-    <div class="alert alert-error">
-        <i class="icon-error"></i>
-        <span>${errorAlert.message()}</span>
-        <details>
-            <summary>Stack Trace</summary>
-            <pre>${errorAlert.stackTrace()}</pre>
-        </details>
-    </div>
-@elseif(model instanceof SuccessAlert successAlert)
-    <div class="alert alert-success">
-        <i class="icon-success"></i>
-        <span>${successAlert.message()}</span>
-    </div>
-@endif
-```
-
-#### Controller Usage
-
-```java
-@Controller
-public class NotificationController {
-
-    @Autowired
-    private AlertComponent alertComponent;
-
-    @GetMapping("/success")
-    ViewContext showSuccess() {
-        return alertComponent.success("Operation completed successfully!");
-    }
-
-    @GetMapping("/error")
-    ViewContext showError() {
-        return alertComponent.error(
-            "An error occurred",
-            "java.lang.RuntimeException: Database connection failed..."
-        );
-    }
-}
-```
-
-### Example 2: Form Field Component
-
-#### ViewComponent
+### Example 4: Dashboard with Conditional Sections
 
 ```java
 @ViewComponent
-public class FormFieldComponent {
+public class DashboardComponent {
 
-    public record TextField(String name, String label, String value)
-        implements ViewContext {}
+    public record Stats(int users, int orders) implements ViewContext {}
+    public record Chart(List<DataPoint> data) implements ViewContext {}
+    public record Notifications(List<String> messages) implements ViewContext {}
 
-    public record TextFieldWithError(String name, String label, String value, String error)
-        implements ViewContext {}
+    public ViewContext render(User user) {
+        var contexts = new ArrayList<ViewContext>();
 
-    public record TextArea(String name, String label, String value, int rows)
-        implements ViewContext {}
+        // Always show stats
+        contexts.add(new Stats(
+            userService.count(),
+            orderService.count()
+        ));
 
-    public record Select(String name, String label, String value, List<Option> options)
-        implements ViewContext {
-        public record Option(String value, String label) {}
-    }
+        // Premium users get charts
+        if (user.isPremium()) {
+            contexts.add(new Chart(analyticsService.getData()));
+        }
 
-    public TextField textField(String name, String label, String value) {
-        return new TextField(name, label, value);
-    }
+        // Show notifications if any
+        var messages = notificationService.getUnread(user);
+        if (!messages.isEmpty()) {
+            contexts.add(new Notifications(messages));
+        }
 
-    public TextFieldWithError textFieldWithError(String name, String label, String value, String error) {
-        return new TextFieldWithError(name, label, value, error);
-    }
-
-    public TextArea textArea(String name, String label, String value, int rows) {
-        return new TextArea(name, label, value, rows);
-    }
-
-    public Select select(String name, String label, String value, List<Select.Option> options) {
-        return new Select(name, label, value, options);
+        return MultiViewContext.of(contexts.toArray(ViewContext[]::new));
     }
 }
 ```
 
-#### Thymeleaf Template (`FormFieldComponent.html`)
-
+**Template:**
 ```html
-<div view:context-root>
+<!-- DashboardComponent.html -->
 
-    <div view:context="TextField" class="form-field">
-        <label th:for="${textField.name}" th:text="${textField.label}">Label</label>
-        <input type="text"
-               th:id="${textField.name}"
-               th:name="${textField.name}"
-               th:value="${textField.value}">
+<!-- Always renders -->
+<div view:context="Stats" class="stats-panel">
+    <div class="stat">
+        <label>Users</label>
+        <span th:text="${stats.users}">0</span>
     </div>
-
-    <div view:context="TextFieldWithError" class="form-field form-field-error">
-        <label th:for="${textFieldWithError.name}" th:text="${textFieldWithError.label}">Label</label>
-        <input type="text"
-               class="error"
-               th:id="${textFieldWithError.name}"
-               th:name="${textFieldWithError.name}"
-               th:value="${textFieldWithError.value}">
-        <span class="error-message" th:text="${textFieldWithError.error}">Error message</span>
+    <div class="stat">
+        <label>Orders</label>
+        <span th:text="${stats.orders}">0</span>
     </div>
+</div>
 
-    <div view:context="TextArea" class="form-field">
-        <label th:for="${textArea.name}" th:text="${textArea.label}">Label</label>
-        <textarea th:id="${textArea.name}"
-                  th:name="${textArea.name}"
-                  th:rows="${textArea.rows}"
-                  th:text="${textArea.value}">Value</textarea>
-    </div>
+<!-- Only for premium users -->
+<div view:context="Chart" class="chart-panel">
+    <canvas id="chart" th:data-points="${chart.data}"></canvas>
+</div>
 
-    <div view:context="Select" class="form-field">
-        <label th:for="${select.name}" th:text="${select.label}">Label</label>
-        <select th:id="${select.name}" th:name="${select.name}">
-            <option th:each="option : ${select.options}"
-                    th:value="${option.value}"
-                    th:text="${option.label}"
-                    th:selected="${option.value == select.value}">Option</option>
-        </select>
-    </div>
-
+<!-- Only if notifications exist -->
+<div view:context="Notifications" class="notifications">
+    <h3>Notifications</h3>
+    <ul>
+        <li th:each="msg : ${notifications.messages}" th:text="${msg}">Message</li>
+    </ul>
 </div>
 ```
 
-### Example 3: Layout with Different Headers
-
-#### ViewComponent
+### Example 5: Layout Variants
 
 ```java
 @ViewComponent
 public class LayoutComponent {
 
-    public record AdminLayout(ViewContext content, String adminName)
-        implements ViewContext {}
+    public record AdminNav(String username) implements ViewContext {}
+    public record UserNav(String username) implements ViewContext {}
+    public record GuestNav() implements ViewContext {}
+    public record Content(ViewContext body) implements ViewContext {}
 
-    public record UserLayout(ViewContext content, String username)
-        implements ViewContext {}
-
-    public record GuestLayout(ViewContext content)
-        implements ViewContext {}
-
-    public AdminLayout adminLayout(ViewContext content, String adminName) {
-        return new AdminLayout(content, adminName);
+    public ViewContext adminLayout(String username, ViewContext body) {
+        return MultiViewContext.of(
+            new AdminNav(username),
+            new Content(body)
+        );
     }
 
-    public UserLayout userLayout(ViewContext content, String username) {
-        return new UserLayout(content, username);
+    public ViewContext userLayout(String username, ViewContext body) {
+        return MultiViewContext.of(
+            new UserNav(username),
+            new Content(body)
+        );
     }
 
-    public GuestLayout guestLayout(ViewContext content) {
-        return new GuestLayout(content);
+    public ViewContext guestLayout(ViewContext body) {
+        return MultiViewContext.of(
+            new GuestNav(),
+            new Content(body)
+        );
     }
 }
 ```
 
-#### Thymeleaf Template (`LayoutComponent.html`)
-
+**Template:**
 ```html
+<!-- LayoutComponent.html -->
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Application</title>
-</head>
+<head><title>Application</title></head>
 <body>
 
-<div view:context-root>
+<!-- Only one nav renders based on which is in model -->
+<nav view:context="AdminNav" class="admin-nav">
+    <span>Admin Panel</span>
+    <span th:text="${adminNav.username}">Admin</span>
+    <a href="/admin">Dashboard</a>
+    <a href="/logout">Logout</a>
+</nav>
 
-    <!-- Admin Layout -->
-    <div view:context="AdminLayout">
-        <nav class="navbar navbar-admin">
-            <span>Admin Panel</span>
-            <span th:text="${adminLayout.adminName}">Admin Name</span>
-            <a href="/admin/logout">Logout</a>
-        </nav>
-        <main>
-            <div view:component="${adminLayout.content}"></div>
-        </main>
-        <footer>Admin Footer</footer>
-    </div>
+<nav view:context="UserNav" class="user-nav">
+    <span>Welcome, <span th:text="${userNav.username}">User</span></span>
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+</nav>
 
-    <!-- User Layout -->
-    <div view:context="UserLayout">
-        <nav class="navbar navbar-user">
-            <span>Welcome</span>
-            <span th:text="${userLayout.username}">Username</span>
-            <a href="/logout">Logout</a>
-        </nav>
-        <main>
-            <div view:component="${userLayout.content}"></div>
-        </main>
-        <footer>User Footer</footer>
-    </div>
+<nav view:context="GuestNav" class="guest-nav">
+    <span>Welcome, Guest</span>
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+</nav>
 
-    <!-- Guest Layout -->
-    <div view:context="GuestLayout">
-        <nav class="navbar navbar-guest">
-            <span>Guest Access</span>
-            <a href="/login">Login</a>
-        </nav>
-        <main>
-            <div view:component="${guestLayout.content}"></div>
-        </main>
-        <footer>Guest Footer</footer>
-    </div>
-
-</div>
+<!-- Always renders -->
+<main view:context="Content">
+    <div view:component="${content.body}"></div>
+</main>
 
 </body>
 </html>
@@ -775,102 +851,172 @@ public class LayoutComponent {
 
 ## Implementation Considerations
 
-### 1. Performance
+### 1. thymeVar Comments for IDE Autocomplete
 
-**Fragment Selection Overhead:**
-- Thymeleaf: Minimal - one attribute check per fragment element
-- JTE/KTE: Zero overhead - compiled to native Java if-else
+**Pattern for Thymeleaf templates:**
 
-**Model Attribute Duplication:**
-- Adding ViewContext with two names (auto + simple name) has negligible memory impact
-
-### 2. Error Handling
-
-**No Matching Fragment:**
-```kotlin
-class FragmentNotFoundException(
-    val viewContext: IViewContext,
-    val availableFragments: List<String>
-) : ViewComponentException(
-    "No fragment found for ViewContext type '${viewContext.javaClass.simpleName}'. " +
-    "Available fragments: ${availableFragments.joinToString(", ")}"
-)
+```html
+<!--/*@thymesVar id="primaryButton" type="de.example.ButtonComponent.PrimaryButton"*/-->
+<!--/*@thymesVar id="secondaryButton" type="de.example.ButtonComponent.SecondaryButton"*/-->
+<!--/*@thymesVar id="dangerButton" type="de.example.ButtonComponent.DangerButton"*/-->
 ```
 
-**Multiple Matching Fragments:**
-```kotlin
-class MultipleFragmentsException(
-    val viewContext: IViewContext,
-    val fragmentName: String
-) : ViewComponentException(
-    "Multiple fragments found for context type '$fragmentName'. " +
-    "Only one fragment per ViewContext type is allowed."
-)
+**With sealed interfaces:**
+```html
+<!-- Base interface for shared properties -->
+<!--/*@thymesVar id="alert" type="de.example.AlertComponent.Alert"*/-->
+<!-- Specific types for unique properties -->
+<!--/*@thymesVar id="warningAlert" type="de.example.AlertComponent.WarningAlert"*/-->
+<!--/*@thymesVar id="errorAlert" type="de.example.AlertComponent.ErrorAlert"*/-->
 ```
 
-### 3. Development Experience
+**Best practice:**
+- Add thymeVar comment for each ViewContext type
+- Use sealed interface variable for shared properties
+- Use specific type variable for unique properties
 
-**IDE Support:**
-- ViewContext type names in `view:context` are strings (no autocomplete)
-- Consider IntelliJ/Eclipse plugin for validation
+### 2. Validation Strategy
 
-**Hot Reload:**
-- Fragment changes should trigger template recompilation
-- No changes needed to existing hot-reload mechanism
+**Runtime validation only** - no template scanning or compile-time validation.
 
-**Debugging:**
-- Add logging for fragment selection
-- Template comments indicating which fragment was selected
+**Why:**
+- Runtime validation catches the critical issue (mixed components)
+- Template errors are caught during development/testing
+- Template engines validate property access
+- IDE plugins are better place for template validation
 
-### 4. Testing
+**Validation in MultiViewContext.of():**
+- ✅ Validates all ViewContexts from same component
+- ✅ Clear error messages
+- ✅ Filters out nulls automatically
+- ✅ Zero overhead (runs once per request)
 
-**Unit Tests:**
+### 3. Error Handling
+
+**Clear error messages:**
+
 ```java
-@Test
-void shouldRenderPrimaryButtonFragment() {
-    var button = buttonComponent.renderPrimary("Submit", "/submit");
+// Wrong: mixing components
+MultiViewContext.of(
+    new PageComponent.Header("Title"),
+    new FooterComponent.Footer("Footer")  // Different component!
+)
 
-    var html = renderToString(button);
+// Error message:
+"All ViewContexts in MultiViewContext must be from the same ViewComponent.
+Expected: PageComponent, found: FooterComponent for ViewContext: Footer.
+To compose ViewContexts from different components, use nested components instead."
+```
 
-    assertThat(html).contains("btn-primary");
-    assertThat(html).contains("Submit");
-    assertThat(html).doesNotContain("btn-secondary");
+```java
+// Wrong: not an inner class
+public record Header(String title) implements ViewContext {}  // Top-level!
+
+MultiViewContext.of(new Header("Title"))
+
+// Error message:
+"ViewContext Header must be an inner class of a @ViewComponent.
+Did you forget to define it as a nested record/class?"
+```
+
+### 4. Performance
+
+**Fragment Selection:**
+- Thymeleaf: One model lookup per fragment (`webContext.getVariable(variableName)`)
+- JTE/KTE: Compiled to native if-else statements (zero overhead)
+
+**MultiViewContext:**
+- Validation runs once per MultiViewContext.of() call
+- Model population: one addAttribute per context
+- Negligible overhead
+
+### 5. Template Organization
+
+**Best practices:**
+
+1. **Group related fragments together:**
+   ```html
+   <!-- Navigation fragments -->
+   <nav view:context="AdminNav">...</nav>
+   <nav view:context="UserNav">...</nav>
+   <nav view:context="GuestNav">...</nav>
+
+   <!-- Content -->
+   <main view:context="Content">...</main>
+   ```
+
+2. **Use comments to document fragments:**
+   ```html
+   <!-- Header: Renders for all page types -->
+   <header view:context="Header">...</header>
+
+   <!-- Sidebar: Premium users only -->
+   <aside view:context="Sidebar">...</aside>
+   ```
+
+3. **Keep always-visible content without view:context:**
+   ```html
+   <footer>
+       <!-- No view:context - always renders -->
+       <p>© 2026 Company</p>
+   </footer>
+   ```
+
+### 6. Testing
+
+**Unit testing fragments:**
+
+```java
+@SpringBootTest
+class ButtonComponentTest {
+
+    @Autowired
+    private ButtonComponent buttonComponent;
+
+    @Test
+    void primaryButtonShouldHavePrimaryClass() {
+        var button = buttonComponent.primary("Submit", "/submit");
+
+        assertThat(button).isInstanceOf(ButtonComponent.PrimaryButton.class);
+        assertThat(button.label()).isEqualTo("Submit");
+        assertThat(button.action()).isEqualTo("/submit");
+    }
+
+    @Test
+    void dangerButtonShouldIncludeConfirmMessage() {
+        var button = buttonComponent.danger("Delete", "/delete", "Sure?");
+
+        assertThat(button.confirmMsg()).isEqualTo("Sure?");
+    }
 }
 ```
 
-**Integration Tests:**
-```java
-@Test
-void shouldSelectCorrectFragmentBasedOnContext() {
-    mockMvc.perform(get("/button/primary"))
-           .andExpect(status().isOk())
-           .andExpect(content().string(containsString("btn-primary")));
+**Integration testing with MockMvc:**
 
-    mockMvc.perform(get("/button/danger"))
-           .andExpect(status().isOk())
-           .andExpect(content().string(containsString("btn-danger")));
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class PageControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void pageWithFooterShouldRenderFooter() throws Exception {
+        mockMvc.perform(get("/page?footer=true"))
+               .andExpect(status().isOk())
+               .andExpect(content().string(containsString("<footer")))
+               .andExpect(content().string(containsString("© 2026")));
+    }
+
+    @Test
+    void pageWithoutFooterShouldNotRenderFooter() throws Exception {
+        mockMvc.perform(get("/page?footer=false"))
+               .andExpect(status().isOk())
+               .andExpect(content().string(not(containsString("<footer"))));
+    }
 }
 ```
-
-### 5. Documentation
-
-**Required Documentation:**
-1. Fragment rendering guide
-2. Migration guide from multiple components to fragments
-3. Template syntax reference for each engine
-4. Best practices and patterns
-5. Troubleshooting guide
-
-### 6. Backward Compatibility
-
-**Existing Code:**
-- All existing ViewComponents work unchanged
-- Fragment syntax is opt-in
-- No breaking changes to API
-
-**Migration:**
-- Developers can gradually refactor to fragments
-- Provide codemods/refactoring tools
 
 ---
 
@@ -879,269 +1025,202 @@ void shouldSelectCorrectFragmentBasedOnContext() {
 ### Phase 1: Core Infrastructure (v0.10.0)
 
 **Core Module:**
-1. Add fragment resolution methods to `IViewContext`
-2. Update `ViewContextMethodReturnValueHandler` to add ViewContext with simple name
+1. Add `MultiViewContext` class with validation
+2. Update `IViewContext` companion methods if needed
 3. Add fragment-related exceptions
 
 **Thymeleaf Module:**
 1. Implement `ThymeleafViewContextFragmentProcessor`
 2. Register processor in `ThymeleafViewComponentDialect`
-3. Add configuration properties for fragment behavior
+3. Update `ViewContextMethodReturnValueHandler` for MultiViewContext support
 
-**JTE/KTE Module:**
-1. No changes needed (already supports `instanceof`)
-2. Add utility classes/macros for fragment selection
+**JTE/KTE Modules:**
+- No changes needed (already supports instanceof)
+- Add documentation and examples
 
 **Testing:**
-- Unit tests for fragment selection logic
-- Integration tests for each template engine
-- Performance benchmarks
+- Unit tests for MultiViewContext validation
+- Integration tests for fragment rendering
+- Tests for each template engine
 
 ### Phase 2: Documentation & Examples (v0.10.0)
 
-1. Add fragment examples to each example project
-2. Write comprehensive documentation
-3. Create migration guide
-4. Record tutorial videos
+1. Update documentation with fragment rendering guide
+2. Add examples to each example project:
+   - ButtonComponent (variants)
+   - PageComponent (composition)
+   - AlertComponent (sealed interfaces)
+3. Write migration guide from multiple components to fragments
+4. Add thymeVar conventions guide
 
-### Phase 3: Tooling & Developer Experience (v0.11.0)
+### Phase 3: Tooling (v0.11.0+)
 
-1. IntelliJ IDEA plugin for fragment validation
-2. Template linting rules
-3. Code generation templates
-4. Refactoring tools
+1. **IntelliJ IDEA Plugin:**
+   - Autocomplete for `view:context` attribute values
+   - Validation: warn if ViewContext doesn't exist
+   - Navigate from `view:context="Header"` to `Header` class
+   - Quick-fix: create missing ViewContext
 
-### Phase 4: Advanced Features (Future)
+2. **VS Code Extension:**
+   - Similar features for VS Code users
 
-1. Fragment parameters
-2. Fragment composition
-3. Cross-component fragment sharing
-4. Fragment testing utilities
+3. **CLI Tools:**
+   - Code generator for fragment-based components
+   - Refactoring tool: convert multiple components to fragments
 
 ---
 
 ## Alternatives Considered
 
-### Alternative 1: String-Based Fragment Selection (Thymeleaf-style)
+### Alternative 1: Require view:context-root
+
+**Approach:**
+```html
+<div view:context-root>
+    <div view:context="Header">...</div>
+    <div view:context="Content">...</div>
+</div>
+```
+
+**Decision:** Rejected - unnecessary boilerplate. Template is already scoped to the component.
+
+### Alternative 2: String-Based Fragment Selection
 
 **Approach:**
 ```java
-public ViewContext render(String variant) {
-    return new ButtonContext(variant, "Submit", "/submit");
-}
+public record ButtonContext(String variant, ...) implements ViewContext {}
 ```
 
 ```html
-<div th:fragment="primary">...</div>
-<div th:fragment="secondary">...</div>
+<div th:if="${buttonContext.variant == 'primary'}">...</div>
 ```
 
-**Pros:**
-- Familiar to Thymeleaf users
-- Flexible (runtime fragment selection)
+**Decision:** Rejected - no type safety, error-prone.
 
-**Cons:**
-- No compile-time safety
-- String-based matching prone to typos
-- Difficult to refactor
-- No IDE autocomplete
-
-**Decision:** Rejected in favor of type-based approach
-
-### Alternative 2: Separate Template Files per Fragment
-
-**Approach:**
-```
-ButtonComponent-Primary.html
-ButtonComponent-Secondary.html
-ButtonComponent-Danger.html
-```
-
-**Pros:**
-- Clear separation
-- Easier to navigate
-
-**Cons:**
-- File proliferation
-- Harder to see related fragments together
-- Template path resolution complexity
-
-**Decision:** Rejected - fragments belong together
-
-### Alternative 3: Builder Pattern with Conditional Methods
+### Alternative 3: Allow Cross-Component ViewContexts in MultiViewContext
 
 **Approach:**
 ```java
-public record ButtonContext(
-    String variant,
-    String label,
-    String action,
-    String confirmMessage
-) implements ViewContext {}
-
-public ButtonContext primary(String label) {
-    return new ButtonContext("primary", label, null, null);
-}
+MultiViewContext.of(
+    headerComponent.render(),  // HeaderComponent
+    contentComponent.render()  // ContentComponent
+)
 ```
 
-```html
-<button th:class="${buttonContext.variant == 'primary' ? 'btn-primary' : 'btn-secondary'}">
-  ...
-</button>
-```
+**Decision:** Rejected for v0.10 - complex template resolution, unclear ownership. Use nested components for cross-component composition.
 
-**Pros:**
-- Single ViewContext
-- Simple implementation
+### Alternative 4: Compile-Time Validation with Annotation Processor
 
-**Cons:**
-- Template logic complexity
-- No type safety
-- Nullable fields
+**Approach:** Annotation processor validates MultiViewContext.of() calls at compile time.
 
-**Decision:** Rejected - defeats purpose of type-based design
+**Decision:** Deferred - complexity not justified. Runtime validation is sufficient.
 
-### Alternative 4: Sealed Classes (Java 17+)
+### Alternative 5: Startup Template Scanning
 
-**Approach:**
-```java
-public sealed interface ButtonContext permits PrimaryButton, SecondaryButton, DangerButton {
-    record PrimaryButton(...) implements ButtonContext {}
-    record SecondaryButton(...) implements ButtonContext {}
-    record DangerButton(...) implements ButtonContext {}
-}
-```
+**Approach:** Scan templates at startup, validate view:context references exist.
 
-**Pros:**
-- Exhaustiveness checking
-- Modern Java feature
-- Clear intent
-
-**Cons:**
-- Requires Java 17+
-- Current users may be on Java 11/17
-- Not compatible with Kotlin sealed classes across languages
-
-**Decision:** Consider for future enhancement (optional feature)
+**Decision:** Rejected - runtime validation sufficient. Template errors caught during development.
 
 ---
 
 ## Open Questions
 
-### 1. Fragment Naming Convention
+### 1. Should we support wildcard matching?
 
-**Question:** Should fragments use simple names or fully qualified names?
-
-**Options:**
-- Simple: `view:context="PrimaryButton"`
-- Qualified: `view:context="de.example.ButtonComponent.PrimaryButton"`
-
-**Recommendation:** Simple names (less verbose, ViewContext is always in same file)
-
-### 2. Default Fragment
-
-**Question:** Should we support a default fragment when no match is found?
+**Question:** Should `view:context="*"` match any ViewContext (always render)?
 
 **Options:**
-- A. Throw exception (fail fast)
-- B. Render nothing (silent failure)
-- C. Support `view:context="*"` as fallback
+- A. No wildcard - use absence of `view:context` for always-render
+- B. Support `view:context="*"` for clarity
 
-**Recommendation:** Option A initially, add Option C in future release
+**Recommendation:** Option A - simpler, no attribute = always render is intuitive.
 
-### 3. Fragment Inheritance
+### 2. Should we support negation?
 
-**Question:** Should fragments support inheritance (e.g., base fragment + variant-specific overrides)?
+**Question:** Should `view:context="!Footer"` render when Footer is NOT in model?
 
 **Example:**
 ```html
-<div view:context-base>
-    <button class="btn">
-        <span view:context-slot="label"></span>
-    </button>
-</div>
-
-<div view:context="PrimaryButton">
-    <span view:context-slot="label">Primary</span>
-</div>
+<p view:context="!Footer">No footer available</p>
 ```
 
-**Recommendation:** Defer to future release (significant complexity)
+**Recommendation:** No - use template engine conditionals (`th:if`) for complex logic.
 
-### 4. Fragment Testing
+### 3. Should sealed interfaces be required or optional?
 
-**Question:** Should we provide utilities for testing individual fragments?
+**Question:** Recommend sealed interfaces as best practice or make them optional?
 
-**Example:**
+**Recommendation:** Optional but recommended. Document as best practice for shared properties.
+
+### 4. Should we provide a fluent builder for MultiViewContext?
+
+**Question:** Would a builder API improve ergonomics?
+
 ```java
-@Test
-void testPrimaryButtonFragment() {
-    var html = fragmentRenderer.render(
-        ButtonComponent.class,
-        "PrimaryButton",
-        new PrimaryButton("Submit", "/submit")
-    );
-
-    assertThat(html).contains("btn-primary");
-}
+return MultiViewContext.builder()
+    .with(new Header("Title"))
+    .with(new Content("Body"))
+    .withIf(showFooter, new Footer("Footer"))
+    .build();
 ```
 
-**Recommendation:** Yes, add in Phase 3
+**Recommendation:** Defer to v0.11 - `of()` with nulls is sufficient for now.
 
-### 5. Multi-Fragment Selection
+### 5. How to handle empty MultiViewContext?
 
-**Question:** Should one ViewContext be able to match multiple fragments?
+**Question:** What if all ViewContexts are null?
 
-**Use Case:** Render both header and footer fragments from same context
+```java
+MultiViewContext.of(
+    condition1 ? new Header("Title") : null,
+    condition2 ? new Footer("Footer") : null
+)
+// Both null!
+```
 
-**Recommendation:** No - use nested ViewContexts for this pattern
+**Current behavior:** Throws exception "requires at least one non-null ViewContext"
 
-### 6. Fragment Validation
+**Alternative:** Render empty content?
 
-**Question:** Should we validate at startup that all ViewContext types have matching fragments?
-
-**Pros:**
-- Early error detection
-- Better developer experience
-
-**Cons:**
-- Startup time impact
-- Complex for conditional fragments
-
-**Recommendation:** Add as opt-in feature via configuration property
+**Recommendation:** Keep exception - forces explicit handling.
 
 ---
 
 ## Summary
 
-This specification proposes adding **type-based fragment rendering** to Spring View Component, enabling:
+This specification proposes adding **fragment rendering** to Spring View Component via two complementary patterns:
 
-1. **Multiple ViewContext implementations per ViewComponent**
-2. **Type-safe fragment selection via `view:context` attribute**
-3. **Reduced code duplication for component variants**
-4. **Improved developer experience with compile-time checks**
+1. **Type-Based Variants** - One ViewContext, one fragment (button variants, alert types)
+2. **MultiViewContext Composition** - Multiple ViewContexts, multiple fragments (page layouts, optional sections)
 
-**Key Benefits:**
-- ✅ Backward compatible
+**Key Features:**
+- ✅ Framework-provided `MultiViewContext` class (zero boilerplate)
+- ✅ Presence-based rendering (`view:context` attribute)
+- ✅ Same-component requirement (simple template resolution)
+- ✅ Runtime validation with clear error messages
+- ✅ Sealed interfaces for shared properties
+- ✅ Null filtering for conditional composition
 - ✅ Works with all template engines (Thymeleaf, JTE, KTE)
-- ✅ Type-safe (leverages Java/Kotlin type system)
-- ✅ Minimal performance overhead
-- ✅ Natural template support (Thymeleaf)
+- ✅ Backward compatible
+
+**Benefits:**
+- Reduces code duplication (one component instead of many)
+- Type-safe (compile-time checks for ViewContext types)
+- Clean composition (no `Optional<ViewContext>`)
+- Better developer experience (clear intent, less boilerplate)
 
 **Next Steps:**
-1. Review and refine this specification
-2. Create proof-of-concept implementation
-3. Gather community feedback
-4. Implement Phase 1 (Core Infrastructure)
-5. Release as experimental feature in v0.10.0
+1. Review and gather feedback
+2. Implement Phase 1 (Core Infrastructure)
+3. Release as experimental feature in v0.10.0
+4. Iterate based on community feedback
 
 ---
 
 ## References
 
-- **Thymeleaf Fragments Documentation**: https://www.thymeleaf.org/doc/articles/layouts.html
-- **Thymeleaf Fragment Tutorial**: https://www.baeldung.com/spring-thymeleaf-fragments
-- **Spring View Component Repository**: https://github.com/tschuehly/spring-view-component
+- **Thymeleaf Fragments**: https://www.thymeleaf.org/doc/articles/layouts.html
+- **Spring View Component**: https://github.com/tschuehly/spring-view-component
 - **JTE Documentation**: https://jte.gg/
 - **Sealed Classes (Java)**: https://openjdk.org/jeps/409
 
