@@ -66,6 +66,84 @@ All component resources are served under the `/view-src/` path prefix:
 
 ## 4. Technical Design
 
+### 4.0 Design Alternatives Considered
+
+#### 4.0.1 Approach A: ResourceHandler (Selected)
+Use Spring's `ResourceHandlerRegistry` to register static resource handlers for each ViewComponent package.
+
+**Pros**:
+- ✅ Built-in Spring mechanism (well-tested, optimized)
+- ✅ Automatic HTTP caching (ETag, Last-Modified, Cache-Control)
+- ✅ Resource chain support (versioning, compression)
+- ✅ Handles range requests (for video/large files)
+- ✅ 304 Not Modified responses automatically
+- ✅ Less code to maintain
+- ✅ Standard approach for static resources
+
+**Cons**:
+- ❌ Less explicit control over individual requests
+- ❌ Harder to add custom logic per request (logging, metrics)
+- ❌ Configuration-based rather than code-based
+
+#### 4.0.2 Approach B: Controller Endpoint (Alternative)
+Create a `@RestController` with a catch-all endpoint to serve resources programmatically.
+
+**Pros**:
+- ✅ Explicit control over every request
+- ✅ Easy to add logging, metrics, analytics
+- ✅ Can add authentication/authorization per resource
+- ✅ Easier to debug (breakpoints, request tracking)
+- ✅ More testable (standard controller testing)
+
+**Cons**:
+- ❌ Must manually handle caching, range requests, 304 responses
+- ❌ Goes through full MVC stack (slightly slower)
+- ❌ More code to write and maintain
+- ❌ Need to reimplement Spring's resource handling
+
+**Example Controller Implementation**:
+```kotlin
+@RestController
+@RequestMapping("/view-src")
+class ViewComponentResourceController(
+    private val applicationContext: ApplicationContext,
+    @Value("\${spring.view-component.resources.package-filter:}")
+    private val packageFilter: String = ""
+) {
+
+    @GetMapping("/**")
+    fun serveResource(request: HttpServletRequest): ResponseEntity<Resource> {
+        val path = extractPath(request)
+
+        // Custom validation
+        if (!isValidRequest(path)) {
+            return ResponseEntity.notFound().build()
+        }
+
+        // Custom logging
+        logResourceAccess(path)
+
+        // Load and serve resource
+        val resource = loadResource(path)
+        return ResponseEntity.ok()
+            .contentType(detectContentType(path))
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(resource)
+    }
+}
+```
+
+#### 4.0.3 Approach C: Hybrid (Future Consideration)
+Use a Controller that delegates to `ResourceHttpRequestHandler` for actual serving - combines benefits of both.
+
+**Decision**: Use **Approach A (ResourceHandler)** for initial implementation because:
+1. Simpler implementation (less code)
+2. Leverages Spring's optimized resource handling
+3. Standard approach familiar to Spring developers
+4. Adequate for current requirements
+
+**Future**: Can migrate to Approach C if custom request handling is needed (authentication, detailed logging, etc.).
+
 ### 4.1 Components
 
 #### 4.1.1 Resource Handler (Core Module)
@@ -655,17 +733,58 @@ For users who want to adopt this feature:
 - CSS/JS minification
 - Resource bundling for production
 
-### 13.2 Advanced Features
+### 13.2 JTE/KTE Build-Time Enhancements
+Since JTE/KTE are compiled template engines, additional optimizations are possible:
+
+**Compile-Time Resource Path Resolution**:
+- Generate resource constants during JTE compilation
+- Type-safe resource references with IDE autocomplete
+- Build fails if referenced resource doesn't exist
+
+**Implementation**:
+```kotlin
+// Auto-generated during JTE compilation
+package com.example.index
+
+object IndexViewComponentResources {
+    const val CAT_JPG = "/view-src/com/example/index/cat.jpg"
+    const val STYLES_CSS = "/view-src/com/example/index/styles.css"
+}
+```
+
+**Usage**:
+```jte
+@import static com.example.index.IndexViewComponentResources.*
+
+<img src="${CAT_JPG}" alt="Cat">
+<link href="${STYLES_CSS}" rel="stylesheet">
+```
+
+**Benefits**:
+- Zero runtime overhead (compile-time constants)
+- Type-safe (compiler errors for missing resources)
+- IDE autocomplete for available resources
+- Refactoring-safe (rename detection)
+
+**Implementation Approach**:
+1. Extend JTE Gradle/Maven plugin
+2. Scan ViewComponent packages for resources during compilation
+3. Generate constants file per ViewComponent
+4. Make generated sources available to templates
+
+### 13.3 Advanced Features
 - Support for SCSS/LESS compilation
 - TypeScript compilation
 - Hot module replacement for resources in development
+- Controller-based approach (Approach C) for advanced request handling
 
-### 13.3 Developer Experience
+### 13.4 Developer Experience
 - IDE plugin for resource reference validation
 - Build-time checks for broken resource references
 - Resource usage reporting
+- Metrics and analytics for resource access
 
-### 13.4 Configuration
+### 13.5 Configuration Enhancements
 - Customizable allowed extensions via properties
 - Custom path prefix configuration
 - Per-component resource configuration
