@@ -76,33 +76,53 @@ All component resources are served under the `/view-src/` path prefix:
 - Map `/view-src/{package-path}/**` to `classpath:/{package-path}/`
 - Implement security filtering to allow only specific file extensions
 - Automatically discover all `@ViewComponent` beans at application startup
+- **Optionally restrict to specific packages** (e.g., only `*.web.*` packages)
 
 **Implementation Details**:
 ```kotlin
-override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-    val viewComponentBeans = applicationContext.getBeansWithAnnotation(ViewComponent::class.java)
+@Component
+class ViewComponentMvcConfigurer(
+    private val methodReturnValueHandlers: List<HandlerMethodReturnValueHandler>,
+    private val applicationContext: ApplicationContext,
+    @Value("\${spring.view-component.resources.package-filter:}")
+    private val packageFilter: String = ""
+) : WebMvcConfigurer {
 
-    viewComponentBeans
-        .map { (_, viewComponent) ->
-            viewComponent.javaClass.`package`.name.replace(".", "/")
-        }
-        .toSet()
-        .forEach { path ->
-            registry.addResourceHandler("/view-src/$path/**")
-                .addResourceLocations("classpath:/$path/")
-                .resourceChain(true)
-                .addResolver(object : PathResourceResolver() {
-                    override fun getResource(resourcePath: String, location: Resource): Resource? {
-                        // Only serve allowed extensions
-                        if (resourcePath.matches(ALLOWED_EXTENSIONS_REGEX)) {
-                            return super.getResource(resourcePath, location)
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        val viewComponentBeans = applicationContext.getBeansWithAnnotation(ViewComponent::class.java)
+
+        viewComponentBeans
+            .map { (_, viewComponent) ->
+                viewComponent.javaClass.`package`.name
+            }
+            .filter { packageName ->
+                // Apply package filter if configured
+                packageFilter.isEmpty() || packageName.contains(packageFilter)
+            }
+            .map { it.replace(".", "/") }
+            .toSet()
+            .forEach { path ->
+                registry.addResourceHandler("/view-src/$path/**")
+                    .addResourceLocations("classpath:/$path/")
+                    .resourceChain(true)
+                    .addResolver(object : PathResourceResolver() {
+                        override fun getResource(resourcePath: String, location: Resource): Resource? {
+                            // Only serve allowed extensions
+                            if (resourcePath.matches(ALLOWED_EXTENSIONS_REGEX)) {
+                                return super.getResource(resourcePath, location)
+                            }
+                            return null
                         }
-                        return null
-                    }
-                })
-        }
+                    })
+            }
 
-    super.addResourceHandlers(registry)
+        super.addResourceHandlers(registry)
+    }
+
+    companion object {
+        private val ALLOWED_EXTENSIONS_REGEX =
+            ".*\\.(jpg|jpeg|png|gif|svg|webp|css|js|woff|woff2|ttf|eot|ico)$".toRegex()
+    }
 }
 ```
 
@@ -111,6 +131,7 @@ override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
 - Explicitly exclude: `.java`, `.class`, `.jar`, `.properties`, `.xml`, `.yml`, `.yaml`, `.html`, `.jte`, `.kte`
 - Use `PathResourceResolver` to prevent path traversal attacks
 - Resources only served from packages containing `@ViewComponent` beans
+- **Package filter restricts resource serving to specific package patterns** (e.g., only `*.web.*` packages)
 
 #### 4.1.2 Thymeleaf Attribute Processor
 **File**: `thymeleaf/src/main/kotlin/de/tschuehly/spring/viewcomponent/thymeleaf/ThymeleafViewComponentSrcAttributeProcessor.kt`
@@ -351,27 +372,67 @@ private val ALLOWED_EXTENSIONS_REGEX =
 - Dynamically registered based on actual components, not static configuration
 - No wildcard or catch-all patterns
 - Each component package is isolated (cannot access other package resources)
+- **Optional package filter** restricts resource serving to specific package patterns
+
+**Recommended**: Use package filter to limit resource serving to public-facing components only:
+
+```properties
+# Only serve resources from components in *.web.* packages
+spring.view-component.resources.package-filter=.web.
+```
+
+**Examples**:
+- `package-filter=.web.` → Only `de.example.web.*` packages
+- `package-filter=.ui.` → Only `de.example.ui.*` packages
+- Empty/not set → All `@ViewComponent` packages (less secure)
 
 ## 6. Configuration
 
-### 6.1 Application Properties (Future Enhancement)
-While not part of the initial implementation, consider adding:
+### 6.1 Application Properties
+
+#### 6.1.1 Package Filter (Recommended for Security)
+**Property**: `spring.view-component.resources.package-filter`
+
+Restricts resource serving to ViewComponents in packages matching the filter pattern.
+
+```properties
+# Recommended: Only serve resources from web-facing components
+spring.view-component.resources.package-filter=.web.
+```
+
+**Examples**:
+```properties
+# Only components in *.web.* packages
+spring.view-component.resources.package-filter=.web.
+
+# Only components in *.ui.* packages
+spring.view-component.resources.package-filter=.ui.
+
+# Multiple patterns not supported - choose most specific
+# Omit property to allow all @ViewComponent packages (less secure)
+```
+
+**Security Recommendation**: Always set this property in production to limit exposure to only public-facing components.
+
+#### 6.1.2 Future Enhancements
+Consider adding in future versions:
 
 ```properties
 # Enable/disable relative resource resolution
-spring.view-component.relative-resources.enabled=true
+spring.view-component.resources.enabled=true
 
 # Custom allowed extensions (comma-separated)
-spring.view-component.relative-resources.allowed-extensions=jpg,png,css,js
+spring.view-component.resources.allowed-extensions=jpg,png,css,js
 
 # Custom path prefix (default: /view-src)
-spring.view-component.relative-resources.path-prefix=/view-src
+spring.view-component.resources.path-prefix=/view-src
 ```
 
-### 6.2 Initial Implementation
-- No configuration required
+### 6.2 Default Behavior
 - Feature enabled by default when dependency is present
-- Sensible defaults for all settings
+- No package filter by default (all `@ViewComponent` packages allowed)
+- Standard file extensions whitelisted (jpg, png, css, js, fonts)
+- Resources served under `/view-src/` path prefix
 
 ## 7. Testing Strategy
 
@@ -383,6 +444,11 @@ spring.view-component.relative-resources.path-prefix=/view-src
 - Test denied extension blocking
 - Test path traversal prevention
 - Test package isolation
+- **Test package filter configuration**:
+  - Test filter allows matching packages (e.g., `*.web.*`)
+  - Test filter blocks non-matching packages (e.g., `*.internal.*`)
+  - Test empty filter allows all packages
+  - Test filter works with nested packages
 
 #### Thymeleaf Processor Tests
 - Test `view:src` attribute processing
@@ -411,6 +477,10 @@ spring.view-component.relative-resources.path-prefix=/view-src
 - Attempt to access `.class` file - should return 404
 - Attempt path traversal `../../../` - should be blocked
 - Attempt to access resource from non-ViewComponent package - should return 404
+- **Package filter security tests**:
+  - With `package-filter=.web.`, attempt to access resource from `*.internal.*` component - should return 404
+  - With `package-filter=.web.`, verify resource from `*.web.*` component - should return 200
+  - Verify filter is case-sensitive and respects exact package naming
 
 ### 7.3 Example Applications
 Update example applications to demonstrate feature:
@@ -426,7 +496,11 @@ Add new section "Component Resources" explaining:
 - Syntax for Thymeleaf (`view:src`)
 - Syntax for JTE/KTE (helper functions)
 - Build configuration requirements
-- Security implications
+- **Security implications and best practices**:
+  - Use `processResources` with explicit includes
+  - Configure `package-filter` to restrict to `*.web.*` packages
+  - File extension whitelisting
+- Configuration options and examples
 
 ### 8.2 Example Code
 Provide complete examples for:
@@ -767,4 +841,38 @@ tasks.named<ProcessResources>("processResources") {
         </resource>
     </resources>
 </build>
+```
+
+### A.4 Security Configuration (application.properties)
+
+**Recommended Production Configuration**:
+```properties
+# Restrict resource serving to only web-facing ViewComponents
+spring.view-component.resources.package-filter=.web.
+```
+
+**Example Package Structure**:
+```
+com/example/myapp/
+  web/                          ← Resources ALLOWED (public-facing)
+    index/IndexViewComponent
+    profile/ProfileViewComponent
+  internal/                     ← Resources BLOCKED (internal components)
+    admin/AdminViewComponent
+    report/ReportViewComponent
+```
+
+**Result with `package-filter=.web.`**:
+- ✅ `/view-src/com/example/myapp/web/index/logo.png` → **200 OK**
+- ✅ `/view-src/com/example/myapp/web/profile/avatar.jpg` → **200 OK**
+- ❌ `/view-src/com/example/myapp/internal/admin/chart.png` → **404 Not Found**
+- ❌ `/view-src/com/example/myapp/internal/report/data.csv` → **404 Not Found**
+
+**Development vs Production**:
+```properties
+# application-dev.properties (more permissive for development)
+# spring.view-component.resources.package-filter= (empty = all packages)
+
+# application-prod.properties (strict for production)
+spring.view-component.resources.package-filter=.web.
 ```
