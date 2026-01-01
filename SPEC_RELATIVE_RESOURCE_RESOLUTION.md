@@ -216,32 +216,80 @@ object ViewComponentResources {
 
 ### 4.3 Build Configuration
 
-#### 4.3.1 Gradle
-Update example `build.gradle.kts` to include resources:
+Build systems need to copy static resources from `src/main/java` (or `src/main/kotlin`) to the classpath output.
 
+**Security Note**: Use **explicit includes** (whitelist) rather than excludes (blacklist) for better security. This ensures only approved file types are packaged, preventing accidental inclusion of sensitive files.
+
+#### 4.3.1 Gradle (Recommended Approach)
+Use the `processResources` task with explicit `include` patterns:
+
+```kotlin
+tasks.named<ProcessResources>("processResources") {
+    from("src/main/java") {
+        include("**/*.html")      // Templates
+        include("**/*.jte")
+        include("**/*.kte")
+        include("**/*.jpg")       // Images
+        include("**/*.jpeg")
+        include("**/*.png")
+        include("**/*.gif")
+        include("**/*.svg")
+        include("**/*.webp")
+        include("**/*.css")       // Stylesheets
+        include("**/*.js")        // JavaScript
+        include("**/*.woff")      // Fonts
+        include("**/*.woff2")
+        include("**/*.ttf")
+        include("**/*.eot")
+        include("**/*.ico")       // Icons
+    }
+}
+```
+
+**Alternative (Less Secure)**: Using `sourceSets` with excludes:
 ```kotlin
 sourceSets {
     main {
         resources {
             srcDir("src/main/java")
-            exclude("**/*.java", "**/*.kt")
+            exclude("**/*.java", "**/*.kt", "**/*.class")
+            // Must remember to exclude ALL sensitive file types
         }
     }
 }
 ```
 
 #### 4.3.2 Maven
-Update example `pom.xml`:
+Use explicit `includes` in resource configuration:
 
 ```xml
 <build>
     <resources>
         <resource>
             <directory>src/main/java</directory>
-            <excludes>
-                <exclude>**/*.java</exclude>
-                <exclude>**/*.kt</exclude>
-            </excludes>
+            <includes>
+                <!-- Templates -->
+                <include>**/*.html</include>
+                <include>**/*.jte</include>
+                <include>**/*.kte</include>
+                <!-- Images -->
+                <include>**/*.jpg</include>
+                <include>**/*.jpeg</include>
+                <include>**/*.png</include>
+                <include>**/*.gif</include>
+                <include>**/*.svg</include>
+                <include>**/*.webp</include>
+                <!-- Stylesheets and Scripts -->
+                <include>**/*.css</include>
+                <include>**/*.js</include>
+                <!-- Fonts -->
+                <include>**/*.woff</include>
+                <include>**/*.woff2</include>
+                <include>**/*.ttf</include>
+                <include>**/*.eot</include>
+                <!-- Icons -->
+                <include>**/*.ico</include>
+            </includes>
         </resource>
         <resource>
             <directory>src/main/resources</directory>
@@ -252,27 +300,57 @@ Update example `pom.xml`:
 
 ## 5. Security Considerations
 
-### 5.1 File Extension Whitelist
+### 5.1 Defense in Depth Strategy
+Security is implemented at **two layers**:
+
+1. **Build-time**: Only approved file types are packaged (via `processResources` includes)
+2. **Runtime**: Only approved file types are served (via `PathResourceResolver` filtering)
+
+This dual-layer approach ensures security even if one layer is misconfigured.
+
+### 5.2 Build-Time Security (Recommended)
+**Use whitelisting** via explicit `include` patterns in build configuration:
+
+**Why whitelisting is more secure**:
+- ✅ Default deny: Nothing is included unless explicitly allowed
+- ✅ Fail-safe: New sensitive file types are automatically excluded
+- ✅ Explicit: Clear what resources are packaged
+
+**Why blacklisting is less secure**:
+- ❌ Default allow: Everything is included unless explicitly excluded
+- ❌ Fragile: Must remember to exclude every sensitive file type
+- ❌ Risk: New file types (`.env`, `.key`, etc.) may be accidentally included
+
+### 5.3 Runtime File Extension Whitelist
 Only allow specific file extensions to prevent:
 - Source code disclosure (`.java`, `.kt`, `.class`)
-- Configuration leakage (`.properties`, `.yml`, `.xml`)
+- Configuration leakage (`.properties`, `.yml`, `.xml`, `.env`)
 - Template source exposure (`.html`, `.jte`, `.kte`)
+- Compiled bytecode (`.class`, `.jar`)
 
-### 5.2 Path Traversal Prevention
-- Use Spring's `PathResourceResolver` which handles `../` and absolute paths
-- Only serve resources from registered ViewComponent packages
-- No custom path resolution logic
-
-### 5.3 Allowed Extensions
+**Allowed Extensions**:
 ```kotlin
 private val ALLOWED_EXTENSIONS_REGEX =
     ".*\\.(jpg|jpeg|png|gif|svg|webp|css|js|woff|woff2|ttf|eot|ico)$".toRegex()
 ```
 
-### 5.4 Package Restriction
+**Explicitly Denied** (even if present in classpath):
+- Source code: `.java`, `.kt`, `.scala`, `.groovy`
+- Compiled: `.class`, `.jar`, `.war`
+- Templates: `.html`, `.jte`, `.kte` (should be processed, not served raw)
+- Configuration: `.properties`, `.yml`, `.yaml`, `.xml`, `.json`, `.env`
+
+### 5.4 Path Traversal Prevention
+- Use Spring's `PathResourceResolver` which handles `../` and absolute paths
+- Only serve resources from registered ViewComponent packages
+- No custom path resolution logic
+- Spring automatically normalizes and validates paths
+
+### 5.5 Package Restriction
 - Resources only served from packages containing `@ViewComponent` beans
 - Dynamically registered based on actual components, not static configuration
 - No wildcard or catch-all patterns
+- Each component package is isolated (cannot access other package resources)
 
 ## 6. Configuration
 
@@ -359,10 +437,33 @@ Provide complete examples for:
 
 ### 8.3 Migration Guide
 For users who want to adopt this feature:
-1. Update build configuration to include resources from `src/main/java`
-2. Move component-specific assets to component packages
-3. Update template syntax to use `view:src`/helper functions
-4. Test resource loading
+
+1. **Update build configuration** (Security-first approach):
+   - **Gradle**: Use `processResources` task with explicit `include` patterns
+   - **Maven**: Use `<includes>` in resource configuration
+   - ⚠️ **Do NOT use excludes** - use explicit includes for better security
+
+2. **Move component-specific assets** to component packages:
+   ```
+   de/tschuehly/example/index/
+     IndexViewComponent.java
+     IndexViewComponent.html
+     logo.png          ← Move here
+     styles.css        ← Move here
+   ```
+
+3. **Update template syntax**:
+   - **Thymeleaf**: Change `src="/static/logo.png"` to `view:src="logo.png"`
+   - **JTE/KTE**: Import helper and use `src="${src(\"logo.png\")}"`
+
+4. **Test resource loading**:
+   - Start application
+   - Verify resources load at `/view-src/{package-path}/{filename}`
+   - Check browser console for 404 errors
+
+5. **Clean up**:
+   - Remove component-specific assets from `src/main/resources/static`
+   - Update any hardcoded paths in templates
 
 ## 9. Implementation Plan
 
@@ -604,23 +705,33 @@ public class IndexViewComponent {
 
 ### A.3 Build Configuration
 
-**Gradle (build.gradle.kts)**:
+**Gradle (build.gradle.kts)** - Recommended approach using `processResources`:
 ```kotlin
 dependencies {
     implementation("de.tschuehly:spring-view-component-thymeleaf:0.10.0")
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/java")
-            exclude("**/*.java", "**/*.kt")
-        }
+tasks.named<ProcessResources>("processResources") {
+    from("src/main/java") {
+        include("**/*.html")      // Templates
+        include("**/*.jpg")       // Images
+        include("**/*.jpeg")
+        include("**/*.png")
+        include("**/*.gif")
+        include("**/*.svg")
+        include("**/*.webp")
+        include("**/*.css")       // Stylesheets
+        include("**/*.js")        // JavaScript
+        include("**/*.woff")      // Fonts
+        include("**/*.woff2")
+        include("**/*.ttf")
+        include("**/*.eot")
+        include("**/*.ico")       // Icons
     }
 }
 ```
 
-**Maven (pom.xml)**:
+**Maven (pom.xml)** - Using explicit includes:
 ```xml
 <dependencies>
     <dependency>
@@ -634,10 +745,22 @@ sourceSets {
     <resources>
         <resource>
             <directory>src/main/java</directory>
-            <excludes>
-                <exclude>**/*.java</exclude>
-                <exclude>**/*.kt</exclude>
-            </excludes>
+            <includes>
+                <include>**/*.html</include>
+                <include>**/*.jpg</include>
+                <include>**/*.jpeg</include>
+                <include>**/*.png</include>
+                <include>**/*.gif</include>
+                <include>**/*.svg</include>
+                <include>**/*.webp</include>
+                <include>**/*.css</include>
+                <include>**/*.js</include>
+                <include>**/*.woff</include>
+                <include>**/*.woff2</include>
+                <include>**/*.ttf</include>
+                <include>**/*.eot</include>
+                <include>**/*.ico</include>
+            </includes>
         </resource>
         <resource>
             <directory>src/main/resources</directory>
