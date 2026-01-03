@@ -67,3 +67,37 @@ sourceSets {
     }
 
 }
+
+// TypeScript compilation with Bun
+tasks.register<Exec>("bunInstall") {
+    group = "build"
+    description = "Install Bun dependencies"
+    commandLine("bun", "install")
+    inputs.file("package.json")
+    outputs.dir("node_modules")
+    onlyIf { file("package.json").exists() }
+}
+
+tasks.register<Exec>("compileFrontend") {
+    group = "build"
+    description = "Compile TypeScript files to JavaScript using Bun"
+    dependsOn("bunInstall")
+    commandLine("bun", "run", "build")
+    inputs.files(fileTree("src/main/kotlin").matching { include("**/*.ts") })
+    inputs.files(fileTree("src/main/java").matching { include("**/*.ts") })
+    outputs.dir("src/main/resources/static/js/components")
+    onlyIf {
+        fileTree("src/main/kotlin").matching { include("**/*.ts") }.files.isNotEmpty() ||
+        fileTree("src/main/java").matching { include("**/*.ts") }.files.isNotEmpty()
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("compileFrontend")
+}
+
+tasks.register<Exec>("watchFrontend") {
+    group = "build"
+    description = "Watch and compile TypeScript files on change"
+    commandLine("bun", "run", "watch")
+}

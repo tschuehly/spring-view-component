@@ -1,10 +1,12 @@
 <html>
 <head>
   <script src="http://localhost:35729/livereload.js"></script>
+  <!--/*@thymesVar id="indexView" type="de.tschuehly.example.thymeleafkotlin.web.index.IndexViewComponent.IndexView"*/-->
+  <script th:src="${indexView.getScriptPath()}" type="module"></script>
 </head>
 <div>
   <h1>This is the IndexViewComponent</h1>
-
+  <p style="color: #666; font-size: 0.9em;">💡 Try pressing 1, 2, or 3 on your keyboard to navigate!</p>
 </div>
 <a href="/">IndexViewComponent</a><br>
 <a href="/simple">SimpleViewComponent</a><br>

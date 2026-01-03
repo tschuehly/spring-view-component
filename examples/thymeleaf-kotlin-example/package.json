@@ -1,0 +1,15 @@
+{
+  "name": "thymeleaf-kotlin-example",
+  "version": "0.0.1",
+  "description": "Spring ViewComponent Thymeleaf example with TypeScript support",
+  "scripts": {
+    "build": "bun run build.ts",
+    "watch": "bun run build.ts --watch"
+  },
+  "dependencies": {
+    "glob": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

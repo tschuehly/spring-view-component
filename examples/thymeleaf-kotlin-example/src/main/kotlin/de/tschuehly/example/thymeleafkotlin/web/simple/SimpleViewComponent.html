@@ -1,8 +1,22 @@
-<div>
+<div data-component="simple-view">
   <h2>This is the SimpleViewComponent</h2>
   <!--/*@thymesVar id="simpleView" type="de.tschuehly.example.thymeleafkotlin.web.simple.SimpleViewComponent.SimpleView"*/-->
-  <div th:text="${simpleView.helloWorld}"></div>
+  <div th:text="${simpleView.helloWorld}" data-content></div>
   <div th:object="${simpleView}">
     <input th:field="*{helloWorld}">
   </div>
+
+  <!-- Component-specific TypeScript -->
+  <script th:src="${simpleView.getScriptPath()}" type="module"></script>
 </div>
+
+<style>
+  [data-component="simple-view"].clicked {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+  [data-component="simple-view"][data-enhanced="true"] {
+    border-left: 3px solid #4CAF50;
+    padding-left: 10px;
+  }
+</style>
