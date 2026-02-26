@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "4.0.0"
+    id("org.springframework.boot") version "4.0.3"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm") version "2.2.21"
     kotlin("plugin.spring") version "2.2.21"
@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.9.1-SNAPSHOT"
+version = "0.9.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
