@@ -45,6 +45,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-restclient")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-devtools")
     testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.9.1"))
