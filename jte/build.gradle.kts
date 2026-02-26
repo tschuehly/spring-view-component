@@ -22,7 +22,7 @@ repositories {
 }
 dependencies {
     api("gg.jte:jte:3.2.1")
-    api("de.tschuehly:spring-view-component-core:0.9.1-SNAPSHOT")
+    api("de.tschuehly:spring-view-component-core:0.9.1")
 
     implementation("gg.jte:jte-spring-boot-starter-3:3.2.1")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")

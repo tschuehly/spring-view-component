@@ -26,7 +26,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
-    implementation("de.tschuehly:spring-view-component-jte:0.9.1-SNAPSHOT")
+    implementation("de.tschuehly:spring-view-component-jte:0.9.1")
 
     implementation("org.webjars.npm:htmx.org:1.9.11")
     implementation("org.webjars:webjars-locator-lite:1.1.0")
@@ -34,7 +34,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.9.1-SNAPSHOT"))
+    testImplementation(testFixtures("de.tschuehly:spring-view-component-core:0.9.1"))
 }
 
 tasks.withType<Test> {

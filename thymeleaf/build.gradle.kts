@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    api("de.tschuehly:spring-view-component-core:0.9.1-SNAPSHOT")
+    api("de.tschuehly:spring-view-component-core:0.9.1")
     api("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
