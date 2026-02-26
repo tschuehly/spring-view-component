@@ -1,10 +1,10 @@
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "3.5.6"
+    id("org.springframework.boot") version "4.0.3"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.spring") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.spring") version "2.2.21"
 
     id("maven-publish")
     id("org.jreleaser") version "1.20.0"
@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.9.0"
+version = "0.9.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -22,15 +22,16 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-aspectj")
     compileOnly("org.springframework.boot:spring-boot-devtools")
     implementation("io.projectreactor:reactor-core")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
-    testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
+    testFixturesImplementation("org.springframework.boot:spring-boot-resttestclient")
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-webmvc")
     testFixturesImplementation("org.springframework.boot:spring-boot-devtools")
 
 }

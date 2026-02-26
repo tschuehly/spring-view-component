@@ -3,10 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jreleaser.model.Active
 
 plugins {
-    id("org.springframework.boot") version "3.5.6"
+    id("org.springframework.boot") version "4.0.3"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.spring") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.spring") version "2.2.21"
 
     id("maven-publish")
     id("org.jreleaser") version "1.20.0"
@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "de.tschuehly"
-version = "0.9.0"
+version = "0.9.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -22,14 +22,14 @@ repositories {
 }
 dependencies {
     api("gg.jte:jte-kotlin:3.2.1")
-    api("de.tschuehly:spring-view-component-core:0.9.0")
+    api("de.tschuehly:spring-view-component-core:0.9.1")
 
     implementation("gg.jte:jte-spring-boot-starter-3:3.2.1")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-aspectj")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.webjars:webjars-locator-lite:1.1.0")

@@ -1,4 +1,6 @@
-@param layoutView:  de.tschuehly.kteviewcomponentexample.web.layout.LayoutViewComponent.LayoutView
+@import de.tschuehly.kteviewcomponentexample.web.layout.LayoutViewComponent
+
+@param layoutView: de.tschuehly.kteviewcomponentexample.web.layout.LayoutViewComponent.LayoutView
 <html>
 
 <nav>

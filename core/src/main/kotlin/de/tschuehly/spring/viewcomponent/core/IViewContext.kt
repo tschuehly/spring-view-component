@@ -1,5 +1,6 @@
 package de.tschuehly.spring.viewcomponent.core
 
+import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 
 interface IViewContext {

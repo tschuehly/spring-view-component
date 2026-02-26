@@ -4,7 +4,7 @@ import de.tschuehly.spring.viewcomponent.core.ViewComponentAutoConfiguration
 import de.tschuehly.spring.viewcomponent.core.component.ViewComponentProperties
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties
+import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
