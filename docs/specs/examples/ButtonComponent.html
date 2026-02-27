@@ -1,0 +1,35 @@
+<!--
+  ButtonComponent template with fragment-based conditional rendering.
+
+  Each fragment corresponds to a specific ViewContext type.
+  Only the fragment matching the current ViewContext type will be rendered.
+-->
+
+<div view:context-root xmlns:view="https://github.com/tschuehly/spring-view-component">
+
+    <!-- Fragment for PrimaryButton context -->
+    <button view:context="PrimaryButton"
+            class="btn btn-primary"
+            type="button"
+            th:attr="data-action=${primaryButton.action}">
+        <span th:text="${primaryButton.label}">Primary Action</span>
+    </button>
+
+    <!-- Fragment for SecondaryButton context -->
+    <button view:context="SecondaryButton"
+            class="btn btn-secondary"
+            type="button"
+            th:attr="data-action=${secondaryButton.action}">
+        <span th:text="${secondaryButton.label}">Secondary Action</span>
+    </button>
+
+    <!-- Fragment for DangerButton context -->
+    <button view:context="DangerButton"
+            class="btn btn-danger"
+            type="button"
+            th:attr="data-action=${dangerButton.action}"
+            th:onclick="|return confirm('${dangerButton.confirmMessage}')|">
+        <span th:text="${dangerButton.label}">Danger Action</span>
+    </button>
+
+</div>
