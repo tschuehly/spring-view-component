@@ -1,3 +1,35 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=id">Bahasa Indonesia</a>
+        | <a href="https://openaitx.github.io/view.html?user=tschuehly&project=spring-view-component&lang=as">অসমীয়া</
+      </div>
+    </div>
+  </details>
+</div>
+
 ![image](https://user-images.githubusercontent.com/33346637/235085980-eb16eaa3-ec89-4293-9609-cf651a44f60e.png)
 
 Spring ViewComponent allows you to create typesafe, reusable & encapsulated server-rendered UI components.
