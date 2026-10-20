@@ -1,8 +1,22 @@
 import kotlin.io.path.Path
 
+// Patched versions for the Gradle plugin classpath (build-time only; Dependabot)
+buildscript {
+    dependencies {
+        constraints {
+            classpath("tools.jackson.core:jackson-core:3.1.8")
+            classpath("tools.jackson.core:jackson-databind:3.1.8")
+            classpath("org.apache.httpcomponents.core5:httpcore5:5.4.4")
+            classpath("org.apache.httpcomponents.core5:httpcore5-h2:5.4.4")
+            classpath("org.apache.httpcomponents.client5:httpclient5:5.6.4")
+            classpath("org.apache.commons:commons-lang3:3.20.0")
+        }
+    }
+}
+
 plugins {
     java
-    id("org.springframework.boot") version "4.0.3"
+    id("org.springframework.boot") version "4.0.8"
     id("io.spring.dependency-management") version "1.1.7"
     id("gg.jte.gradle") version("3.2.1")
 }
@@ -17,6 +31,11 @@ jte{
 java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
+
+// Security overrides until Spring Boot 4.0.x manages patched versions (Dependabot)
+extra["tomcat.version"] = "11.0.27"
+extra["jackson-2-bom.version"] = "2.21.8"
+extra["jackson-bom.version"] = "3.1.8"
 
 repositories {
     mavenCentral()
