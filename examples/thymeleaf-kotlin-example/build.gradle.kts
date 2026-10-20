@@ -30,6 +30,12 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 extra["tomcat.version"] = "11.0.27"
 extra["jackson-2-bom.version"] = "2.21.8"
 extra["jackson-bom.version"] = "3.1.8"
+// Kotlin plugin's internal kotlinBouncyCastleConfiguration (Dependabot)
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.bouncycastle") useVersion("1.85")
+    }
+}
 
 repositories {
     mavenCentral()

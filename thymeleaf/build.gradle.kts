@@ -31,10 +31,19 @@ group = "de.tschuehly"
 version = "0.9.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-// Security overrides until Spring Boot 4.0.x manages patched versions (Dependabot)
-extra["tomcat.version"] = "11.0.27"
-extra["jackson-2-bom.version"] = "2.21.8"
-extra["jackson-bom.version"] = "3.1.8"
+// Security overrides until Spring Boot 4.0.x manages patched versions (Dependabot).
+// resolutionStrategy only affects this build's classpaths; unlike extra["..."] BOM
+// properties it is not written into the published POM/.module, so consumers keep their own versions.
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        when {
+            requested.group == "org.apache.tomcat.embed" -> useVersion("11.0.27")
+            requested.group == "com.fasterxml.jackson.core" && requested.name != "jackson-annotations" -> useVersion("2.21.8")
+            requested.group == "tools.jackson.core" -> useVersion("3.1.8")
+            requested.group == "org.bouncycastle" -> useVersion("1.85") // Kotlin plugin's internal kotlinBouncyCastleConfiguration
+        }
+    }
+}
 
 repositories {
     mavenCentral()
